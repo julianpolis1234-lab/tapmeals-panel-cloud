@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TapMeals Yopal — Panel de Control 24/7</title>
+  <title>TapMeals Yopal — Panel de Control 24/7 & Multi-IA</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Inter & Outfit -->
+  <!-- Google Fonts: Inter & Outfit & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -24,14 +24,17 @@
               card: '#121721',
               cardBorder: '#1e2638',
               emerald: '#10b981',
+              emeraldNeon: '#00f59b',
               emeraldHover: '#059669',
               amber: '#f59e0b',
-              accent: '#38bdf8'
+              accent: '#38bdf8',
+              purple: '#a855f7'
             }
           },
           fontFamily: {
             sans: ['Inter', 'sans-serif'],
-            display: ['Outfit', 'sans-serif']
+            display: ['Outfit', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
           }
         }
       }
@@ -44,8 +47,8 @@
       font-family: 'Inter', sans-serif;
     }
     .glass-card {
-      background: rgba(18, 23, 33, 0.75);
-      backdrop-filter: blur(12px);
+      background: rgba(18, 23, 33, 0.78);
+      backdrop-filter: blur(14px);
       border: 1px solid rgba(255, 255, 255, 0.07);
     }
     .custom-scrollbar::-webkit-scrollbar {
@@ -53,7 +56,7 @@
       height: 6px;
     }
     .custom-scrollbar::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.25);
     }
     .custom-scrollbar::-webkit-scrollbar-thumb {
       background: rgba(255, 255, 255, 0.15);
@@ -74,17 +77,18 @@
 <body class="min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-black">
 
   <!-- TOP NAVIGATION HEADER -->
-  <header class="sticky top-0 z-50 border-b border-gray-800 bg-[#0a0d12]/90 backdrop-blur-md px-4 lg:px-8 py-3.5 flex items-center justify-between">
+  <header class="sticky top-0 z-40 border-b border-gray-800 bg-[#0a0d12]/90 backdrop-blur-md px-4 lg:px-8 py-3.5 flex items-center justify-between">
     <div class="flex items-center space-x-3.5">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 font-display font-extrabold text-xl text-black">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 via-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 font-display font-extrabold text-xl text-black">
         ⚡
       </div>
       <div>
         <div class="flex items-center space-x-2">
           <span class="font-display font-bold text-lg text-white tracking-tight">TAPMEALS</span>
           <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">YOPAL</span>
+          <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 bg-purple-500/15 text-purple-300 rounded border border-purple-500/30">Multi-IA v2.0</span>
         </div>
-        <p class="text-xs text-gray-400">Panel de Control 24/7 & Contestador Automático</p>
+        <p class="text-xs text-gray-400">Panel de Control 24/7 & Contestador Automático por Palabras Clave</p>
       </div>
     </div>
 
@@ -96,7 +100,7 @@
       </div>
 
       <!-- Master ON/OFF Switch -->
-      <button onclick="toggleBot()" id="btnToggle" class="relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-emerald-500 transition-colors duration-200 ease-in-out focus:outline-none" role="switch" aria-checked="true">
+      <button onclick="toggleBot()" id="btnToggle" class="relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-emerald-500 transition-colors duration-200 ease-in-out focus:outline-none" role="switch" aria-checked="true" title="Encender / Pausar Contestador">
         <span id="toggleKnob" aria-hidden="true" class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-5"></span>
       </button>
     </div>
@@ -105,7 +109,7 @@
   <!-- MAIN APP CONTAINER -->
   <div class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
 
-    <!-- CLOUD 24/7 BANNER ALERT -->
+    <!-- CLOUD 24/7 STATUS BANNER ALERT -->
     <div class="rounded-2xl bg-gradient-to-r from-emerald-950/40 via-gray-900 to-cyan-950/30 border border-emerald-500/30 p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
       <div class="flex items-start space-x-3.5">
         <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mt-0.5">
@@ -113,18 +117,22 @@
         </div>
         <div>
           <h2 class="text-sm sm:text-base font-semibold text-white flex items-center gap-2">
-            ¿Quieres que responda incluso con el computador APAGADO?
-            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded border border-emerald-500/30">Solución 24/7</span>
+            Servidor Cloud 24/7 Activo en Render & ManyChat Meta
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded border border-emerald-500/30">100% Gratuito</span>
           </h2>
-          <p class="text-xs sm:text-sm text-gray-300 mt-1 max-w-2xl">
-            Tu contestador ya está listo para correr en la nube sin depender de tu laptop. Activa <strong>ManyChat Oficial (0% riesgo)</strong> o <strong>despliega el servidor gratis en Render</strong> en 1 clic.
+          <p class="text-xs sm:text-sm text-gray-300 mt-1 max-w-3xl">
+            Tu panel y bot responden <strong>incluso con tu computador apagado</strong>. Puedes administrar todas las palabras clave y ver estadísticas desde cualquier celular visitando <a href="https://tapmeals-bot-panel.onrender.com" target="_blank" class="text-emerald-400 font-mono underline">tapmeals-bot-panel.onrender.com</a>.
           </p>
         </div>
       </div>
-      <button onclick="switchTab('cloud')" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs sm:text-sm transition flex items-center gap-2 shadow-lg shadow-emerald-500/25 shrink-0">
-        <i data-lucide="cloud" class="w-4 h-4"></i>
-        Ver Guía de Nube 24/7
-      </button>
+      <div class="flex items-center gap-2 shrink-0">
+        <button onclick="switchTab('rules')" class="px-3.5 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-medium text-xs sm:text-sm transition flex items-center gap-2 border border-gray-700">
+          <i data-lucide="sliders" class="w-4 h-4 text-emerald-400"></i> Ver Reglas
+        </button>
+        <button onclick="switchTab('cloud')" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs sm:text-sm transition flex items-center gap-2 shadow-lg shadow-emerald-500/25">
+          <i data-lucide="server" class="w-4 h-4"></i> Guía Nube
+        </button>
+      </div>
     </div>
 
     <!-- TABS NAVIGATION -->
@@ -132,11 +140,14 @@
       <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium transition flex items-center gap-2 bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
         <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Tablero
       </button>
+      <button onclick="switchTab('rules')" id="tab-btn-rules" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
+        <i data-lucide="tags" class="w-4 h-4 text-emerald-400"></i> Editor de Reglas
+      </button>
       <button onclick="switchTab('simulator')" id="tab-btn-simulator" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
         <i data-lucide="smartphone" class="w-4 h-4"></i> Simulador en Vivo
       </button>
       <button onclick="switchTab('config')" id="tab-btn-config" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
-        <i data-lucide="settings" class="w-4 h-4"></i> Mensajes y Disparadores
+        <i data-lucide="settings" class="w-4 h-4"></i> Mensajes Globales
       </button>
       <button onclick="switchTab('menu')" id="tab-btn-menu" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
         <i data-lucide="utensils" class="w-4 h-4"></i> Carta y Menú
@@ -148,7 +159,7 @@
         <i data-lucide="calculator" class="w-4 h-4"></i> Automatizaciones de Cocina
       </button>
       <button onclick="switchTab('multiai')" id="tab-btn-multiai" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
-        <i data-lucide="bot" class="w-4 h-4"></i> Red Multi-IA
+        <i data-lucide="bot" class="w-4 h-4 text-purple-400"></i> Red Multi-IA
       </button>
       <button onclick="switchTab('logs')" id="tab-btn-logs" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
         <i data-lucide="history" class="w-4 h-4"></i> Registro en Vivo
@@ -161,7 +172,7 @@
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="glass-card rounded-2xl p-4 sm:p-5 border border-gray-800">
           <div class="flex items-center justify-between text-gray-400 text-xs">
-            <span>TIEMPO ACTIVO</span>
+            <span>TIEMPO ACTIVO (24/7)</span>
             <i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i>
           </div>
           <div id="statUptime" class="text-xl sm:text-2xl font-bold font-display text-white mt-2">00h 00m 00s</div>
@@ -170,20 +181,20 @@
 
         <div class="glass-card rounded-2xl p-4 sm:p-5 border border-gray-800">
           <div class="flex items-center justify-between text-gray-400 text-xs">
-            <span>DMS ENTREGADOS</span>
-            <i data-lucide="send" class="w-4 h-4 text-cyan-400"></i>
+            <span>REGLAS ACTIVAS</span>
+            <i data-lucide="tags" class="w-4 h-4 text-emerald-400"></i>
           </div>
-          <div id="statDMs" class="text-xl sm:text-2xl font-bold font-display text-white mt-2">0</div>
-          <p class="text-[11px] text-gray-400 mt-1">Menús enviados a clientes</p>
+          <div id="statRulesCount" class="text-xl sm:text-2xl font-bold font-display text-white mt-2">6 Reglas</div>
+          <p class="text-[11px] text-emerald-400 mt-1">Precios, TapTap, Macros, Gyms...</p>
         </div>
 
         <div class="glass-card rounded-2xl p-4 sm:p-5 border border-gray-800">
           <div class="flex items-center justify-between text-gray-400 text-xs">
-            <span>COMENTARIOS RESPONDIDOS</span>
-            <i data-lucide="message-circle" class="w-4 h-4 text-amber-400"></i>
+            <span>INTERACCIONES REGISTRADAS</span>
+            <i data-lucide="send" class="w-4 h-4 text-cyan-400"></i>
           </div>
-          <div id="statComentarios" class="text-xl sm:text-2xl font-bold font-display text-white mt-2">0</div>
-          <p class="text-[11px] text-gray-400 mt-1">Interacciones en Posts/Reels</p>
+          <div id="statDMs" class="text-xl sm:text-2xl font-bold font-display text-white mt-2">0</div>
+          <p class="text-[11px] text-gray-400 mt-1">Comentarios y DMs procesados</p>
         </div>
 
         <div class="glass-card rounded-2xl p-4 sm:p-5 border border-gray-800">
@@ -196,12 +207,11 @@
         </div>
       </div>
 
-      <!-- Live Quick Status Card + Recent Activity preview -->
+      <!-- Operational Status & Quick Actions -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Status & Controls -->
         <div class="glass-card rounded-2xl p-6 border border-gray-800 space-y-4">
           <h3 class="text-sm font-semibold uppercase tracking-wider text-gray-400 flex items-center gap-2">
-            <i data-lucide="activity" class="w-4 h-4 text-emerald-400"></i> Estado Operativo
+            <i data-lucide="activity" class="w-4 h-4 text-emerald-400"></i> Estado del Contestador
           </h3>
           
           <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 space-y-3">
@@ -215,7 +225,7 @@
             </div>
             <div class="flex justify-between items-center text-sm">
               <span class="text-gray-400">Velocidad de Respuesta:</span>
-              <span class="font-medium text-emerald-400">~1.5s - 3s (Instantáneo)</span>
+              <span class="font-medium text-emerald-400">~1.5s (Instantáneo)</span>
             </div>
             <div class="flex justify-between items-center text-sm">
               <span class="text-gray-400">Auto-Aprobación Solicitudes:</span>
@@ -224,11 +234,11 @@
           </div>
 
           <div class="space-y-2 pt-2">
+            <button onclick="switchTab('rules')" class="w-full py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
+              <i data-lucide="sliders" class="w-4 h-4"></i> Administrar Reglas y Palabras Clave
+            </button>
             <button onclick="switchTab('simulator')" class="w-full py-2.5 px-4 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-medium text-sm transition flex items-center justify-center gap-2 border border-gray-700">
               <i data-lucide="play" class="w-4 h-4 text-emerald-400"></i> Probar en el Simulador
-            </button>
-            <button onclick="switchTab('config')" class="w-full py-2.5 px-4 rounded-xl bg-gray-800/50 hover:bg-gray-800 text-gray-300 font-medium text-sm transition flex items-center justify-center gap-2 border border-gray-800">
-              <i data-lucide="edit-3" class="w-4 h-4"></i> Editar Mensajes y Textos
             </button>
           </div>
         </div>
@@ -243,7 +253,6 @@
               <button onclick="switchTab('logs')" class="text-xs text-emerald-400 hover:underline">Ver todo</button>
             </div>
             <div id="dashboardLogsList" class="space-y-2.5 text-xs text-gray-300">
-              <!-- Dynamically populated -->
               <p class="text-gray-500 py-6 text-center">Esperando interacciones de clientes...</p>
             </div>
           </div>
@@ -255,7 +264,34 @@
       </div>
     </div>
 
-    <!-- TAB 2: SIMULADOR EN VIVO (LIVE TESTER) -->
+    <!-- TAB 2: EDITOR DE REGLAS DE PALABRAS CLAVE (DYNAMIC RULES ENGINE) -->
+    <div id="tab-rules" class="tab-content hidden space-y-6">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold font-display text-white flex items-center gap-2">
+            <i data-lucide="tags" class="w-6 h-6 text-emerald-400"></i> Editor de Reglas por Palabras Clave
+          </h2>
+          <p class="text-xs sm:text-sm text-gray-400 mt-1">
+            Crea o edita qué responde el bot cuando alguien escribe palabras como <em>'precios'</em>, <em>'domicilios'</em>, <em>'macros'</em>, <em>'smartfit'</em> o <em>'TapTap'</em>.
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="resetRulesToDefaults()" class="px-3.5 py-2.5 rounded-xl bg-gray-800/80 hover:bg-gray-800 text-gray-300 text-xs font-semibold transition border border-gray-700 flex items-center gap-1.5" title="Restaurar las 6 reglas estándar fitness">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Restaurar Reglas Base
+          </button>
+          <button onclick="openRuleModal()" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs sm:text-sm transition flex items-center gap-2 shadow-lg shadow-emerald-500/25">
+            <i data-lucide="plus" class="w-4 h-4"></i> Nueva Regla
+          </button>
+        </div>
+      </div>
+
+      <!-- Rules Cards Grid -->
+      <div id="rulesListContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+
+    <!-- TAB 3: SIMULADOR EN VIVO (LIVE TESTER) -->
     <div id="tab-simulator" class="tab-content hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
@@ -266,7 +302,7 @@
               <i data-lucide="smartphone" class="w-5 h-5 text-emerald-400"></i> Simulador de Instagram en Vivo
             </h2>
             <p class="text-xs text-gray-400 mt-1">
-              Escribe cualquier mensaje de prueba como si fueras un cliente en Instagram para verificar que el bot responda correctamente y sin enviar doble mensaje.
+              Escribe cualquier mensaje como si fueras un cliente para comprobar qué regla se activa y verificar que no haya respuestas duplicadas.
             </p>
           </div>
 
@@ -289,34 +325,33 @@
           <!-- Message Input -->
           <div class="space-y-1.5">
             <label class="text-xs font-semibold text-gray-300">Mensaje del cliente:</label>
-            <textarea id="simInputText" rows="3" class="w-full px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-emerald-500 transition" placeholder="Escribe 'TapTap', 'hola quiero el menú', etc."></textarea>
+            <textarea id="simInputText" rows="3" class="w-full px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-emerald-500 transition" placeholder="Escribe 'TapTap', 'precios', 'domicilios', 'macros', 'smartfit', etc."></textarea>
           </div>
 
           <!-- Quick Test Badges -->
           <div class="space-y-1.5">
-            <span class="text-[11px] text-gray-400">Pruebas rápidas (un clic):</span>
+            <span class="text-[11px] text-gray-400">Pruebas rápidas de reglas (un clic):</span>
             <div class="flex flex-wrap gap-1.5">
               <button onclick="fillSimInput('TapTap')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-emerald-300 border border-gray-700">TapTap</button>
-              <button onclick="fillSimInput('tap tap')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-emerald-300 border border-gray-700">tap tap</button>
-              <button onclick="fillSimInput('TAPTAP!!')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-emerald-300 border border-gray-700">TAPTAP!!</button>
-              <button onclick="fillSimInput('Hola me regalas el menú porfa')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-cyan-300 border border-gray-700">menú</button>
-              <button onclick="fillSimInput('precio de los almuerzos')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-cyan-300 border border-gray-700">precios</button>
-              <button onclick="fillSimInput('buenas tardes')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-gray-300 border border-gray-700">saludo</button>
-              <button onclick="fillSimInput('')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-red-300 border border-gray-700">Vacío (anti-duplicado)</button>
+              <button onclick="fillSimInput('cuanto valen los almuerzos?')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-cyan-300 border border-gray-700">Precios</button>
+              <button onclick="fillSimInput('donde tienen cobertura de domicilio?')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-amber-300 border border-gray-700">Domicilios</button>
+              <button onclick="fillSimInput('cuanta proteina y macros tienen?')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-purple-300 border border-gray-700">Macros</button>
+              <button onclick="fillSimInput('entreno en smartfit')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-emerald-300 border border-gray-700">Gym SmartFit</button>
+              <button onclick="fillSimInput('quiero pedir por whatsapp')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-green-300 border border-gray-700">WhatsApp Pedido</button>
             </div>
           </div>
 
           <button onclick="runSimulatorTest()" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-bold text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
-            <i data-lucide="send" class="w-4 h-4"></i> Enviar Mensaje y Simular Respuesta
+            <i data-lucide="send" class="w-4 h-4"></i> Enviar Mensaje y Evaluar Regla
           </button>
 
           <!-- Result Diagnostic -->
           <div id="simDiagnostic" class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 space-y-2 hidden">
             <div class="flex items-center justify-between">
-              <span class="text-xs text-gray-400">Resultado del Disparador:</span>
-              <span id="simResultBadge" class="px-2 py-0.5 rounded text-xs font-semibold"></span>
+              <span class="text-xs text-gray-400">Regla Disparada:</span>
+              <span id="simResultBadge" class="px-2.5 py-1 rounded-lg text-xs font-semibold"></span>
             </div>
-            <p id="simReasonText" class="text-xs text-gray-300"></p>
+            <p id="simReasonText" class="text-xs text-gray-300 font-mono"></p>
           </div>
         </div>
 
@@ -358,8 +393,6 @@
               <div id="simBotContainer" class="flex flex-col space-y-2">
                 <div id="simBotBubble" class="max-w-[85%] bg-gray-800 text-gray-100 rounded-2xl rounded-bl-sm px-3.5 py-2.5 leading-relaxed whitespace-pre-line">
                   ¡Hola atleta! 🍱⚡ Aquí tienes el menú oficial de TapMeals en Yopal.
-                  
-                  💡 Cero fritos ni aceites quemados. Cada bandeja viene pesada en báscula digital con etiqueta sellada en la tapa.
                 </div>
 
                 <!-- Menu Image Attachment -->
@@ -368,7 +401,7 @@
                 </div>
               </div>
 
-              <!-- Public Comment Toast (if channel = comentario) -->
+              <!-- Public Comment Toast -->
               <div id="simPublicCommentBox" class="hidden p-2.5 rounded-xl bg-purple-950/40 border border-purple-500/30 text-[11px] text-purple-200">
                 <span class="font-bold text-purple-400">Respuesta pública al comentario:</span>
                 <p id="simPublicCommentText" class="mt-0.5"></p>
@@ -387,15 +420,15 @@
       </div>
     </div>
 
-    <!-- TAB 3: CONFIGURACIÓN (SETTINGS) -->
+    <!-- TAB 4: MENSAJES GLOBALES (GLOBAL SETTINGS) -->
     <div id="tab-config" class="tab-content hidden space-y-6">
       <div class="glass-card rounded-2xl p-6 sm:p-8 border border-gray-800 max-w-4xl mx-auto space-y-6">
         <div>
           <h2 class="text-xl font-bold font-display text-white flex items-center gap-2">
-            <i data-lucide="settings" class="w-5 h-5 text-emerald-400"></i> Configuración de Textos y Disparadores
+            <i data-lucide="settings" class="w-5 h-5 text-emerald-400"></i> Ajustes Generales y Cooldowns
           </h2>
           <p class="text-xs sm:text-sm text-gray-400 mt-1">
-            Modifica aquí los textos y respuestas automáticas. Se aplicarán de inmediato tanto en el contestador local como en la nube.
+            Configura el mensaje por defecto para nuevos atletas y los tiempos de protección para evitar envíos dobles.
           </p>
         </div>
 
@@ -404,54 +437,48 @@
           <div class="space-y-1.5">
             <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Palabra clave activadora principal:</label>
             <input type="text" id="cfgTriggerKeyword" class="w-full px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white font-medium text-sm focus:outline-none focus:border-emerald-500" value="TapTap">
-            <p class="text-[11px] text-gray-500">El bot la detecta automáticamente pegada, separada ('tap tap'), con guiones o en mayúsculas.</p>
           </div>
 
           <!-- Official Welcome Message -->
           <div class="space-y-1.5">
-            <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Mensaje Oficial de Bienvenida (Texto del DM):</label>
+            <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Mensaje Oficial por Defecto (DM):</label>
             <textarea id="cfgWelcomeMessage" rows="4" class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-emerald-500 leading-relaxed"></textarea>
-            <p class="text-[11px] text-gray-500">Este es el texto que se entrega inmediatamente junto con la foto oficial del menú.</p>
           </div>
 
           <!-- Comment Public Reply -->
           <div class="space-y-1.5">
-            <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Respuesta pública en comentarios de Posts/Reels:</label>
+            <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Respuesta pública a comentarios en Posts/Reels:</label>
             <input type="text" id="cfgCommentReply" class="w-full px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-emerald-500">
-            <p class="text-[11px] text-gray-500">El bot etiqueta al usuario y publica esto en el comentario para confirmar que ya le mandó el DM.</p>
           </div>
 
           <!-- Closed DMs Fallback -->
           <div class="space-y-1.5">
-            <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Respuesta cuando el usuario tiene DMs privados/bloqueados:</label>
+            <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Respuesta cuando el usuario tiene DMs bloqueados (Privacidad):</label>
             <input type="text" id="cfgClosedDmsReply" class="w-full px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-emerald-500">
-            <p class="text-[11px] text-gray-500">Si Instagram no permite enviarle DM por privacidad, el bot le dice en su comentario que escriba primero 'TapTap'.</p>
           </div>
 
-          <!-- Cooldown -->
+          <!-- Cooldown & Scan Interval -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="space-y-1.5">
               <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Cooldown Anti-Duplicados (Segundos):</label>
               <input type="number" id="cfgCooldown" min="10" max="300" class="w-full px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-emerald-500" value="45">
-              <p class="text-[11px] text-gray-500">Evita que a un mismo usuario le llegue doble mensaje en menos de este tiempo.</p>
             </div>
             <div class="space-y-1.5">
               <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Intervalo de Escaneo (Segundos):</label>
               <input type="number" step="0.5" id="cfgScanInterval" min="1.0" max="10.0" class="w-full px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-emerald-500" value="1.5">
-              <p class="text-[11px] text-gray-500">Frecuencia de revisión continua de nuevos DMs y solicitudes.</p>
             </div>
           </div>
 
           <div class="pt-4 flex justify-end">
             <button type="submit" class="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm transition flex items-center gap-2 shadow-lg shadow-emerald-500/20">
-              <i data-lucide="save" class="w-4 h-4"></i> Guardar Cambios
+              <i data-lucide="save" class="w-4 h-4"></i> Guardar Ajustes Globales
             </button>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- TAB 4: CARTA Y MENÚ (MENU MANAGER) -->
+    <!-- TAB 5: CARTA Y MENÚ (MENU MANAGER) -->
     <div id="tab-menu" class="tab-content hidden space-y-6">
       <div class="glass-card rounded-2xl p-6 sm:p-8 border border-gray-800 max-w-4xl mx-auto space-y-6">
         <div>
@@ -476,16 +503,16 @@
           <div class="space-y-6">
             <div class="p-5 rounded-xl bg-gray-900/80 border border-gray-800 space-y-3">
               <h3 class="text-sm font-semibold text-white flex items-center gap-2">
-                <i data-lucide="upload" class="w-4 h-4 text-emerald-400"></i> Cambiar imagen de la carta
+                <i data-lucide="upload" class="w-4 h-4 text-emerald-400"></i> Reemplazar imagen de la carta
               </h3>
               <p class="text-xs text-gray-400">
-                Si actualizas los precios o platos, sube aquí la nueva imagen (.png o .jpg) y el bot empezará a enviar la nueva versión de inmediato.
+                Sube una nueva foto (.png o .jpg) para que el bot empiece a enviar la nueva versión de inmediato.
               </p>
               
               <input type="file" id="menuFileInput" accept="image/*" class="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/10 file:text-emerald-400 hover:file:bg-emerald-500/20 cursor-pointer">
               
               <button onclick="uploadMenuImage()" class="w-full py-2.5 px-4 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-medium text-xs transition flex items-center justify-center gap-2 border border-gray-700">
-                <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Subir y Reemplazar Menú
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Subir y Actualizar Carta
               </button>
             </div>
 
@@ -496,8 +523,8 @@
               <ul class="text-xs text-gray-300 space-y-1.5 list-disc list-inside">
                 <li>Resolución nativa: <strong>1080 × 1350 px (4:5)</strong></li>
                 <li>3 opciones estelares: Pechuga a la plancha, Fajitas de ternera magra, Bowl Doble Proteína.</li>
-                <li>Pollo Crispy Fit removido conforme a tus indicaciones.</li>
                 <li>Gramos reales pesados en crudo y macros certificados.</li>
+                <li>Cero aceites quemados ni fritos.</li>
               </ul>
             </div>
           </div>
@@ -505,7 +532,7 @@
       </div>
     </div>
 
-    <!-- TAB 5: DESPLIEGUE NUBE 24/7 (CLOUD SETUP) -->
+    <!-- TAB 6: DESPLIEGUE NUBE 24/7 (CLOUD SETUP) -->
     <div id="tab-cloud" class="tab-content hidden space-y-6">
       <div class="glass-card rounded-2xl p-6 sm:p-8 border border-gray-800 max-w-4xl mx-auto space-y-6">
         <div>
@@ -522,11 +549,11 @@
           <!-- Option A: ManyChat Official (Recommended) -->
           <div class="rounded-2xl bg-gradient-to-b from-emerald-950/40 to-gray-900 border-2 border-emerald-500/40 p-6 space-y-4 shadow-xl">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">MÉTODO OFICIAL RECOMENDADO</span>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">MÉTODO OFICIAL DE META</span>
               <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400"></i>
             </div>
             
-            <h3 class="text-lg font-bold text-white">1. ManyChat Cloud (Oficial de Meta)</h3>
+            <h3 class="text-lg font-bold text-white">1. ManyChat Cloud (Oficial)</h3>
             <p class="text-xs text-gray-300 leading-relaxed">
               Es el socio verificado oficial de Instagram. Corre directamente en los servidores de Meta. <strong>No requiere tener el computador prendido</strong> y tiene <strong>0% de riesgo de baneo</strong>.
             </p>
@@ -536,12 +563,8 @@
               <ol class="list-decimal list-inside space-y-1">
                 <li>Crea cuenta gratis en <a href="https://manychat.com" target="_blank" class="text-cyan-400 underline">manychat.com</a></li>
                 <li>Conecta tu cuenta <code class="text-emerald-300">@tapmeals.yopal</code></li>
-                <li>Crea una automatización: <em>"Cuando comenten <strong>TapTap</strong> en cualquier Reel $\rightarrow$ Enviar DM con el texto y la foto del menú"</em>.</li>
+                <li>Crea la regla: <em>"Cuando comenten o envíen <strong>TapTap</strong> o palabras clave $\rightarrow$ Enviar DM con texto y carta"</em>.</li>
               </ol>
-            </div>
-
-            <div class="text-[11px] text-gray-400 flex items-center gap-1.5">
-              <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Plan gratuito incluye hasta 1.000 contactos.
             </div>
           </div>
 
@@ -552,89 +575,92 @@
               <i data-lucide="server" class="w-5 h-5 text-cyan-400"></i>
             </div>
 
-            <h3 class="text-lg font-bold text-white">2. Servidor Cloud (Render / Railway)</h3>
+            <h3 class="text-lg font-bold text-white">2. Servidor Cloud en Render</h3>
             <p class="text-xs text-gray-300 leading-relaxed">
-              Tu repositorio ya está creado y subido a tu cuenta de GitHub. Puedes desplegar este mismo Panel y contestador en <strong>Render.com</strong> con 1 solo clic de forma 100% gratuita.
+              Tu servidor ya está desplegado y activo en Render de forma 100% gratuita. Puedes entrar desde tu teléfono en cualquier momento:
             </p>
 
             <div class="space-y-2 text-xs text-gray-300 bg-black/40 p-3.5 rounded-xl border border-gray-800">
-              <div class="font-semibold text-cyan-400">Repositorio en tu GitHub:</div>
-              <div class="truncate text-gray-300 font-mono text-[11px]">
-                <a href="https://github.com/julianpolis1234-lab/tapmeals-panel-cloud" target="_blank" class="text-cyan-400 underline hover:text-cyan-300">
-                  github.com/julianpolis1234-lab/tapmeals-panel-cloud
+              <div class="font-semibold text-cyan-400">URL de Producción Cloud:</div>
+              <div class="truncate text-gray-300 font-mono text-xs">
+                <a href="https://tapmeals-bot-panel.onrender.com" target="_blank" class="text-emerald-400 underline hover:text-emerald-300">
+                  https://tapmeals-bot-panel.onrender.com
                 </a>
               </div>
             </div>
 
             <div class="space-y-2 pt-1">
-              <a href="https://render.com/deploy?repo=https://github.com/julianpolis1234-lab/tapmeals-panel-cloud" target="_blank" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-bold text-xs sm:text-sm text-center transition flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20">
-                <i data-lucide="rocket" class="w-4 h-4"></i> Desplegar en Render con 1 Clic (Gratis)
+              <a href="https://tapmeals-bot-panel.onrender.com" target="_blank" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-bold text-xs sm:text-sm text-center transition flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20">
+                <i data-lucide="external-link" class="w-4 h-4"></i> Abrir Panel en la Nube
               </a>
               <a href="https://github.com/julianpolis1234-lab/tapmeals-panel-cloud" target="_blank" class="w-full py-2 px-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium text-xs text-center transition flex items-center justify-center gap-2 border border-gray-700">
-                <i data-lucide="github" class="w-4 h-4"></i> Ver Código en GitHub
+                <i data-lucide="github" class="w-4 h-4"></i> Ver Repositorio GitHub
               </a>
             </div>
-
-            <p class="text-[11px] text-gray-400">
-              Al hacer clic en Desplegar, Render compilará tu servidor y te dará una URL HTTPS propia (ej: <code class="text-cyan-300">https://tapmeals-panel-cloud.onrender.com</code>) para administrar el negocio desde tu celular sin depender de la laptop.
-            </p>
           </div>
 
-        </div>
-
-        <!-- Tip Box for School -->
-        <div class="p-4 rounded-xl bg-purple-950/30 border border-purple-500/25 text-xs text-purple-200 flex items-start gap-3">
-          <i data-lucide="award" class="w-5 h-5 text-purple-400 shrink-0 mt-0.5"></i>
-          <div>
-            <strong class="text-purple-300">Para tu sustentación en el Liceo Moderno Celestín Freinet:</strong>
-            <p class="mt-0.5 text-gray-300">
-              Explicar a los profesores que TapMeals cuenta con un <strong>sistema de atención automatizado en la nube 24/7</strong> con arquitectura desacoplada demuestra un nivel sobresaliente de ingeniería y modelo de negocio tecnológico.
-            </p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- TAB 6: REGISTRO DE ACTIVIDAD (LOGS) -->
-    <div id="tab-logs" class="tab-content hidden space-y-4">
-      <div class="glass-card rounded-2xl p-6 border border-gray-800 space-y-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-lg font-bold font-display text-white flex items-center gap-2">
-              <i data-lucide="history" class="w-5 h-5 text-emerald-400"></i> Registro de Actividad en Tiempo Real
-            </h2>
-            <p class="text-xs text-gray-400 mt-0.5">Historial en vivo de comentarios detectados, DMs enviados y solicitudes aprobadas.</p>
-          </div>
-          <button onclick="clearLogs()" class="px-3 py-1.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs text-gray-300 transition border border-gray-700">
-            Limpiar Registro
-          </button>
-        </div>
-
-        <!-- Logs Table -->
-        <div class="overflow-x-auto rounded-xl border border-gray-800 bg-gray-900/60">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-gray-900 text-gray-400 uppercase text-[10px] tracking-wider border-b border-gray-800">
-              <tr>
-                <th class="py-3 px-4">Hora</th>
-                <th class="py-3 px-4">Canal</th>
-                <th class="py-3 px-4">Remitente</th>
-                <th class="py-3 px-4">Detalle de la acción</th>
-                <th class="py-3 px-4">Estado</th>
-              </tr>
-            </thead>
-            <tbody id="logsTableBody" class="divide-y divide-gray-800/60">
-              <tr>
-                <td colspan="5" class="py-8 text-center text-gray-500">No hay eventos registrados recientemente.</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
     </div>
 
     <!-- TAB 7: AUTOMATIZACIONES Y COCINA (TOOLS) -->
     <div id="tab-tools" class="tab-content hidden space-y-6">
+      
+      <!-- CALCULADORA INTERACTIVA DE MACROS PARA ATLETAS (INNOVACIÓN 3) -->
+      <div class="glass-card rounded-2xl p-6 border border-emerald-500/30 space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold font-display text-white flex items-center gap-2">
+              <i data-lucide="flame" class="w-5 h-5 text-amber-400"></i> Calculadora Interactiva de Macros para Atletas (Yopal Fitness)
+            </h2>
+            <p class="text-xs text-gray-400 mt-1">
+              Calcula la meta de proteína y calorías según el peso del cliente ($2.0\text{g de proteína / kg}$) y recomienda el plato exacto de TapMeals.
+            </p>
+          </div>
+          <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/25">
+            Herramienta de Cierre de Ventas
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div class="space-y-1">
+            <label class="text-gray-300 font-semibold">Peso del atleta (kg):</label>
+            <input type="number" id="athleteWeight" value="75" min="40" max="150" oninput="calculateAthleteMacros()" class="w-full px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-emerald-400 font-bold text-sm focus:outline-none focus:border-emerald-500">
+          </div>
+          <div class="space-y-1">
+            <label class="text-gray-300 font-semibold">Objetivo del atleta:</label>
+            <select id="athleteGoal" onchange="calculateAthleteMacros()" class="w-full px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500">
+              <option value="definicion">Definición Muscular (Déficit Limpio)</option>
+              <option value="volumen">Volumen Magro / Rendimiento</option>
+              <option value="mantenimiento">Mantenimiento y Salud Fit</option>
+            </select>
+          </div>
+          <div class="space-y-1">
+            <label class="text-gray-300 font-semibold">Gimnasio donde entrena:</label>
+            <input type="text" id="athleteGym" value="SmartFit Unicentro Yopal" oninput="calculateAthleteMacros()" class="w-full px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500">
+          </div>
+        </div>
+
+        <!-- Calculated Macros Output -->
+        <div class="p-4 rounded-xl bg-black/50 border border-gray-800 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+          <div class="p-3 rounded-lg bg-gray-900/60 border border-gray-800">
+            <span class="text-[11px] text-gray-400 block">Proteína Diaria Recomendada:</span>
+            <span id="resMacroProteina" class="text-xl font-bold font-mono text-emerald-400">150g / día</span>
+            <span class="text-[10px] text-gray-500 block mt-0.5">Estándar de 2.0 g/kg</span>
+          </div>
+          <div class="p-3 rounded-lg bg-gray-900/60 border border-gray-800">
+            <span class="text-[11px] text-gray-400 block">Calorías Estimadas:</span>
+            <span id="resMacroCalorias" class="text-xl font-bold font-mono text-amber-400">2.100 kcal</span>
+            <span class="text-[10px] text-gray-500 block mt-0.5">Cero aceites quemados</span>
+          </div>
+          <div class="p-3 rounded-lg bg-gray-900/60 border border-gray-800">
+            <span class="text-[11px] text-gray-400 block">Plato TapMeals Sugerido:</span>
+            <span id="resMacroPlato" class="text-sm font-bold text-white block mt-1">Bowl Doble Proteína (54g)</span>
+            <span class="text-[10px] text-emerald-400 block">Cubre el 36% de su día</span>
+          </div>
+        </div>
+      </div>
+
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         
         <!-- Tool 1: WhatsApp Checkout Link Generator -->
@@ -652,7 +678,6 @@
             <div class="space-y-1">
               <label class="text-gray-300 font-semibold">Número de WhatsApp de TapMeals:</label>
               <input type="text" id="waPhone" value="573100000000" class="w-full px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white font-mono text-xs focus:outline-none focus:border-emerald-500">
-              <p class="text-[10px] text-gray-500">Incluye el código de país (57 para Colombia) sin signos + ni espacios.</p>
             </div>
 
             <div class="space-y-1">
@@ -773,15 +798,15 @@
           </p>
         </div>
 
-        <!-- Architecture Flow Diagram -->
+        <!-- Architecture Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch">
           
           <div class="p-5 rounded-2xl bg-gray-900/90 border border-emerald-500/30 space-y-3">
             <div class="flex items-center space-x-2 text-emerald-400 text-xs font-bold uppercase tracking-wider">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Agente 1: Operaciones y Redes (Antigravity)
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Agente 1: Operaciones & Bot (@tapmeals.yopal)
             </div>
             <p class="text-xs text-gray-300 leading-relaxed">
-              Monitorea en tiempo real los comentarios de Instagram, responde el disparador <em>'TapTap'</em> en 2 segundos, aprueba solicitudes y envía la carta 4:5.
+              Monitorea en tiempo real los comentarios de Instagram, responde en 1.5s a <em>'TapTap'</em> y palabras clave, aprueba solicitudes y envía la carta 4:5.
             </p>
             <div class="text-[11px] text-gray-500 font-mono bg-black/50 p-2.5 rounded-lg border border-gray-800">
               &bull; Tarea: Ejecución en tiempo real<br>
@@ -792,15 +817,15 @@
 
           <div class="p-5 rounded-2xl bg-gray-900/90 border border-purple-500/30 space-y-3">
             <div class="flex items-center space-x-2 text-purple-400 text-xs font-bold uppercase tracking-wider">
-              <span class="w-2.5 h-2.5 rounded-full bg-purple-400"></span> Agente 2: Auditor de Calidad y Finanzas
+              <span class="w-2.5 h-2.5 rounded-full bg-purple-400"></span> Agente 2: Auditor Estratégico & Innovación
             </div>
             <p class="text-xs text-gray-300 leading-relaxed">
-              Revisa los logs del Agente 1, calcula la merma cárnica a las 07:00 AM, analiza el sentimiento de los clientes a la 1:30 PM y sugiere mejoras al menú a las 20:00 PM.
+              Propuso el motor de reglas dinámicas, los convenios con SmartFit/Bodytech, la comanda express de WhatsApp y la calculadora de macros a $2.0\text{g/kg}$.
             </p>
             <div class="text-[11px] text-gray-500 font-mono bg-black/50 p-2.5 rounded-lg border border-gray-800">
-              &bull; Tarea: Supervisión, auditoría y alertas<br>
-              &bull; Entorno: Cron / Ciclo analítico de fondo<br>
-              &bull; Frecuencia: 3 checkpoints diarios
+              &bull; Tarea: Supervisión estratégica y arquitectura<br>
+              &bull; Entorno: Subagente especializado Antigravity<br>
+              &bull; Estado: Conversación completada con éxito
             </div>
           </div>
 
@@ -809,22 +834,141 @@
         <!-- Live Inter-Agent Transmission Report -->
         <div class="p-5 rounded-2xl bg-black/60 border border-purple-500/40 space-y-3 font-mono text-xs">
           <div class="flex items-center justify-between pb-2 border-b border-gray-800 text-[11px] text-gray-400">
-            <span class="flex items-center gap-1.5 text-purple-400">
-              <i data-lucide="terminal" class="w-4 h-4"></i> Última comunicación entre Agentes IA (Completada):
+            <span class="flex items-center gap-1.5 text-purple-400 font-bold">
+              <i data-lucide="terminal" class="w-4 h-4"></i> Transcripción de la Conversación IA $\leftrightarrow$ IA:
             </span>
             <span class="text-emerald-400">Status: 200 OK</span>
           </div>
 
-          <div class="space-y-1.5 text-gray-300 leading-relaxed text-[11px]">
-            <p><span class="text-cyan-400">[Agente 1 $\rightarrow$ Agente 2]:</span> <em>"Menú 4:5 oficial desplegado en Yopal. Solicitud de auditoría de embudo."</em></p>
-            <p><span class="text-purple-400">[Agente 2 $\rightarrow$ Agente 1]:</span> <em>"Auditoría completada: Detectada fuga en comanda manual. Activando recomendación de WhatsApp Smart Link, MRP crudo de merma y encuesta CSAT a la 1:30 PM."</em></p>
-            <p><span class="text-emerald-400">[Consenso IA]:</span> <em>"Las 3 automatizaciones fueron inyectadas con éxito en el panel de control de Julián."</em></p>
+          <div class="space-y-2 text-gray-300 leading-relaxed text-[11px]">
+            <p><span class="text-cyan-400">[Agente 1 $\rightarrow$ Agente 2]:</span> <em>"Julián nos pide avanzar al siguiente nivel en TapMeals: motor de palabras clave dinámico, más opciones, ideas innovadoras y diseño atlético. ¿Cuál es la especificación técnica?"</em></p>
+            <p><span class="text-purple-400">[Agente 2 $\rightarrow$ Agente 1]:</span> <em>"Auditoría y propuesta lista: 1) Estructura JSON para reglas con canales y adjunto de imagen opcional. 2) Tres innovaciones: Cupones SmartFit, Comanda Express estructurada y Calculadora de macros ($2.0\text{g/kg}$). 3) Paleta atlética obsidiana, esmeralda y ámbar."</em></p>
+            <p><span class="text-emerald-400">[Consenso Multi-IA]:</span> <em>"Código inyectado en app.py y frontend del panel. Desplegado en GitHub y Render 24/7."</em></p>
           </div>
         </div>
 
       </div>
     </div>
 
+    <!-- TAB 9: REGISTRO DE ACTIVIDAD (LOGS) -->
+    <div id="tab-logs" class="tab-content hidden space-y-4">
+      <div class="glass-card rounded-2xl p-6 border border-gray-800 space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold font-display text-white flex items-center gap-2">
+              <i data-lucide="history" class="w-5 h-5 text-emerald-400"></i> Registro de Actividad en Tiempo Real
+            </h2>
+            <p class="text-xs text-gray-400 mt-0.5">Historial en vivo de comentarios detectados, DMs enviados y solicitudes aprobadas.</p>
+          </div>
+          <button onclick="clearLogs()" class="px-3 py-1.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs text-gray-300 transition border border-gray-700">
+            Limpiar Registro
+          </button>
+        </div>
+
+        <!-- Logs Table -->
+        <div class="overflow-x-auto rounded-xl border border-gray-800 bg-gray-900/60">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-gray-900 text-gray-400 uppercase text-[10px] tracking-wider border-b border-gray-800">
+              <tr>
+                <th class="py-3 px-4">Hora</th>
+                <th class="py-3 px-4">Canal</th>
+                <th class="py-3 px-4">Remitente</th>
+                <th class="py-3 px-4">Detalle de la acción</th>
+                <th class="py-3 px-4">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="logsTableBody" class="divide-y divide-gray-800/60">
+              <tr>
+                <td colspan="5" class="py-8 text-center text-gray-500">No hay eventos registrados recientemente.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODAL: CREAR / EDITAR REGLA DE PALABRAS CLAVE -->
+  <div id="ruleModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+    <div class="glass-card rounded-3xl p-6 sm:p-8 border border-gray-700 max-w-xl w-full space-y-5 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-gray-800">
+        <h3 id="modalTitle" class="text-lg font-bold font-display text-white flex items-center gap-2">
+          <i data-lucide="plus-circle" class="w-5 h-5 text-emerald-400"></i> Nueva Regla de Respuesta
+        </h3>
+        <button onclick="closeRuleModal()" class="text-gray-400 hover:text-white p-1 rounded-lg hover:bg-gray-800 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="ruleForm" onsubmit="saveRuleForm(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="modalRuleId" value="">
+
+        <!-- Rule Name -->
+        <div class="space-y-1">
+          <label class="text-gray-300 font-semibold uppercase tracking-wider text-[11px]">Nombre descriptivo de la regla:</label>
+          <input type="text" id="modalRuleName" required placeholder="Ej: Convenio SmartFit, Horarios de Domicilio..." class="w-full px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500">
+        </div>
+
+        <!-- Keywords input -->
+        <div class="space-y-1">
+          <label class="text-gray-300 font-semibold uppercase tracking-wider text-[11px]">Palabras clave activadoras (separadas por coma):</label>
+          <input type="text" id="modalRuleKeywords" required placeholder="smartfit, gym, gimnasio, descuento, entrenamiento" class="w-full px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-emerald-400 font-mono text-xs focus:outline-none focus:border-emerald-500">
+          <p class="text-[10px] text-gray-500">El bot las detectará sin importar mayúsculas, minúsculas o tildes.</p>
+        </div>
+
+        <!-- Channel & Match Type Selector -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label class="text-gray-300 font-semibold uppercase tracking-wider text-[11px]">Canal de activación:</label>
+            <select id="modalRuleChannel" class="w-full px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500">
+              <option value="dm,solicitud">Mensajes Directos (DMs)</option>
+              <option value="comentario">Solo Comentarios en Posts/Reels</option>
+              <option value="dm,solicitud,comentario">Ambos Canales (DM + Comentario)</option>
+            </select>
+          </div>
+          <div class="space-y-1">
+            <label class="text-gray-300 font-semibold uppercase tracking-wider text-[11px]">Tipo de coincidencia:</label>
+            <select id="modalRuleMatchType" class="w-full px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500">
+              <option value="contains">Contiene la palabra clave</option>
+              <option value="exact">Frase exacta</option>
+              <option value="starts_with">Empieza por la palabra clave</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Reply Text (DM) -->
+        <div class="space-y-1">
+          <label class="text-gray-300 font-semibold uppercase tracking-wider text-[11px]">Mensaje privado a enviar al DM:</label>
+          <textarea id="modalRuleReplyText" rows="3" required placeholder="¡Hola! 🍱⚡ Aquí tienes la respuesta..." class="w-full px-3.5 py-2 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500 leading-relaxed"></textarea>
+        </div>
+
+        <!-- Comment Reply (if applies) -->
+        <div class="space-y-1">
+          <label class="text-gray-300 font-semibold uppercase tracking-wider text-[11px]">Respuesta pública al comentario (opcional):</label>
+          <input type="text" id="modalRuleCommentReply" placeholder="¡Te respondimos al DM con la información! Revisa tu bandeja 📩⚡" class="w-full px-3.5 py-2 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500">
+        </div>
+
+        <!-- Attach Menu Image Checkbox -->
+        <div class="p-3 rounded-xl bg-gray-900/60 border border-gray-800 flex items-center justify-between">
+          <div class="space-y-0.5">
+            <span class="text-xs font-semibold text-white">¿Adjuntar foto de la carta oficial 4:5?</span>
+            <p class="text-[10px] text-gray-400">Si se activa, el bot enviará la imagen del menú junto al texto.</p>
+          </div>
+          <input type="checkbox" id="modalRuleSendImage" class="w-4 h-4 rounded text-emerald-500 focus:ring-emerald-400 bg-gray-800 border-gray-700">
+        </div>
+
+        <!-- Buttons -->
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeRuleModal()" class="px-4 py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium text-xs transition">
+            Cancelar
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs transition flex items-center gap-1.5 shadow-lg shadow-emerald-500/20">
+            <i data-lucide="check" class="w-3.5 h-3.5"></i> Guardar Regla
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- TOAST NOTIFICATION POPUP -->
@@ -843,6 +987,7 @@
   <!-- SCRIPT LOGIC -->
   <script>
     let activeSimChannel = 'dm';
+    let currentRules = [];
 
     // Initialize Lucide icons
     lucide.createIcons();
@@ -906,7 +1051,243 @@
       }
     }
 
-    // Simulator channel
+    // -------------------------------------------------------------------------
+    // RULES MANAGEMENT LOGIC (CRUD)
+    // -------------------------------------------------------------------------
+
+    async function loadRules() {
+      try {
+        const res = await fetch('/api/rules');
+        const data = await res.json();
+        currentRules = data.rules || [];
+        renderRulesList();
+        const activeCount = currentRules.filter(r => r.enabled).length;
+        if (document.getElementById('statRulesCount')) {
+          document.getElementById('statRulesCount').innerText = `${activeCount} Activas`;
+        }
+      } catch (e) {
+        console.error("Error al cargar reglas:", e);
+      }
+    }
+
+    function renderRulesList() {
+      const container = document.getElementById('rulesListContainer');
+      if (!container) return;
+
+      if (!currentRules.length) {
+        container.innerHTML = `
+          <div class="col-span-full py-12 text-center text-gray-500 glass-card rounded-2xl border border-gray-800">
+            <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+            <p>No hay reglas configuradas. Haz clic en 'Nueva Regla' o 'Restaurar Reglas Base'.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = currentRules.map((r, index) => {
+        const keywords = r.keywords || [];
+        const isEnabled = r.enabled !== false;
+        const channels = r.channels || ['dm'];
+        const channelLabel = channels.includes('comentario') && (channels.includes('dm') || channels.includes('solicitud')) 
+          ? 'Ambos Canales' 
+          : (channels.includes('comentario') ? 'Solo Comentarios' : 'Direct Message (DM)');
+        
+        return `
+          <div class="glass-card rounded-2xl p-5 border ${isEnabled ? 'border-gray-800' : 'border-gray-800/40 opacity-60'} flex flex-col justify-between space-y-4 hover:border-gray-700 transition">
+            <div class="space-y-3">
+              <!-- Header: Name, Channel & Toggle -->
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
+                    ${r.name || 'Regla sin nombre'}
+                  </h3>
+                  <div class="flex items-center gap-1.5 mt-1">
+                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full ${channels.includes('comentario') ? 'bg-purple-500/15 text-purple-400 border border-purple-500/20' : 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/20'}">
+                      ${channelLabel}
+                    </span>
+                    ${r.send_image ? '<span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">Foto Menú 4:5</span>' : ''}
+                  </div>
+                </div>
+
+                <button onclick="toggleRuleActive('${r.id}')" class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent ${isEnabled ? 'bg-emerald-500' : 'bg-gray-700'} transition-colors duration-200" title="Activar / Desactivar regla">
+                  <span class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ${isEnabled ? 'translate-x-4' : 'translate-x-0'}"></span>
+                </button>
+              </div>
+
+              <!-- Keywords Chips -->
+              <div class="space-y-1">
+                <span class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Palabras Clave:</span>
+                <div class="flex flex-wrap gap-1">
+                  ${keywords.map(kw => `
+                    <span class="text-[11px] font-mono px-2 py-0.5 rounded-md bg-gray-900 border border-gray-800 text-emerald-300">
+                      ${kw}
+                    </span>
+                  `).join('')}
+                </div>
+              </div>
+
+              <!-- Reply Preview -->
+              <div class="space-y-1">
+                <span class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Respuesta DM:</span>
+                <p class="text-xs text-gray-300 line-clamp-3 bg-black/40 p-2.5 rounded-xl border border-gray-800/80 leading-relaxed font-sans">
+                  ${r.reply_text || 'Sin texto asignado'}
+                </p>
+              </div>
+
+              ${r.comment_reply ? `
+                <div class="space-y-1">
+                  <span class="text-[10px] uppercase font-bold tracking-wider text-purple-400">Respuesta Pública al Comentario:</span>
+                  <p class="text-[11px] text-gray-400 italic line-clamp-2">
+                    "${r.comment_reply}"
+                  </p>
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- Actions Footer -->
+            <div class="pt-3 border-t border-gray-800/80 flex items-center justify-between text-xs">
+              <button onclick="testRuleInSimulator('${keywords[0] || ''}')" class="text-emerald-400 hover:text-emerald-300 font-medium flex items-center gap-1">
+                <i data-lucide="play" class="w-3.5 h-3.5"></i> Probar
+              </button>
+              <div class="flex items-center gap-1.5">
+                <button onclick="editRule('${r.id}')" class="p-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition" title="Editar regla">
+                  <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="deleteRule('${r.id}')" class="p-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/60 text-red-400 hover:text-red-300 transition" title="Eliminar regla">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function openRuleModal(rule = null) {
+      document.getElementById('modalRuleId').value = rule ? rule.id : '';
+      document.getElementById('modalRuleName').value = rule ? rule.name : '';
+      document.getElementById('modalRuleKeywords').value = rule ? (rule.keywords || []).join(', ') : '';
+      
+      const channels = rule ? (rule.channels || ['dm']) : ['dm', 'solicitud'];
+      document.getElementById('modalRuleChannel').value = channels.join(',');
+      document.getElementById('modalRuleMatchType').value = rule ? (rule.match_type || 'contains') : 'contains';
+      document.getElementById('modalRuleReplyText').value = rule ? (rule.reply_text || '') : '';
+      document.getElementById('modalRuleCommentReply').value = rule ? (rule.comment_reply || '') : '';
+      document.getElementById('modalRuleSendImage').checked = rule ? !!rule.send_image : false;
+
+      document.getElementById('modalTitle').innerHTML = rule 
+        ? `<i data-lucide="edit" class="w-5 h-5 text-emerald-400"></i> Editar Regla: ${rule.name}`
+        : `<i data-lucide="plus-circle" class="w-5 h-5 text-emerald-400"></i> Nueva Regla de Respuesta`;
+
+      document.getElementById('ruleModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeRuleModal() {
+      document.getElementById('ruleModal').classList.add('hidden');
+    }
+
+    async function saveRuleForm(e) {
+      e.preventDefault();
+      const ruleId = document.getElementById('modalRuleId').value;
+      const name = document.getElementById('modalRuleName').value.trim();
+      const rawKeywords = document.getElementById('modalRuleKeywords').value;
+      const channels = document.getElementById('modalRuleChannel').value.split(',').map(c => c.trim());
+      const matchType = document.getElementById('modalRuleMatchType').value;
+      const replyText = document.getElementById('modalRuleReplyText').value.trim();
+      const commentReply = document.getElementById('modalRuleCommentReply').value.trim();
+      const sendImage = document.getElementById('modalRuleSendImage').checked;
+
+      const payload = {
+        id: ruleId || undefined,
+        name: name,
+        keywords: rawKeywords,
+        channels: channels,
+        match_type: matchType,
+        reply_text: replyText,
+        comment_reply: commentReply,
+        send_image: sendImage,
+        enabled: true
+      };
+
+      try {
+        const res = await fetch('/api/rules', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(ruleId ? "Regla actualizada con éxito" : "Nueva regla creada con éxito");
+          closeRuleModal();
+          loadRules();
+        } else {
+          alert("Error: " + data.error);
+        }
+      } catch (err) {
+        alert("Error al guardar: " + err);
+      }
+    }
+
+    async function toggleRuleActive(ruleId) {
+      try {
+        const res = await fetch(`/api/rules/${ruleId}/toggle`, { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          loadRules();
+          showToast(data.enabled ? "Regla activada" : "Regla pausada");
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function deleteRule(ruleId) {
+      if (!confirm("¿Seguro que deseas eliminar esta regla?")) return;
+      try {
+        const res = await fetch(`/api/rules/${ruleId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          showToast("Regla eliminada");
+          loadRules();
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function editRule(ruleId) {
+      const rule = currentRules.find(r => r.id === ruleId);
+      if (rule) openRuleModal(rule);
+    }
+
+    function testRuleInSimulator(keyword) {
+      switchTab('simulator');
+      fillSimInput(keyword);
+      runSimulatorTest();
+    }
+
+    async function resetRulesToDefaults() {
+      if (!confirm("¿Deseas restaurar las 6 reglas predeterminadas de TapMeals?")) return;
+      try {
+        const res = await fetch('/api/rules/reset-defaults', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          showToast("Reglas restauradas a los 6 valores oficiales fitness");
+          loadRules();
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // SIMULATOR LOGIC
+    // -------------------------------------------------------------------------
+
     function setSimChannel(channel) {
       activeSimChannel = channel;
       document.querySelectorAll('.sim-chan-btn').forEach(btn => {
@@ -944,12 +1325,17 @@
       reason.innerText = data.reason;
 
       if (data.triggers) {
-        badge.className = "px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
-        badge.innerText = "¡DISPARÓ MENÚ!";
+        badge.className = "px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+        badge.innerText = `REGLA: ${data.rule_name || 'TapTap Base'}`;
         
         botContainer.classList.remove('hidden');
         botBubble.innerText = data.dm_response;
-        menuAttach.classList.remove('hidden');
+
+        if (data.has_image) {
+          menuAttach.classList.remove('hidden');
+        } else {
+          menuAttach.classList.add('hidden');
+        }
 
         if (activeSimChannel === 'comentario' && data.public_comment_reply) {
           commentBox.classList.remove('hidden');
@@ -958,7 +1344,7 @@
           commentBox.classList.add('hidden');
         }
       } else {
-        badge.className = "px-2 py-0.5 rounded text-xs font-semibold bg-gray-800 text-gray-400 border border-gray-700";
+        badge.className = "px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-400 border border-gray-700";
         badge.innerText = "NO DISPARÓ (IGNORADO)";
         
         botContainer.classList.add('hidden');
@@ -970,7 +1356,7 @@
       chat.scrollTop = chat.scrollHeight;
     }
 
-    // Save config
+    // Save global config
     async function saveConfig(e) {
       e.preventDefault();
       const payload = {
@@ -990,7 +1376,7 @@
         });
         const data = await res.json();
         if (data.success) {
-          showToast("Configuración guardada exitosamente");
+          showToast("Ajustes globales guardados con éxito");
           document.getElementById('statTrigger').innerText = payload.trigger_keyword;
         }
       } catch (err) {
@@ -1032,15 +1418,17 @@
       showToast("Registro limpiado");
     }
 
-    // Fetch initial status and populate
+    // Load server status
     async function loadStatus() {
       try {
         const res = await fetch('/api/status');
         const data = await res.json();
         document.getElementById('statUptime').innerText = data.uptime;
         document.getElementById('statDMs').innerText = data.total_dms;
-        document.getElementById('statComentarios').innerText = data.total_comentarios;
         document.getElementById('statTrigger').innerText = data.trigger_keyword;
+        if (document.getElementById('statRulesCount') && data.active_rules !== undefined) {
+          document.getElementById('statRulesCount').innerText = `${data.active_rules} Activas`;
+        }
         updateBotStatusUI(data.bot_enabled);
       } catch (e) {
         console.error(e);
@@ -1112,7 +1500,10 @@
       }
     }
 
-    // WhatsApp generator logic
+    // -------------------------------------------------------------------------
+    // TOOLS LOGIC (WHATSAPP, KITCHEN PREP, MACRO TRACKER)
+    // -------------------------------------------------------------------------
+
     function updateWhatsAppLink() {
       const phone = document.getElementById('waPhone') ? document.getElementById('waPhone').value.trim() : "573100000000";
       const dish = document.getElementById('waDish') ? document.getElementById('waDish').value : "Pechuga a la Plancha";
@@ -1136,25 +1527,22 @@
       }
     }
 
-    // Kitchen MRP Prep calculator
     function calculateKitchenPrep() {
       const pechugas = parseInt(document.getElementById('prepPechuga')?.value) || 0;
       const terneras = parseInt(document.getElementById('prepTernera')?.value) || 0;
       const bowls = parseInt(document.getElementById('prepBowls')?.value) || 0;
 
-      // 150g pechuga en Pechugas + 200g pechuga en Bowls
       // Merma de pollo ~ 30%: crudo = cocido / 0.70
       const polloCocidoGramos = (pechugas * 150) + (bowls * 200);
       const polloCrudoKg = (polloCocidoGramos / 0.70) / 1000;
 
-      // 140g ternera en Terneras
       // Merma de ternera ~ 25%: crudo = cocido / 0.75
       const terneraCocidaGramos = (terneras * 140);
       const terneraCrudaKg = (terneraCocidaGramos / 0.75) / 1000;
 
       const totalBandejas = pechugas + terneras + bowls;
       const totalVenta = (pechugas * 13500) + (terneras * 14500) + (bowls * 15000);
-      const margenNeto = totalVenta * 0.48; // Margen gastronómico fit del 48%
+      const margenNeto = totalVenta * 0.48;
 
       if (document.getElementById('resPolloCrudo')) document.getElementById('resPolloCrudo').innerText = polloCrudoKg.toFixed(2) + " kg";
       if (document.getElementById('resTerneraCruda')) document.getElementById('resTerneraCruda').innerText = terneraCrudaKg.toFixed(2) + " kg";
@@ -1164,10 +1552,31 @@
       if (document.getElementById('resMargenNeto')) document.getElementById('resMargenNeto').innerText = "$" + Math.round(margenNeto).toLocaleString('es-CO') + " COP";
     }
 
-    // Polling intervals and initializations
+    function calculateAthleteMacros() {
+      const weight = parseFloat(document.getElementById('athleteWeight')?.value) || 75;
+      const goal = document.getElementById('athleteGoal')?.value || 'definicion';
+
+      // Estándar deportivo: 2.0g proteina / kg
+      const proteina = Math.round(weight * 2.0);
+      let calorias = Math.round(weight * 28);
+      if (goal === 'volumen') calorias = Math.round(weight * 34);
+      if (goal === 'mantenimiento') calorias = Math.round(weight * 30);
+
+      let platoSugerido = "Bowl Doble Proteína (54g proteína magra)";
+      if (weight < 65) platoSugerido = "Pechuga a la Plancha (37g proteína magra)";
+      else if (goal === 'definicion') platoSugerido = "Fajitas de Ternera Magra (42g proteína magra)";
+
+      if (document.getElementById('resMacroProteina')) document.getElementById('resMacroProteina').innerText = proteina + "g / día";
+      if (document.getElementById('resMacroCalorias')) document.getElementById('resMacroCalorias').innerText = calorias.toLocaleString('es-CO') + " kcal";
+      if (document.getElementById('resMacroPlato')) document.getElementById('resMacroPlato').innerText = platoSugerido;
+    }
+
+    // Initializations
     updateWhatsAppLink();
     calculateKitchenPrep();
+    calculateAthleteMacros();
     loadStatus();
+    loadRules();
     loadConfig();
     loadLogs();
     setInterval(loadStatus, 4000);

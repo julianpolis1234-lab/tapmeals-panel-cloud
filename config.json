@@ -6,6 +6,140 @@
   "closed_dms_reply": "Tu cuenta tiene bloqueados los DMs de externos 🔒 Porfa envíanos tú un mensaje al directo con la palabra 'TapTap' y te llegará la carta de una 🍱⚡",
   "cooldown_seconds": 45,
   "scan_interval_seconds": 1.5,
-  "menu_image_path": "C:\\Users\\MSI\\Downloads\\TapMeals_Kit_Editable_ApoloStyle\\Menu_Oficial_TapMeals_Yopal.png",
-  "cloud_mode": "manychat_recommended"
+  "menu_image_path": "Menu_Oficial_TapMeals_Yopal.png",
+  "cloud_mode": "manychat_recommended",
+  "rules": [
+    {
+      "id": "rule_taptap",
+      "name": "Menú Oficial TapTap",
+      "keywords": [
+        "taptap",
+        "tap tap",
+        "tap-tap",
+        "tapp",
+        "menu",
+        "carta"
+      ],
+      "match_type": "contains",
+      "channels": [
+        "dm",
+        "solicitud",
+        "comentario"
+      ],
+      "reply_text": "¡Hola atleta! 🍱⚡ Aquí tienes el menú oficial de TapMeals en Yopal.\n\n💡 Cero fritos ni aceites quemados. Cada bandeja viene pesada en báscula digital con etiqueta sellada en la tapa.",
+      "comment_reply": "¡Te acabamos de enviar el menú oficial por mensaje directo! Revisa tu DM 🍱⚡",
+      "send_image": true,
+      "enabled": true
+    },
+    {
+      "id": "rule_precios",
+      "name": "Precios y Opciones",
+      "keywords": [
+        "precio",
+        "precios",
+        "cuanto vale",
+        "costo",
+        "valor",
+        "cuanto cuesta"
+      ],
+      "match_type": "contains",
+      "channels": [
+        "dm",
+        "solicitud"
+      ],
+      "reply_text": "¡Hola! 🍱⚡ Nuestros precios oficiales en Yopal son:\n\n1. Pechuga a la Plancha (150g proteína magra): $13.500 COP\n2. Fajitas de Ternera Magra (140g proteína magra): $14.500 COP\n3. Bowl Doble Proteína (200g pollo + huevo cocido): $15.000 COP\n\nTodos incluyen porción de carbohidrato limpio medido al gramo y vegetales frescos.",
+      "comment_reply": "¡Precios enviados al DM! Revisa tu bandeja de entrada 🍱⚡",
+      "send_image": false,
+      "enabled": true
+    },
+    {
+      "id": "rule_domicilios",
+      "name": "Horarios y Zonas de Entrega",
+      "keywords": [
+        "domicilio",
+        "domicilios",
+        "donde entregan",
+        "cobertura",
+        "horario",
+        "a que hora",
+        "entrega"
+      ],
+      "match_type": "contains",
+      "channels": [
+        "dm",
+        "solicitud"
+      ],
+      "reply_text": "📍 Cobertura: Todo el casco urbano de Yopal (gimnasios, oficinas y residencias).\n\n⏰ Horario de pedidos: 07:00 AM a 10:30 AM.\n🚀 Despachos calientes: Entre 11:30 AM y 01:00 PM listos para comer.",
+      "comment_reply": "¡Información de domicilios enviada por interno! Revisa tu DM 📍",
+      "send_image": false,
+      "enabled": true
+    },
+    {
+      "id": "rule_macros",
+      "name": "Macros y Báscula Digital",
+      "keywords": [
+        "macros",
+        "proteina",
+        "calorias",
+        "gramos",
+        "gramera",
+        "peso",
+        "deficit",
+        "volumen"
+      ],
+      "match_type": "contains",
+      "channels": [
+        "dm",
+        "solicitud"
+      ],
+      "reply_text": "⚡ En TapMeals no adivinamos: cada bandeja viene pesada en báscula digital con los gramos exactos de proteína cocida (36g a 54g) certificados en la etiqueta de la tapa.\n\nCero aceites quemados, cero calorías vacías.",
+      "comment_reply": "¡Detalles de macros y gramos certificados enviados a tu DM! 📊⚡",
+      "send_image": false,
+      "enabled": true
+    },
+    {
+      "id": "rule_pedido",
+      "name": "Hacer Pedido / WhatsApp Directo",
+      "keywords": [
+        "pedir",
+        "pedido",
+        "quiero pedir",
+        "comprar",
+        "ordenar",
+        "whatsapp",
+        "agendar"
+      ],
+      "match_type": "contains",
+      "channels": [
+        "dm",
+        "solicitud"
+      ],
+      "reply_text": "¡Excelente elección, atleta! 📲⚡ Puedes agendar tu pedido en 30 segundos directamente en nuestro WhatsApp oficial con el plato que deseas:\n\n👉 https://api.whatsapp.com/send?phone=573100000000&text=Hola%20TapMeals!%20Quiero%20agendar%20mi%20almuerzo%20fitness%20de%20hoy%20🍱",
+      "comment_reply": "¡Link directo de WhatsApp enviado a tu DM para tomar tu pedido! 📲",
+      "send_image": false,
+      "enabled": true
+    },
+    {
+      "id": "rule_gym",
+      "name": "Convenio Gimnasios Yopal",
+      "keywords": [
+        "gym",
+        "gimnasio",
+        "smartfit",
+        "bodytech",
+        "convenio",
+        "descuento",
+        "atleta"
+      ],
+      "match_type": "contains",
+      "channels": [
+        "dm",
+        "solicitud"
+      ],
+      "reply_text": "🏋️‍♂️ ¿Entrenas en SmartFit, Bodytech o algún box de Yopal? Tienes $2.000 COP de descuento en tu primer almuerzo mostrando tu membresía activa al repartidor.\n\nEscribe 'TapTap' para ver la carta completa.",
+      "comment_reply": "¡Beneficio de gimnasio enviado a tu DM! Revisa tu bandeja 🏋️‍♂️⚡",
+      "send_image": false,
+      "enabled": true
+    }
+  ]
 }

@@ -2,11 +2,12 @@
 ===============================================================================
 PANEL DE CONTROL WEB Y SERVIDOR CLOUD 24/7 — TAPMEALS (@tapmeals.yopal)
 ===============================================================================
-Servidor Flask con API REST y Dashboard Administrativo:
+Servidor Flask con API REST, Editor de Reglas Dinámicas y Dashboard 24/7:
 - Monitoreo en tiempo real del estado del bot (24/7)
-- Editor interactivo de mensajes, disparadores 'TapTap' y macros
-- Simulador de chat en vivo para probar respuestas
+- Editor Dinámico de Reglas por Palabras Clave (Precios, Domicilios, Macros, etc.)
+- Simulador de chat en vivo con diagnóstico de regla disparada
 - Registro de actividad e interacciones de clientes
+- Endpoints de Webhook oficial para Meta / Instagram Graph API
 - Guía y configuración de despliegue en la nube (Render / ManyChat oficial)
 ===============================================================================
 """
@@ -51,6 +52,75 @@ bot_logs = []
 bot_worker_thread = None
 bot_running_flag = False
 
+DEFAULT_RULES = [
+    {
+        "id": "rule_taptap",
+        "name": "Menú Oficial TapTap",
+        "keywords": ["taptap", "tap tap", "tap-tap", "tapp", "menu", "carta"],
+        "match_type": "contains",
+        "channels": ["dm", "solicitud", "comentario"],
+        "reply_text": "¡Hola atleta! 🍱⚡ Aquí tienes el menú oficial de TapMeals en Yopal.\n\n💡 Cero fritos ni aceites quemados. Cada bandeja viene pesada en báscula digital con etiqueta sellada en la tapa.",
+        "comment_reply": "¡Te acabamos de enviar el menú oficial por mensaje directo! Revisa tu DM 🍱⚡",
+        "send_image": True,
+        "enabled": True
+    },
+    {
+        "id": "rule_precios",
+        "name": "Precios y Opciones",
+        "keywords": ["precio", "precios", "cuanto vale", "costo", "valor", "cuanto cuesta"],
+        "match_type": "contains",
+        "channels": ["dm", "solicitud"],
+        "reply_text": "¡Hola! 🍱⚡ Nuestros precios oficiales en Yopal son:\n\n1. Pechuga a la Plancha (150g proteína magra): $13.500 COP\n2. Fajitas de Ternera Magra (140g proteína magra): $14.500 COP\n3. Bowl Doble Proteína (200g pollo + huevo cocido): $15.000 COP\n\nTodos incluyen porción de carbohidrato limpio medido al gramo y vegetales frescos.",
+        "comment_reply": "¡Precios enviados al DM! Revisa tu bandeja de entrada 🍱⚡",
+        "send_image": False,
+        "enabled": True
+    },
+    {
+        "id": "rule_domicilios",
+        "name": "Horarios y Zonas de Entrega",
+        "keywords": ["domicilio", "domicilios", "donde entregan", "cobertura", "horario", "a que hora", "entrega"],
+        "match_type": "contains",
+        "channels": ["dm", "solicitud"],
+        "reply_text": "📍 Cobertura: Todo el casco urbano de Yopal (gimnasios, oficinas y residencias).\n\n⏰ Horario de pedidos: 07:00 AM a 10:30 AM.\n🚀 Despachos calientes: Entre 11:30 AM y 01:00 PM listos para comer.",
+        "comment_reply": "¡Información de domicilios enviada por interno! Revisa tu DM 📍",
+        "send_image": False,
+        "enabled": True
+    },
+    {
+        "id": "rule_macros",
+        "name": "Macros y Báscula Digital",
+        "keywords": ["macros", "proteina", "calorias", "gramos", "gramera", "peso", "deficit", "volumen"],
+        "match_type": "contains",
+        "channels": ["dm", "solicitud"],
+        "reply_text": "⚡ En TapMeals no adivinamos: cada bandeja viene pesada en báscula digital con los gramos exactos de proteína cocida (36g a 54g) certificados en la etiqueta de la tapa.\n\nCero aceites quemados, cero calorías vacías.",
+        "comment_reply": "¡Detalles de macros y gramos certificados enviados a tu DM! 📊⚡",
+        "send_image": False,
+        "enabled": True
+    },
+    {
+        "id": "rule_pedido",
+        "name": "Hacer Pedido / WhatsApp Directo",
+        "keywords": ["pedir", "pedido", "quiero pedir", "comprar", "ordenar", "whatsapp", "agendar"],
+        "match_type": "contains",
+        "channels": ["dm", "solicitud"],
+        "reply_text": "¡Excelente elección, atleta! 📲⚡ Puedes agendar tu pedido en 30 segundos directamente en nuestro WhatsApp oficial con el plato que deseas:\n\n👉 https://api.whatsapp.com/send?phone=573100000000&text=Hola%20TapMeals!%20Quiero%20agendar%20mi%20almuerzo%20fitness%20de%20hoy%20🍱",
+        "comment_reply": "¡Link directo de WhatsApp enviado a tu DM para tomar tu pedido! 📲",
+        "send_image": False,
+        "enabled": True
+    },
+    {
+        "id": "rule_gym",
+        "name": "Convenio Gimnasios Yopal",
+        "keywords": ["gym", "gimnasio", "smartfit", "bodytech", "convenio", "descuento", "atleta"],
+        "match_type": "contains",
+        "channels": ["dm", "solicitud", "comentario"],
+        "reply_text": "🏋️‍♂️ ¿Entrenas en SmartFit, Bodytech o algún box de Yopal? Tienes $2.000 COP de descuento en tu primer almuerzo mostrando tu membresía activa al repartidor.\n\nEscribe 'TapTap' para ver la carta completa.",
+        "comment_reply": "¡Beneficio de gimnasio enviado a tu DM! Revisa tu bandeja 🏋️‍♂️⚡",
+        "send_image": False,
+        "enabled": True
+    }
+]
+
 
 def log_event(tipo: str, remitente: str, detalle: str, canal: str = "DM"):
     """Registra un evento visual para el dashboard."""
@@ -68,12 +138,14 @@ def log_event(tipo: str, remitente: str, detalle: str, canal: str = "DM"):
 
 
 def normalizar_texto(texto: str) -> str:
+    """Elimina tildes, signos y convierte a minúsculas para análisis robusto."""
     if not texto:
         return ""
     return unicodedata.normalize('NFKD', texto).encode('ASCII', 'ignore').decode('utf-8').lower()
 
 
 def verificar_taptap(texto: str) -> bool:
+    """Detecta 'TapTap' en cualquier formato (mayúsculas, minúsculas, espacios, símbolos)."""
     if not texto or not isinstance(texto, str):
         return False
     norm = normalizar_texto(texto)
@@ -86,6 +158,7 @@ def verificar_taptap(texto: str) -> bool:
 
 
 def es_solicitud_menu(texto: str) -> bool:
+    """Detecta si el mensaje es TapTap o una solicitud explícita de la carta/menú/precios."""
     if not texto or not isinstance(texto, str):
         return False
     limpio = texto.strip()
@@ -102,6 +175,126 @@ def es_solicitud_menu(texto: str) -> bool:
     return any(p in norm for p in palabras_clave)
 
 
+def evaluar_reglas(texto: str, canal: str, conf: dict) -> dict:
+    """
+    Evalúa el mensaje entrante contra el motor dinámico de reglas.
+    Retorna la regla coincidente, la respuesta, canal y adjunto de imagen.
+    """
+    if not texto or not isinstance(texto, str):
+        return {"triggers": False, "reason": "Mensaje vacío o no textual", "rule": None}
+    
+    texto_limpio = texto.strip()
+    if not texto_limpio:
+        return {"triggers": False, "reason": "Mensaje vacío", "rule": None}
+    
+    norm = normalizar_texto(texto_limpio)
+    tokens = set(re.findall(r'\b\w+\b', norm))
+    
+    rules = conf.get("rules", DEFAULT_RULES)
+    
+    for rule in rules:
+        if not rule.get("enabled", True):
+            continue
+            
+        r_channels = rule.get("channels", ["dm"])
+        if isinstance(r_channels, str):
+            r_channels = [r_channels]
+            
+        # Verificar si el canal coincide
+        channel_matches = False
+        if "both" in r_channels:
+            channel_matches = True
+        elif canal in r_channels:
+            channel_matches = True
+        elif canal == "solicitud" and ("dm" in r_channels or "both" in r_channels):
+            channel_matches = True
+            
+        if not channel_matches:
+            continue
+            
+        match_type = rule.get("match_type", "contains")
+        keywords = [normalizar_texto(k) for k in rule.get("keywords", []) if k.strip()]
+        
+        # Caso especial para TapTap
+        if rule.get("id") == "rule_taptap" or any("taptap" in k for k in keywords):
+            if verificar_taptap(texto_limpio):
+                return {
+                    "triggers": True,
+                    "rule": rule,
+                    "matched_kw": "TapTap",
+                    "reason": f"Disparado por regla '{rule.get('name')}' (coincidencia de TapTap)",
+                    "dm_response": rule.get("reply_text") or conf.get("welcome_message"),
+                    "comment_reply": rule.get("comment_reply") or conf.get("comment_public_reply"),
+                    "has_image": rule.get("send_image", True),
+                    "image_url": "/menu-image"
+                }
+                
+        # Matching normal de palabras clave
+        for kw in keywords:
+            matched = False
+            if match_type == "exact":
+                if norm == kw:
+                    matched = True
+            elif match_type == "starts_with":
+                if norm.startswith(kw):
+                    matched = True
+            else: # contains
+                if " " in kw:
+                    if kw in norm:
+                        matched = True
+                else:
+                    if kw in tokens or any(kw in t for t in tokens):
+                        matched = True
+                        
+            if matched:
+                return {
+                    "triggers": True,
+                    "rule": rule,
+                    "matched_kw": kw,
+                    "reason": f"Disparado por regla '{rule.get('name')}' (palabra clave detectada: '{kw}')",
+                    "dm_response": rule.get("reply_text") or conf.get("welcome_message"),
+                    "comment_reply": rule.get("comment_reply") or conf.get("comment_public_reply"),
+                    "has_image": rule.get("send_image", False),
+                    "image_url": "/menu-image" if rule.get("send_image", False) else None
+                }
+                
+    # Fallback si no hubo regla personalizada pero coincide con TapTap o menú genérico
+    if verificar_taptap(texto_limpio):
+        return {
+            "triggers": True,
+            "rule": None,
+            "matched_kw": "TapTap",
+            "reason": "Detectó 'TapTap' de forma ultra flexible (regla base)",
+            "dm_response": conf.get("welcome_message"),
+            "comment_reply": conf.get("comment_public_reply"),
+            "has_image": True,
+            "image_url": "/menu-image"
+        }
+        
+    if canal in ["dm", "solicitud"] and es_solicitud_menu(texto_limpio):
+        return {
+            "triggers": True,
+            "rule": None,
+            "matched_kw": "solicitud_menu",
+            "reason": "Detectó solicitud genérica de menú/precios",
+            "dm_response": conf.get("welcome_message"),
+            "comment_reply": conf.get("comment_public_reply"),
+            "has_image": True,
+            "image_url": "/menu-image"
+        }
+        
+    return {
+        "triggers": False,
+        "rule": None,
+        "matched_kw": None,
+        "reason": f"El mensaje no coincide con ninguna de las {len(rules)} reglas activas para el canal '{canal}'",
+        "dm_response": None,
+        "comment_reply": None,
+        "has_image": False,
+        "image_url": None
+    }
+
+
 def cargar_config() -> dict:
     default_config = {
         "bot_enabled": True,
@@ -111,13 +304,16 @@ def cargar_config() -> dict:
         "closed_dms_reply": "Tu cuenta tiene bloqueados los DMs de externos 🔒 Porfa envíanos tú un mensaje al directo con la palabra 'TapTap' y te llegará la carta de una 🍱⚡",
         "cooldown_seconds": 45,
         "scan_interval_seconds": 1.5,
-        "menu_image_path": str(DEFAULT_MENU_IMAGE),
-        "cloud_mode": "manychat_recommended"
+        "menu_image_path": "Menu_Oficial_TapMeals_Yopal.png",
+        "cloud_mode": "manychat_recommended",
+        "rules": DEFAULT_RULES
     }
     if CONFIG_FILE.exists():
         try:
             saved = json.loads(CONFIG_FILE.read_text(encoding="utf-8"))
             default_config.update(saved)
+            if not default_config.get("rules"):
+                default_config["rules"] = DEFAULT_RULES
         except Exception:
             pass
     return default_config
@@ -179,6 +375,8 @@ def get_status():
         "total_comentarios": len(hist.get("comentarios", [])),
         "total_dms": len(hist.get("dms", [])),
         "trigger_keyword": conf.get("trigger_keyword", "TapTap"),
+        "total_rules": len(conf.get("rules", [])),
+        "active_rules": len([r for r in conf.get("rules", []) if r.get("enabled", True)]),
         "logs_count": len(bot_logs),
         "cloud_mode": conf.get("cloud_mode", "manychat_recommended"),
         "server_time": time.strftime("%Y-%m-%d %H:%M:%S")
@@ -210,10 +408,103 @@ def update_config():
             if key in data:
                 conf[key] = data[key]
         guardar_config(conf)
-        log_event("exito", "Configuración", "Ajustes de mensajes y disparadores actualizados con éxito.", "Ajustes")
+        log_event("exito", "Configuración", "Ajustes globales de mensajes actualizados.", "Ajustes")
         return jsonify({"success": True, "config": conf})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 400
+
+
+# -----------------------------------------------------------------------------
+# CRUD DEL MOTOR DE REGLAS DE PALABRAS CLAVE
+# -----------------------------------------------------------------------------
+
+@app.route('/api/rules', methods=['GET'])
+def get_rules():
+    conf = cargar_config()
+    return jsonify({"success": True, "rules": conf.get("rules", DEFAULT_RULES)})
+
+
+@app.route('/api/rules', methods=['POST'])
+def create_or_update_rule():
+    try:
+        data = request.json or {}
+        conf = cargar_config()
+        rules = conf.get("rules", [])
+        
+        rule_id = data.get("id")
+        if not rule_id:
+            rule_id = f"rule_{int(time.time() * 1000)}"
+            data["id"] = rule_id
+            
+        if "enabled" not in data:
+            data["enabled"] = True
+        if "send_image" not in data:
+            data["send_image"] = False
+            
+        # Parse keywords list
+        raw_kw = data.get("keywords", [])
+        if isinstance(raw_kw, str):
+            data["keywords"] = [k.strip() for k in raw_kw.split(",") if k.strip()]
+        else:
+            data["keywords"] = [str(k).strip() for k in raw_kw if str(k).strip()]
+            
+        # Parse channels
+        raw_ch = data.get("channels", ["dm"])
+        if isinstance(raw_ch, str):
+            data["channels"] = [c.strip() for c in raw_ch.split(",") if c.strip()]
+            
+        existing_idx = next((i for i, r in enumerate(rules) if r.get("id") == rule_id), None)
+        if existing_idx is not None:
+            rules[existing_idx] = data
+            accion = "actualizada"
+        else:
+            rules.append(data)
+            accion = "creada"
+            
+        conf["rules"] = rules
+        guardar_config(conf)
+        
+        log_event("exito", "Reglas", f"Regla '{data.get('name', rule_id)}' {accion} exitosamente.", "Editor")
+        return jsonify({"success": True, "rule": data, "rules": rules})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 400
+
+
+@app.route('/api/rules/<rule_id>', methods=['DELETE'])
+def delete_rule(rule_id):
+    conf = cargar_config()
+    rules = conf.get("rules", [])
+    nuevas = [r for r in rules if r.get("id") != rule_id]
+    if len(nuevas) == len(rules):
+        return jsonify({"success": False, "error": "Regla no encontrada"}), 404
+        
+    conf["rules"] = nuevas
+    guardar_config(conf)
+    log_event("aviso", "Reglas", f"Regla con ID '{rule_id}' eliminada.", "Editor")
+    return jsonify({"success": True, "rules": nuevas})
+
+
+@app.route('/api/rules/<rule_id>/toggle', methods=['POST'])
+def toggle_rule(rule_id):
+    conf = cargar_config()
+    rules = conf.get("rules", [])
+    for r in rules:
+        if r.get("id") == rule_id:
+            r["enabled"] = not r.get("enabled", True)
+            guardar_config(conf)
+            estado = "activada" if r["enabled"] else "pausada"
+            log_event("aviso", "Reglas", f"Regla '{r.get('name')}' {estado}.", "Editor")
+            return jsonify({"success": True, "enabled": r["enabled"], "rules": rules})
+    return jsonify({"success": False, "error": "Regla no encontrada"}), 404
+
+
+@app.route('/api/rules/reset-defaults', methods=['POST'])
+def reset_rules_to_defaults():
+    conf = cargar_config()
+    conf["rules"] = DEFAULT_RULES
+    guardar_config(conf)
+    log_event("exito", "Reglas", "Reglas restauradas a los 6 valores predeterminados fitness.", "Editor")
+    return jsonify({"success": True, "rules": DEFAULT_RULES})
 
 
 @app.route('/api/upload-menu', methods=['POST'])
@@ -225,18 +516,19 @@ def upload_menu():
         return jsonify({"success": False, "error": "Nombre de archivo vacío"}), 400
     
     filename = secure_filename(file.filename)
-    dest_path = KIT_DIR / "Menu_Oficial_TapMeals_Yopal.png"
+    dest_path = BASE_DIR / "Menu_Oficial_TapMeals_Yopal.png"
     file.save(dest_path)
     
     conf = cargar_config()
-    conf["menu_image_path"] = str(dest_path)
+    conf["menu_image_path"] = "Menu_Oficial_TapMeals_Yopal.png"
     guardar_config(conf)
     
-    log_event("exito", "Menú", "Nueva imagen del menú oficial subida y actualizada en el contestador.", "Carta")
+    log_event("exito", "Menú", "Nueva imagen del menú oficial 4:5 subida y actualizada.", "Carta")
     return jsonify({"success": True, "path": str(dest_path)})
 
 
 @app.route('/api/test-simulator', methods=['POST'])
+@app.route('/api/rules/test-simulate', methods=['POST'])
 def test_simulator():
     """Simula en tiempo real la respuesta exacta del bot para cualquier mensaje."""
     data = request.json or {}
@@ -244,44 +536,35 @@ def test_simulator():
     tipo_canal = data.get("channel", "dm") # 'dm', 'solicitud', 'comentario'
     
     conf = cargar_config()
-    es_taptap = verificar_taptap(texto)
-    es_solicitud = es_solicitud_menu(texto)
+    res = evaluar_reglas(texto, tipo_canal, conf)
     
-    if tipo_canal in ["dm", "solicitud"]:
-        if es_solicitud:
-            log_event("exito", "@atleta_simulado", f"Simulación DM: \"{texto}\" -> Menú enviado", "Simulador")
-            return jsonify({
-                "triggers": True,
-                "reason": "Coincide con 'TapTap' o petición de menú",
-                "dm_response": conf.get("welcome_message"),
-                "has_image": True,
-                "image_url": "/menu-image",
-                "approved_request": (tipo_canal == "solicitud")
-            })
-        else:
-            return jsonify({
-                "triggers": False,
-                "reason": "El mensaje no contiene 'TapTap' ni palabras clave de menú",
-                "dm_response": None,
-                "has_image": False
-            })
-    else: # comentario
-        if es_taptap:
-            log_event("comentario", "@atleta_simulado", f"Simulación Comentario: \"{texto}\" -> Respondido", "Simulador")
-            return jsonify({
-                "triggers": True,
-                "reason": "Detectó 'TapTap' en comentario de publicación",
-                "public_comment_reply": f"@atleta_simulado {conf.get('comment_public_reply')}",
-                "dm_response": conf.get("welcome_message"),
-                "has_image": True,
-                "image_url": "/menu-image"
-            })
-        else:
-            return jsonify({
-                "triggers": False,
-                "reason": "El comentario no contiene la palabra clave 'TapTap'",
-                "public_comment_reply": None
-            })
+    if res["triggers"]:
+        rule_name = res["rule"]["name"] if res.get("rule") else "Regla Base TapTap"
+        rule_id = res["rule"]["id"] if res.get("rule") else "base"
+        log_event("exito", "@atleta_simulado", f"Simulación {tipo_canal.upper()}: \"{texto}\" -> Disparó '{rule_name}'", "Simulador")
+        return jsonify({
+            "triggers": True,
+            "rule_id": rule_id,
+            "rule_name": rule_name,
+            "matched_kw": res.get("matched_kw"),
+            "reason": res["reason"],
+            "dm_response": res["dm_response"],
+            "public_comment_reply": f"@atleta_simulado {res['comment_reply']}" if res.get("comment_reply") else None,
+            "has_image": res["has_image"],
+            "image_url": res["image_url"],
+            "approved_request": (tipo_canal == "solicitud")
+        })
+    else:
+        return jsonify({
+            "triggers": False,
+            "rule_name": None,
+            "rule_id": None,
+            "matched_kw": None,
+            "reason": res["reason"],
+            "dm_response": None,
+            "public_comment_reply": None,
+            "has_image": False
+        })
 
 
 @app.route('/api/logs', methods=['GET'])
@@ -294,6 +577,31 @@ def clear_logs():
     global bot_logs
     bot_logs = []
     return jsonify({"success": True})
+
+
+# -----------------------------------------------------------------------------
+# WEBHOOK OFICIAL DE META GRAPH API (INSTAGRAM CLOUD)
+# -----------------------------------------------------------------------------
+
+@app.route('/webhook', methods=['GET'])
+def meta_webhook_verification():
+    """Verificación de Webhook oficial de Meta / Instagram Graph API."""
+    mode = request.args.get('hub.mode')
+    token = request.args.get('hub.verify_token')
+    challenge = request.args.get('hub.challenge')
+    
+    VERIFY_TOKEN = os.environ.get("META_VERIFY_TOKEN", "tapmeals_yopal_token_2026")
+    if mode == 'subscribe' and token == VERIFY_TOKEN:
+        return str(challenge), 200
+    return "Forbidden", 403
+
+
+@app.route('/webhook', methods=['POST'])
+def meta_webhook_handler():
+    """Recepción en tiempo real de eventos de Instagram Graph API en la nube."""
+    payload = request.json or {}
+    log_event("aviso", "Meta Webhook", "Payload recibido desde Meta Graph API", "Cloud")
+    return "EVENT_RECEIVED", 200
 
 
 # -----------------------------------------------------------------------------

@@ -847,6 +847,110 @@
           </div>
         </div>
 
+        <!-- OMNIROUTE MULTI-MODEL STUDIO (CLAUDE OPUS, CLAUDE SONNET, GEMINI 4 ARGON) -->
+        <div class="p-6 rounded-2xl bg-gradient-to-br from-gray-900 via-gray-950 to-[#0c1017] border border-purple-500/30 space-y-5 shadow-2xl">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-gray-800">
+            <div class="flex items-center space-x-3">
+              <div class="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/40 flex items-center justify-center font-bold text-sm">
+                🧠
+              </div>
+              <div>
+                <h3 class="text-base font-bold font-display text-white flex items-center gap-2">
+                  Estudio Multi-Modelo OmniRoute
+                  <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded border border-purple-500/30">Local :20128</span>
+                </h3>
+                <p class="text-xs text-gray-400">Alterna entre Claude 5.5, Gemini 4 Argon y GPT OSS usando tu pasarela local.</p>
+              </div>
+            </div>
+
+            <!-- OmniRoute Live Status Badge -->
+            <div id="omniStatusBadge" class="flex items-center space-x-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-medium shrink-0">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>PASARELA CONECTADA</span>
+            </div>
+          </div>
+
+          <!-- Model Selector Cards -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+            <button type="button" onclick="selectOmniModel('claude')" id="model-btn-claude" class="model-choice-btn p-3 rounded-xl border border-amber-500/40 bg-amber-500/10 text-left transition hover:border-amber-400">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-amber-300">Claude Sonnet 5.5</span>
+                <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Lujo</span>
+              </div>
+              <p class="text-[11px] text-gray-400 mt-1">Copywriting & Diseño UI</p>
+            </button>
+
+            <button type="button" onclick="selectOmniModel('opus')" id="model-btn-opus" class="model-choice-btn p-3 rounded-xl border border-gray-800 bg-gray-900/60 text-left transition hover:border-purple-500/40">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-purple-300">Claude Opus 5.5</span>
+                <span class="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">Élite</span>
+              </div>
+              <p class="text-[11px] text-gray-400 mt-1">Arquitectura & Estrategia</p>
+            </button>
+
+            <button type="button" onclick="selectOmniModel('argon')" id="model-btn-argon" class="model-choice-btn p-3 rounded-xl border border-gray-800 bg-gray-900/60 text-left transition hover:border-cyan-500/40">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-cyan-300">Gemini 4 Argon</span>
+                <span class="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300">Frontier</span>
+              </div>
+              <p class="text-[11px] text-gray-400 mt-1">Razonamiento & 1M Tokens</p>
+            </button>
+
+            <button type="button" onclick="selectOmniModel('flash')" id="model-btn-flash" class="model-choice-btn p-3 rounded-xl border border-gray-800 bg-gray-900/60 text-left transition hover:border-emerald-500/40">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-emerald-300">Gemini 3 Flash</span>
+                <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Turbo</span>
+              </div>
+              <p class="text-[11px] text-gray-400 mt-1">Respuesta Ultrarrápida</p>
+            </button>
+          </div>
+
+          <!-- Quick Action Prompts -->
+          <div class="space-y-1.5">
+            <span class="text-[11px] text-gray-400 font-semibold uppercase tracking-wider">Plantillas rápidas de consulta:</span>
+            <div class="flex flex-wrap gap-2 text-xs">
+              <button type="button" onclick="setQuickOmniPrompt('design')" class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 transition flex items-center gap-1.5">
+                🎨 Auditar Diseño Web
+              </button>
+              <button type="button" onclick="setQuickOmniPrompt('instagram')" class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 transition flex items-center gap-1.5">
+                📱 Copy Instagram Yopal
+              </button>
+              <button type="button" onclick="setQuickOmniPrompt('smartfit')" class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 transition flex items-center gap-1.5">
+                🏋️ Convenio Gimnasios
+              </button>
+              <button type="button" onclick="setQuickOmniPrompt('macros')" class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 transition flex items-center gap-1.5">
+                🥩 Optimización de Merma
+              </button>
+            </div>
+          </div>
+
+          <!-- Input Textarea & Send Button -->
+          <div class="space-y-2">
+            <textarea id="omniPromptInput" rows="3" placeholder="Escribe tu consulta o pide una tarea para el modelo seleccionado..." class="w-full px-4 py-3 rounded-xl bg-black/60 border border-gray-800 text-white text-xs focus:outline-none focus:border-purple-500 transition leading-relaxed resize-none"></textarea>
+            <div class="flex items-center justify-between">
+              <span id="omniSelectedModelLabel" class="text-[11px] text-purple-400 font-mono">Modelo actual: agy/claude-sonnet-5-5-medium</span>
+              <button type="button" onclick="ejecutarConsultaOmniRoute()" id="btnOmniSend" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition flex items-center gap-2 shadow-lg shadow-purple-600/30">
+                <i data-lucide="sparkles" class="w-4 h-4"></i> Consultar Modelo
+              </button>
+            </div>
+          </div>
+
+          <!-- Response Display Box -->
+          <div id="omniResponseBox" class="hidden p-4 rounded-xl bg-black/80 border border-purple-500/30 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-gray-800 text-xs">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span id="omniResponseModelName" class="font-bold text-white">Claude Sonnet 5.5</span>
+                <span id="omniResponseTokens" class="text-[10px] text-gray-400 font-mono"></span>
+              </div>
+              <button type="button" onclick="copyOmniResponse()" class="px-2.5 py-1 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 text-[11px] transition flex items-center gap-1">
+                <i data-lucide="copy" class="w-3 h-3"></i> Copiar
+              </button>
+            </div>
+            <div id="omniResponseText" class="text-xs text-gray-200 leading-relaxed font-sans whitespace-pre-wrap max-h-96 overflow-y-auto custom-scrollbar"></div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -1571,16 +1675,147 @@
       if (document.getElementById('resMacroPlato')) document.getElementById('resMacroPlato').innerText = platoSugerido;
     }
 
+    // -------------------------------------------------------------------------
+    // OMNIROUTE MULTI-MODEL STUDIO CLIENT
+    // -------------------------------------------------------------------------
+    let currentOmniModel = 'claude';
+    const OMNI_MODEL_LABELS = {
+      'claude': 'agy/claude-sonnet-5-5-medium',
+      'opus': 'agy/claude-opus-5-5-medium',
+      'argon': 'agy/gemini-4-argon-medium',
+      'flash': 'agy/gemini-3-flash'
+    };
+
+    function selectOmniModel(alias) {
+      currentOmniModel = alias;
+      document.querySelectorAll('.model-choice-btn').forEach(b => {
+        b.classList.remove('border-amber-500/40', 'bg-amber-500/10', 'border-purple-500/40', 'bg-purple-500/10', 'border-cyan-500/40', 'bg-cyan-500/10', 'border-emerald-500/40', 'bg-emerald-500/10');
+        b.classList.add('border-gray-800', 'bg-gray-900/60');
+      });
+
+      const btn = document.getElementById(`model-btn-${alias}`);
+      if (btn) {
+        btn.classList.remove('border-gray-800', 'bg-gray-900/60');
+        if (alias === 'claude') btn.classList.add('border-amber-500/40', 'bg-amber-500/10');
+        else if (alias === 'opus') btn.classList.add('border-purple-500/40', 'bg-purple-500/10');
+        else if (alias === 'argon') btn.classList.add('border-cyan-500/40', 'bg-cyan-500/10');
+        else if (alias === 'flash') btn.classList.add('border-emerald-500/40', 'bg-emerald-500/10');
+      }
+
+      const label = document.getElementById('omniSelectedModelLabel');
+      if (label) label.innerText = `Modelo actual: ${OMNI_MODEL_LABELS[alias] || alias}`;
+    }
+
+    function setQuickOmniPrompt(type) {
+      const input = document.getElementById('omniPromptInput');
+      if (!input) return;
+
+      if (type === 'design') {
+        selectOmniModel('claude');
+        input.value = "Analiza el diseño del panel y la web de TapMeals (@tapmeals.yopal). Dame 3 recomendaciones específicas de estilo atleta de élite (paleta de colores oscura, micro-interacciones, tipografía y jerarquía de datos) para maximizar la conversión en deportistas.";
+      } else if (type === 'instagram') {
+        selectOmniModel('argon');
+        input.value = "Redacta 2 publicaciones de Instagram de alto impacto para @tapmeals.yopal destacando: 150g de pechuga en crudo (37g proteína magra neta), cero aceites quemados, bandeja BOPS de 3 compartimentos y entrega puntual a las 11:45 AM en Yopal.";
+      } else if (type === 'smartfit') {
+        selectOmniModel('opus');
+        input.value = "Escribe una propuesta formal de alianza entre TapMeals y gimnasios de Yopal (SmartFit / Bodytech). Plantea un código de descuento del 10% para los alumnos y un incentivo de comisión para los entrenadores que recomienden el menú semanal.";
+      } else if (type === 'macros') {
+        selectOmniModel('flash');
+        input.value = "¿Cómo calculo exactamente la merma del pollo (30%) y el costo de $13.500 COP para garantizar que un atleta en definición reciba 37g de proteína neta con margen rentable del 48%?";
+      }
+      input.focus();
+    }
+
+    async function ejecutarConsultaOmniRoute() {
+      const input = document.getElementById('omniPromptInput');
+      const prompt = input ? input.value.trim() : "";
+      if (!prompt) {
+        showToast("Por favor escribe una consulta o selecciona una plantilla rápida.");
+        return;
+      }
+
+      const btn = document.getElementById('btnOmniSend');
+      const box = document.getElementById('omniResponseBox');
+      const text = document.getElementById('omniResponseText');
+      const modelBadge = document.getElementById('omniResponseModelName');
+      const tokenBadge = document.getElementById('omniResponseTokens');
+
+      btn.disabled = true;
+      btn.innerHTML = `<span class="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span> Consultando...`;
+
+      try {
+        const res = await fetch('/api/omniroute/consultar', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            prompt: prompt,
+            model: currentOmniModel
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          box.classList.remove('hidden');
+          text.innerText = data.answer;
+          modelBadge.innerText = data.model_name || currentOmniModel;
+          if (data.tokens && data.tokens.total_tokens) {
+            tokenBadge.innerText = `${data.tokens.total_tokens} tokens generados`;
+          } else {
+            tokenBadge.innerText = "";
+          }
+          lucide.createIcons();
+          showToast("¡Respuesta de OmniRoute recibida!");
+        } else {
+          showToast("Error en OmniRoute: " + (data.error || "No se pudo conectar"));
+        }
+      } catch (err) {
+        showToast("Error de conexión con el servidor: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="sparkles" class="w-4 h-4"></i> Consultar Modelo`;
+        lucide.createIcons();
+      }
+    }
+
+    function copyOmniResponse() {
+      const text = document.getElementById('omniResponseText');
+      if (text) {
+        navigator.clipboard.writeText(text.innerText);
+        showToast("¡Respuesta de la IA copiada al portapapeles!");
+      }
+    }
+
+    async function checkOmniRouteStatus() {
+      try {
+        const res = await fetch('/api/omniroute/status');
+        const data = await res.json();
+        const badge = document.getElementById('omniStatusBadge');
+        if (badge) {
+          if (data.online) {
+            badge.className = "flex items-center space-x-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-medium shrink-0";
+            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>PASARELA CONECTADA</span>`;
+          } else {
+            badge.className = "flex items-center space-x-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-medium shrink-0";
+            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400"></span><span>PASARELA DESCONECTADA</span>`;
+          }
+        }
+      } catch (e) {
+        // Silencioso
+      }
+    }
+
     // Initializations
     updateWhatsAppLink();
     calculateKitchenPrep();
     calculateAthleteMacros();
+    checkOmniRouteStatus();
     loadStatus();
     loadRules();
     loadConfig();
     loadLogs();
     setInterval(loadStatus, 4000);
     setInterval(loadLogs, 3000);
+    setInterval(checkOmniRouteStatus, 10000);
   </script>
 </body>
 </html>

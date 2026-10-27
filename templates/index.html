@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TapMeals Yopal — Panel de Control 24/7 & Multi-IA</title>
+  <title>TapMeals Yopal — Panel de Control Operativo 24/7</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Inter & Outfit & JetBrains Mono -->
+  <!-- Google Fonts: Big Shoulders Display & Instrument Sans & Geist Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -20,57 +20,82 @@
         extend: {
           colors: {
             brand: {
-              bg: '#0a0d12',
-              card: '#121721',
-              cardBorder: '#1e2638',
+              bg: '#080a0e',
+              card: '#0f131a',
+              cardBorder: 'rgba(255, 255, 255, 0.08)',
               emerald: '#10b981',
               emeraldNeon: '#00f59b',
               emeraldHover: '#059669',
               amber: '#f59e0b',
-              accent: '#38bdf8',
-              purple: '#a855f7'
+              accent: '#38bdf8'
             }
           },
           fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            display: ['Outfit', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace']
+            sans: ['Instrument Sans', 'system-ui', 'sans-serif'],
+            display: ['Big Shoulders Display', 'Impact', 'sans-serif'],
+            mono: ['Geist Mono', 'ui-monospace', 'monospace']
           }
         }
       }
     }
   </script>
   <style>
-    body {
-      background-color: #0a0d12;
-      color: #e2e8f0;
-      font-family: 'Inter', sans-serif;
+    :root {
+      --carbon-950: #080a0e;
+      --carbon-900: #0f131a;
+      --carbon-800: #171c26;
+      --line: rgba(255, 255, 255, 0.08);
+      --line-strong: rgba(255, 255, 255, 0.16);
     }
-    .glass-card {
-      background: rgba(18, 23, 33, 0.78);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.07);
+    body {
+      background-color: var(--carbon-950);
+      color: #e2e8f0;
+      font-family: 'Instrument Sans', system-ui, sans-serif;
+    }
+    .font-display {
+      font-family: 'Big Shoulders Display', sans-serif;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+    }
+    .font-mono {
+      font-family: 'Geist Mono', monospace;
+      font-variant-numeric: tabular-nums;
+    }
+    .metric {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+    .glass-card, .panel-card {
+      background: var(--carbon-900);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .glass-card:hover, .panel-card:hover {
+      border-color: rgba(16, 185, 129, 0.28);
     }
     .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
     }
     .custom-scrollbar::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.25);
+      background: rgba(0, 0, 0, 0.2);
     }
     .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.12);
       border-radius: 9999px;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      background: rgba(16, 185, 129, 0.5);
+      background: rgba(16, 185, 129, 0.4);
     }
     @keyframes pulse-slow {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.6; transform: scale(0.96); }
+      50% { opacity: 0.5; transform: scale(0.96); }
     }
     .live-pulse {
-      animation: pulse-slow 2.5s infinite ease-in-out;
+      animation: pulse-slow 2.4s infinite ease-in-out;
     }
   </style>
 </head>
@@ -86,9 +111,9 @@
         <div class="flex items-center space-x-2">
           <span class="font-display font-bold text-lg text-white tracking-tight">TAPMEALS</span>
           <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">YOPAL</span>
-          <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 bg-purple-500/15 text-purple-300 rounded border border-purple-500/30">Multi-IA v2.0</span>
+          <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-emerald-500/15 text-emerald-300 rounded border border-emerald-500/30 font-mono">v2.4 Prod</span>
         </div>
-        <p class="text-xs text-gray-400">Panel de Control 24/7 & Contestador Automático por Palabras Clave</p>
+        <p class="text-xs text-gray-400">Panel de Control Operativo 24/7 & Contestador Automático por Palabras Clave</p>
       </div>
     </div>
 
@@ -135,32 +160,52 @@
       </div>
     </div>
 
-    <!-- TABS NAVIGATION -->
-    <div class="flex space-x-1 sm:space-x-2 border-b border-gray-800 pb-2 overflow-x-auto custom-scrollbar">
-      <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium transition flex items-center gap-2 bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-        <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Tablero
-      </button>
-      <button onclick="switchTab('rules')" id="tab-btn-rules" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
-        <i data-lucide="tags" class="w-4 h-4 text-emerald-400"></i> Editor de Reglas
-      </button>
-      <button onclick="switchTab('simulator')" id="tab-btn-simulator" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
-        <i data-lucide="smartphone" class="w-4 h-4"></i> Simulador en Vivo
-      </button>
-      <button onclick="switchTab('config')" id="tab-btn-config" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
-        <i data-lucide="settings" class="w-4 h-4"></i> Mensajes Globales
-      </button>
-      <button onclick="switchTab('menu')" id="tab-btn-menu" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
-        <i data-lucide="utensils" class="w-4 h-4"></i> Carta y Menú
-      </button>
-      <button onclick="switchTab('cloud')" id="tab-btn-cloud" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
-        <i data-lucide="server" class="w-4 h-4"></i> Despliegue Nube 24/7
-      </button>
-      <button onclick="switchTab('tools')" id="tab-btn-tools" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
-        <i data-lucide="calculator" class="w-4 h-4"></i> Automatizaciones de Cocina
-      </button>
-      <button onclick="switchTab('logs')" id="tab-btn-logs" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
-        <i data-lucide="history" class="w-4 h-4"></i> Registro en Vivo
-      </button>
+    <!-- 3-ZONE INTENTIONAL NAVIGATION (OPERAR / AUTOMATIZAR / SISTEMA) -->
+    <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 border-b border-gray-800/80 pb-3">
+      <!-- Zone 1: OPERAR (Cocina, Despacho, Menú) -->
+      <div class="flex items-center space-x-1.5 overflow-x-auto custom-scrollbar">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 px-2.5 py-1 bg-emerald-500/10 rounded-lg border border-emerald-500/20 shrink-0 flex items-center gap-1 font-mono">
+          <i data-lucide="flame" class="w-3 h-3 text-emerald-400"></i> Operar
+        </span>
+        <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shrink-0">
+          <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i> Despacho
+        </button>
+        <button onclick="switchTab('menu')" id="tab-btn-menu" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-1.5 border border-transparent shrink-0">
+          <i data-lucide="utensils" class="w-3.5 h-3.5"></i> Carta & Macros
+        </button>
+        <button onclick="switchTab('tools')" id="tab-btn-tools" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-1.5 border border-transparent shrink-0">
+          <i data-lucide="calculator" class="w-3.5 h-3.5"></i> Cocina & Merma
+        </button>
+      </div>
+
+      <!-- Zone 2: AUTOMATIZAR (Bot Instagram) -->
+      <div class="flex items-center space-x-1.5 overflow-x-auto custom-scrollbar">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400 px-2.5 py-1 bg-amber-500/10 rounded-lg border border-amber-500/20 shrink-0 flex items-center gap-1 font-mono">
+          <i data-lucide="bot" class="w-3 h-3 text-amber-400"></i> Bot IG
+        </span>
+        <button onclick="switchTab('rules')" id="tab-btn-rules" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-1.5 border border-transparent shrink-0">
+          <i data-lucide="tags" class="w-3.5 h-3.5 text-amber-400"></i> Reglas
+        </button>
+        <button onclick="switchTab('simulator')" id="tab-btn-simulator" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-1.5 border border-transparent shrink-0">
+          <i data-lucide="smartphone" class="w-3.5 h-3.5"></i> Simulador
+        </button>
+        <button onclick="switchTab('config')" id="tab-btn-config" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-1.5 border border-transparent shrink-0">
+          <i data-lucide="settings" class="w-3.5 h-3.5"></i> Saludos
+        </button>
+      </div>
+
+      <!-- Zone 3: SISTEMA (Render & Logs) -->
+      <div class="flex items-center space-x-1.5 overflow-x-auto custom-scrollbar">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-cyan-400 px-2.5 py-1 bg-cyan-500/10 rounded-lg border border-cyan-500/20 shrink-0 flex items-center gap-1 font-mono">
+          <i data-lucide="cpu" class="w-3 h-3 text-cyan-400"></i> Sistema
+        </span>
+        <button onclick="switchTab('cloud')" id="tab-btn-cloud" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-1.5 border border-transparent shrink-0">
+          <i data-lucide="server" class="w-3.5 h-3.5"></i> Nube 24/7
+        </button>
+        <button onclick="switchTab('logs')" id="tab-btn-logs" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-1.5 border border-transparent shrink-0">
+          <i data-lucide="history" class="w-3.5 h-3.5"></i> Logs
+        </button>
+      </div>
     </div>
 
     <!-- TAB 1: TABLERO (DASHBOARD) -->
@@ -524,6 +569,80 @@
                 <li>Cero aceites quemados ni fritos.</li>
               </ul>
             </div>
+          </div>
+        </div>
+
+        <!-- PLATES CARDS WITH VALIDATED MACROS & SPECS -->
+        <div class="pt-6 border-t border-gray-800 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+              <i data-lucide="award" class="w-4 h-4"></i> Platos Estelares Certificados para Atletas en Yopal
+            </h3>
+            <span class="text-[11px] text-gray-400 font-mono">Entrega diaria: 11:45 AM - 1:15 PM</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            
+            <!-- Plato 1 -->
+            <div class="panel-card p-4 rounded-2xl border border-gray-800 space-y-3">
+              <div class="flex justify-between items-start">
+                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Definición Magra</span>
+                <span class="text-sm font-bold font-mono text-emerald-400">$13.500 COP</span>
+              </div>
+              <div>
+                <h4 class="font-bold text-white text-base">Pechuga a la Plancha Fit</h4>
+                <p class="text-xs text-gray-400 mt-0.5">150g pechuga cocida (214g cruda, 30% merma)</p>
+              </div>
+              <div class="grid grid-cols-3 gap-1.5 p-2 rounded-xl bg-black/40 border border-gray-800/80 text-center text-xs font-mono">
+                <div><span class="text-emerald-400 font-bold block text-sm">37-45g</span><span class="text-[10px] text-gray-400">Proteína</span></div>
+                <div><span class="text-amber-400 font-bold block text-sm">40g</span><span class="text-[10px] text-gray-400">Carbos</span></div>
+                <div><span class="text-cyan-400 font-bold block text-sm">395</span><span class="text-[10px] text-gray-400">Kcal</span></div>
+              </div>
+              <div class="text-[11px] text-gray-400 flex items-center gap-1.5">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Bandeja BOPS 3 divisiones
+              </div>
+            </div>
+
+            <!-- Plato 2 -->
+            <div class="panel-card p-4 rounded-2xl border border-gray-800 space-y-3">
+              <div class="flex justify-between items-start">
+                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">Hierro & Creatina</span>
+                <span class="text-sm font-bold font-mono text-amber-400">$14.500 COP</span>
+              </div>
+              <div>
+                <h4 class="font-bold text-white text-base">Ternera Magra Llanera</h4>
+                <p class="text-xs text-gray-400 mt-0.5">140g ternera magra (186g cruda, 25% merma)</p>
+              </div>
+              <div class="grid grid-cols-3 gap-1.5 p-2 rounded-xl bg-black/40 border border-gray-800/80 text-center text-xs font-mono">
+                <div><span class="text-emerald-400 font-bold block text-sm">42g</span><span class="text-[10px] text-gray-400">Proteína</span></div>
+                <div><span class="text-amber-400 font-bold block text-sm">40g</span><span class="text-[10px] text-gray-400">Carbos</span></div>
+                <div><span class="text-cyan-400 font-bold block text-sm">410</span><span class="text-[10px] text-gray-400">Kcal</span></div>
+              </div>
+              <div class="text-[11px] text-gray-400 flex items-center gap-1.5">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Pulpa de res llanera magra
+              </div>
+            </div>
+
+            <!-- Plato 3 -->
+            <div class="panel-card p-4 rounded-2xl border border-gray-800 space-y-3">
+              <div class="flex justify-between items-start">
+                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">Hipertrofia Plus</span>
+                <span class="text-sm font-bold font-mono text-purple-400">$15.000 COP</span>
+              </div>
+              <div>
+                <h4 class="font-bold text-white text-base">Bowl Doble Proteína</h4>
+                <p class="text-xs text-gray-400 mt-0.5">160g pollo cocido + 1 Huevo AA campesino</p>
+              </div>
+              <div class="grid grid-cols-3 gap-1.5 p-2 rounded-xl bg-black/40 border border-gray-800/80 text-center text-xs font-mono">
+                <div><span class="text-emerald-400 font-bold block text-sm">54g</span><span class="text-[10px] text-gray-400">Proteína</span></div>
+                <div><span class="text-amber-400 font-bold block text-sm">45g</span><span class="text-[10px] text-gray-400">Carbos</span></div>
+                <div><span class="text-cyan-400 font-bold block text-sm">495</span><span class="text-[10px] text-gray-400">Kcal</span></div>
+              </div>
+              <div class="text-[11px] text-gray-400 flex items-center gap-1.5">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Máxima absorción post-entreno
+              </div>
+            </div>
+
           </div>
         </div>
       </div>

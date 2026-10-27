@@ -753,6 +753,12 @@ def index():
     return render_template("index.html")
 
 
+@app.route('/macros')
+@app.route('/calculadora')
+def macros_calculator():
+    return render_template("macros.html")
+
+
 @app.route('/menu-image')
 def get_menu_image():
     conf = cargar_config()

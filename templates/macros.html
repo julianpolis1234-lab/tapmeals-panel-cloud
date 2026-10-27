@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Calculadora de Macros & Proteína | TapMeals Yopal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #08090b;
+            --bg-surface: #111317;
+            --bg-card: #181b21;
+            --bg-card-hover: #1f232b;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-active: rgba(212, 175, 55, 0.5);
+            --gold: #d4af37;
+            --gold-light: #f5d77f;
+            --gold-glow: rgba(212, 175, 55, 0.15);
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.15);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 12px 40px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 540px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Top Brand Header */
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 4px;
+        }
+
+        .brand-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .brand-logo {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 1.5px solid var(--gold);
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .brand-text h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: #fff;
+        }
+
+        .brand-text span {
+            font-size: 11px;
+            color: var(--gold);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .city-pill {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--gold);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Hero Banner */
+        .hero-card {
+            background: linear-gradient(145deg, #161920 0%, #0d0e12 100%);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-card::after {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 140px;
+            height: 140px;
+            background: var(--gold-glow);
+            filter: blur(50px);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 8px;
+        }
+
+        .hero-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .hero-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 22px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Weight Input */
+        .weight-control {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .weight-display {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 6px;
+            padding: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+
+        .weight-num {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 42px;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .weight-unit {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .slider-range {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 6px;
+            background: #252a34;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .slider-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--gold);
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.8);
+            border: 2px solid #fff;
+        }
+
+        /* Segmented Selectors */
+        .grid-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .option-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 12px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .option-btn .icon {
+            font-size: 20px;
+        }
+
+        .option-btn .label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .option-btn.active {
+            background: rgba(212, 175, 55, 0.12);
+            border-color: var(--gold);
+        }
+
+        .option-btn.active .label {
+            color: #fff;
+        }
+
+        /* Activity level chips */
+        .chips-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .chip-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .chip-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chip-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .chip-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .chip-factor {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--gold);
+        }
+
+        .chip-item.active {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: var(--gold);
+        }
+
+        /* Results Card */
+        .results-card {
+            background: linear-gradient(160deg, #14171e 0%, #0c0e12 100%);
+            border: 1.5px solid var(--gold);
+            border-radius: 22px;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .results-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--gold-light);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .verified-pill {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid var(--emerald);
+            color: var(--emerald);
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .metric-hero {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        .metric-value {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 56px;
+            font-weight: 900;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .metric-suffix {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--gold);
+            text-transform: uppercase;
+        }
+
+        .metric-sub {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: -6px;
+        }
+
+        /* Comparison Grid */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .comp-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .comp-card.highlight {
+            background: rgba(212, 175, 55, 0.08);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .comp-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .comp-value {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .comp-detail {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* Progress Bar */
+        .coverage-bar-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .coverage-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .coverage-bar {
+            width: 100%;
+            height: 10px;
+            background: #232832;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .coverage-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold) 0%, var(--emerald) 100%);
+            border-radius: 6px;
+            transition: width 0.4s ease;
+        }
+
+        /* CTA Buttons */
+        .cta-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .btn-whatsapp {
+            background: #25d366;
+            color: #000;
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            padding: 16px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
+            transition: transform 0.15s ease;
+        }
+
+        .btn-whatsapp:active {
+            transform: scale(0.98);
+        }
+
+        .btn-story {
+            background: transparent;
+            color: #fff;
+            border: 1px solid var(--border);
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 13px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .btn-story:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Modal for Story Share */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: #111317;
+            border: 1.5px solid var(--gold);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 420px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .story-preview {
+            background: #000;
+            border: 2px solid var(--gold);
+            border-radius: 16px;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+        }
+
+        .story-preview .tag {
+            font-size: 11px;
+            color: var(--gold);
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .story-preview .target {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .story-preview .quote {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .modal-close {
+            background: #252a34;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Footer */
+        .footer-note {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            padding: 10px 0;
+        }
+
+        .footer-note strong {
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Top Brand Header -->
+        <header class="brand-header">
+            <a href="/" class="brand-badge">
+                <div class="brand-logo">🍱</div>
+                <div class="brand-text">
+                    <h1>TapMeals</h1>
+                    <span>⚖️ Báscula Digital Certificada</span>
+                </div>
+            </a>
+            <span class="city-pill">Yopal, Casanare</span>
+        </header>
+
+        <!-- Hero Card -->
+        <section class="hero-card">
+            <span class="hero-tag">Herramienta Gratuita Para Atletas</span>
+            <h2 class="hero-title">Calculadora de Macros & Proteína</h2>
+            <p class="hero-subtitle">
+                Descubre cuánta proteína real necesita tu cuerpo hoy y cuánto cubre tu bandeja TapMeals de 150g de pechuga pesada sin aceites quemados.
+            </p>
+        </section>
+
+        <!-- Form Controls -->
+        <section class="form-card">
+            <!-- 1. Peso -->
+            <div class="form-section-title">
+                <span>1. Tu Peso Corporal Actual</span>
+            </div>
+            <div class="weight-control">
+                <div class="weight-display">
+                    <span class="weight-num" id="weightVal">72</span>
+                    <span class="weight-unit">kg</span>
+                </div>
+                <input type="range" min="45" max="120" value="72" class="slider-range" id="weightSlider">
+            </div>
+
+            <!-- 2. Objetivo Deportivo -->
+            <div class="form-section-title">
+                <span>2. Tu Objetivo en el Gym</span>
+            </div>
+            <div class="grid-options" id="goalOptions">
+                <div class="option-btn" data-goal="deficit" data-ratio="2.2">
+                    <span class="icon">🔥</span>
+                    <span class="label">Definición</span>
+                </div>
+                <div class="option-btn active" data-goal="maintain" data-ratio="1.9">
+                    <span class="icon">⚡</span>
+                    <span class="label">Mantener</span>
+                </div>
+                <div class="option-btn" data-goal="bulk" data-ratio="2.1">
+                    <span class="icon">💪</span>
+                    <span class="label">Volumen</span>
+                </div>
+            </div>
+
+            <!-- 3. Nivel de Actividad -->
+            <div class="form-section-title">
+                <span>3. Frecuencia de Entrenamiento</span>
+            </div>
+            <div class="chips-list" id="activityList">
+                <div class="chip-item" data-act="mod" data-add="0">
+                    <div class="chip-left">
+                        <span>🏋️‍♂️</span>
+                        <div>
+                            <div class="chip-title">Gimnasio 3 a 4 días</div>
+                            <div class="chip-desc">Smart Fit / Alameda (Rutina estándar)</div>
+                        </div>
+                    </div>
+                    <span class="chip-factor">Base</span>
+                </div>
+                <div class="chip-item active" data-act="intense" data-add="0.2">
+                    <div class="chip-left">
+                        <span>🔥</span>
+                        <div>
+                            <div class="chip-title">Gimnasio 5 a 6 días</div>
+                            <div class="chip-desc">Alta intensidad o trabajo activo</div>
+                        </div>
+                    </div>
+                    <span class="chip-factor">+0.2g/kg</span>
+                </div>
+                <div class="chip-item" data-act="athlete" data-add="0.4">
+                    <div class="chip-left">
+                        <span>⚡</span>
+                        <div>
+                            <div class="chip-title">Atleta de Alto Rendimiento</div>
+                            <div class="chip-desc">Doble jornada o competencia</div>
+                        </div>
+                    </div>
+                    <span class="chip-factor">+0.4g/kg</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Results Card -->
+        <section class="results-card">
+            <div class="results-header">
+                <span class="results-title">Tu Radiografía Nutricional</span>
+                <span class="verified-pill">Báscula 305g</span>
+            </div>
+
+            <div class="metric-hero">
+                <span class="metric-value" id="targetProtein">151</span>
+                <span class="metric-suffix">g proteína / día</span>
+            </div>
+            <p class="metric-sub">Gramos diarios para construir músculo limpio sin acumular grasa</p>
+
+            <div class="comparison-grid">
+                <div class="comp-card highlight">
+                    <span class="comp-label">Bandeja TapMeals</span>
+                    <span class="comp-value">38.2 g</span>
+                    <span class="comp-detail">150g pechuga pesada</span>
+                </div>
+                <div class="comp-card">
+                    <span class="comp-label">Corrientazo Típico</span>
+                    <span class="comp-value">~18 g</span>
+                    <span class="comp-detail">Con exceso de aceite</span>
+                </div>
+            </div>
+
+            <!-- Coverage progress -->
+            <div class="coverage-bar-container">
+                <div class="coverage-label">
+                    <span>Cobertura con 1 almuerzo TapMeals:</span>
+                    <strong id="coveragePct" style="color: var(--gold);">25.3%</strong>
+                </div>
+                <div class="coverage-bar">
+                    <div class="coverage-fill" id="coverageFill" style="width: 25.3%;"></div>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="cta-container">
+                <a href="#" id="waBtn" target="_blank" class="btn-whatsapp">
+                    <span>📲 Apartar Mi Bandeja Pesada en WhatsApp</span>
+                </a>
+                <button type="button" class="btn-story" id="openStoryModal">
+                    <span>📸 Compartir Mi Meta en Historias de Instagram (@tapmeals.yopal)</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer-note">
+            <p><strong>TapMeals Yopal</strong> · Emprendimiento Gastronómico Fitness Grado 10°</p>
+            <p>Liceo Moderno Celestín Freinet · Proyecto Académico 100% Orgánico ($0 COP)</p>
+            <p><a href="/" style="color: var(--gold); text-decoration: none; margin-top: 6px; display: inline-block;">← Volver al Panel Principal</a></p>
+        </footer>
+    </div>
+
+    <!-- Instagram Story Share Modal -->
+    <div class="modal-overlay" id="storyModal">
+        <div class="modal-card">
+            <h3 class="modal-title">Comparte tu Meta en Instagram</h3>
+            <p style="font-size: 12px; color: var(--text-secondary);">Toma una captura de pantalla a esta tarjeta y súbela a tus historias etiquetando a <strong>@tapmeals.yopal</strong> para participar por una degustación gratis:</p>
+            
+            <div class="story-preview" id="storyCapture">
+                <span class="tag">METAS FITNESS YOPAL 2026</span>
+                <div class="target" id="modalTargetProtein">151g PROTEÍNA</div>
+                <p class="quote">"Resolviendo mis macros limpios con @tapmeals.yopal (150g pechuga pesada en báscula digital sin fritos) 🍱⚡"</p>
+                <div style="font-size: 11px; color: var(--gold); font-weight: 700;">#TapMealsYopal #SmartFitYopal #ProteinaReal</div>
+            </div>
+
+            <button type="button" class="btn-whatsapp" onclick="abrirInstagram()">
+                <span>Abrir Instagram para subir Historia 📸</span>
+            </button>
+            <button type="button" class="modal-close" onclick="cerrarStoryModal()">Cerrar</button>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let currentWeight = 72;
+        let baseRatio = 1.9;
+        let activityAdd = 0.2;
+        let goalName = "Mantener";
+
+        const weightSlider = document.getElementById('weightSlider');
+        const weightVal = document.getElementById('weightVal');
+        const targetProtein = document.getElementById('targetProtein');
+        const coveragePct = document.getElementById('coveragePct');
+        const coverageFill = document.getElementById('coverageFill');
+        const waBtn = document.getElementById('waBtn');
+        const modalTargetProtein = document.getElementById('modalTargetProtein');
+
+        function calculate() {
+            const totalRatio = baseRatio + activityAdd;
+            const protein = Math.round(currentWeight * totalRatio);
+            targetProtein.textContent = protein;
+            modalTargetProtein.textContent = `${protein}g PROTEÍNA`;
+
+            // TapMeals delivers ~38g of pure protein from 150g raw breast
+            const tapmealsProtein = 38.2;
+            const pct = Math.min(100, ((tapmealsProtein / protein) * 100)).toFixed(1);
+            coveragePct.textContent = `${pct}%`;
+            coverageFill.style.width = `${pct}%`;
+
+            // Update WhatsApp link
+            const msg = encodeURIComponent(
+                `¡Hola TapMeals Yopal! 🍱⚡ Acabo de calcular mis macros en su web:\n` +
+                `• Mi peso: ${currentWeight} kg\n` +
+                `• Objetivo: ${goalName}\n` +
+                `• Requiero: ${protein}g de proteína/día\n` +
+                `Una sola bandeja TapMeals me cubre el ${pct}% de mi meta. Quiero anotarme en la lista de degustación del almuerzo medido de 150g de pechuga.`
+            );
+            waBtn.href = `https://wa.me/573000000000?text=${msg}`;
+        }
+
+        // Weight slider
+        weightSlider.addEventListener('input', (e) => {
+            currentWeight = parseInt(e.target.value);
+            weightVal.textContent = currentWeight;
+            calculate();
+        });
+
+        // Goal buttons
+        const goalBtns = document.querySelectorAll('#goalOptions .option-btn');
+        goalBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                goalBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                baseRatio = parseFloat(btn.dataset.ratio);
+                goalName = btn.querySelector('.label').textContent.trim();
+                calculate();
+            });
+        });
+
+        // Activity chips
+        const actChips = document.querySelectorAll('#activityList .chip-item');
+        actChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                actChips.forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                activityAdd = parseFloat(chip.dataset.add);
+                calculate();
+            });
+        });
+
+        // Modal
+        const storyModal = document.getElementById('storyModal');
+        document.getElementById('openStoryModal').addEventListener('click', () => {
+            storyModal.style.display = 'flex';
+        });
+
+        function cerrarStoryModal() {
+            storyModal.style.display = 'none';
+        }
+
+        function abrirInstagram() {
+            window.open('https://instagram.com/tapmeals.yopal', '_blank');
+        }
+
+        // Init
+        calculate();
+    </script>
+</body>
+</html>

@@ -411,15 +411,24 @@ def bucle_trabajador_instagram(session_file: Path):
         print(f"[TapMeals Bot] Error cargando sesión: {e}")
         return
 
+    VERIFIED_KNOWN_THREADS = [
+        "340282366841710301244259259610874989555",  # @julian.monroy10 (Julian Monroy)
+        "340282366841710301244259647975719645042",  # @alitos0246 (Alexander Monroy)
+        "340282366841710301244259324659438433812",  # @tomassalazarrodriguez
+        "340282366841710301244259265388784045112",  # @juan_garcia.64
+        "340282366841710301244260000604202212981",  # @lucecita_2
+        "340282366841710301244260346857080832537",  # @juanjose_vacagz
+        "340282366841710301244259626122790867835",  # @danielmatiasprieto1
+        "340282366841710301244260143586137853579",  # @gg8866760
+    ]
+
     historial = cargar_historial()
     dms_procesados = set(historial.get("dms", []))
     comentarios_procesados = set(historial.get("comentarios", []))
     known_threads = set(historial.get("known_threads", []))
-    # Thread verificado de Alexander Monroy
-    known_threads.add("340282366841710301244259647975719645042")
+    for vt in VERIFIED_KNOWN_THREADS:
+        known_threads.add(vt)
 
-    cooldown_usuarios = {}
-    cooldown_threads = {}
     circuit_breaker_until = 0
     cached_medias = []
     ultimo_refresh_medias = 0
@@ -434,23 +443,36 @@ def bucle_trabajador_instagram(session_file: Path):
                 continue
 
             ahora = time.time()
-            cooldown_seg = conf.get("cooldown_seconds", 45)
+
+            # Descubrimiento periódico de nuevos hilos de seguidores (cada 35 ciclos)
+            if ciclo % 35 == 1:
+                try:
+                    flw = cl.user_followers(cl.user_id, amount=30)
+                    for uid in list(flw.keys()):
+                        try:
+                            res_p = cl.private_request(f"direct_v2/threads/get_by_participants/?recipient_users=[{uid}]")
+                            th_p = res_p.get("thread", {})
+                            tid_p = th_p.get("thread_id")
+                            if tid_p and str(tid_p) not in known_threads:
+                                known_threads.add(str(tid_p))
+                                log_event("aviso", "Descubridor", f"Nuevo hilo de @{flw[uid].username} registrado: {tid_p}", "Sistema")
+                        except Exception:
+                            pass
+                except Exception:
+                    pass
 
             # -------------------------------------------------------------
             # 1. SOLICITUDES DE MENSAJE (Message Requests / Nuevos Atletas)
             # -------------------------------------------------------------
             try:
-                pending = cl.direct_pending_inbox(amount=4)
+                pending = cl.direct_pending_inbox(amount=6)
                 for thread in pending:
                     t_id = str(thread.id)
                     known_threads.add(t_id)
-                    if ahora - cooldown_threads.get(t_id, 0) < cooldown_seg:
-                        continue
-                    
+
                     user = thread.users[0] if thread.users else None
                     username = user.username if user else "usuario"
-                    target_pk = str(user.pk) if user else ""
-                    
+
                     msgs = thread.messages if thread.messages else []
                     if not msgs:
                         continue
@@ -462,16 +484,13 @@ def bucle_trabajador_instagram(session_file: Path):
                     eval_res = evaluar_reglas(m.text, "solicitud", conf)
                     if eval_res.get("triggers"):
                         regla = eval_res.get("rule")
-                        nombre_regla = regla["name"] if regla else "TapTap Base"
-                        log_event("exito", f"@{username}", f"Solicitud: \"{m.text}\" -> {nombre_regla}", "DM")
+                        nombre_regla = regla["name"] if regla else "Asistente TapTap"
+                        log_event("solicitud", f"@{username}", f"Solicitud: \"{m.text}\" -> {nombre_regla}", "Solicitud")
                         print(f"\n[⚡ SOLICITUD RESPONDIDA] @{username}: \"{m.text}\" -> {nombre_regla}")
 
                         dms_procesados.add(m_id)
                         historial.setdefault("dms", []).append(m_id)
                         guardar_historial(historial)
-                        cooldown_threads[t_id] = ahora
-                        if target_pk:
-                            cooldown_usuarios[target_pk] = ahora
 
                         try:
                             cl.direct_pending_approve(thread.id)
@@ -482,7 +501,7 @@ def bucle_trabajador_instagram(session_file: Path):
                         cl.direct_send(reply, thread_ids=[thread.id])
 
                         if eval_res.get("has_image") and DEFAULT_MENU_IMAGE.exists():
-                            time.sleep(1.5)
+                            time.sleep(1.2)
                             try:
                                 cl.direct_send_photo(DEFAULT_MENU_IMAGE, thread_ids=[thread.id])
                             except Exception:
@@ -491,49 +510,56 @@ def bucle_trabajador_instagram(session_file: Path):
                 pass
 
             # -------------------------------------------------------------
-            # 2. THREADS ACTIVOS CONOCIDOS (Inspección directa de chat)
+            # 2. THREADS ACTIVOS CONOCIDOS (Monitoreo Directo 24/7)
             # -------------------------------------------------------------
-            for t_id in list(known_threads)[-30:]:
-                if ahora - cooldown_threads.get(t_id, 0) < cooldown_seg:
-                    continue
+            for t_id in list(known_threads):
                 try:
                     thread_data = cl.direct_thread(t_id)
                     msgs = thread_data.messages if hasattr(thread_data, 'messages') else []
                     if not msgs:
                         continue
-                    latest = msgs[0]
-                    mid = str(latest.id)
-                    if mid in dms_procesados or str(latest.user_id) == my_user_id:
+
+                    # Extraer mensajes entrantes que no sean nuestros y no estén procesados
+                    nuevos = []
+                    for m in msgs[:6]:
+                        if str(m.user_id) == my_user_id:
+                            break
+                        mid = str(m.id)
+                        if mid not in dms_procesados and m.text:
+                            nuevos.append(m)
+
+                    if not nuevos:
                         continue
 
                     sender_user = thread_data.users[0] if getattr(thread_data, 'users', None) else None
                     username = sender_user.username if sender_user else "atleta"
 
-                    eval_res = evaluar_reglas(latest.text, "dm", conf)
-                    if eval_res.get("triggers"):
-                        regla = eval_res.get("rule")
-                        nombre_regla = regla["name"] if regla else "Asistente DM"
-                        log_event("exito", f"@{username}", f"DM: \"{latest.text}\" -> {nombre_regla}", "DM")
-                        print(f"\n[⚡ DM RESPONDIDO] @{username}: \"{latest.text}\" -> {nombre_regla}")
+                    for m in reversed(nuevos):
+                        mid = str(m.id)
+                        eval_res = evaluar_reglas(m.text, "dm", conf)
+                        if eval_res.get("triggers"):
+                            regla = eval_res.get("rule")
+                            nombre_regla = regla["name"] if regla else "Asistente DM"
+                            log_event("exito", f"@{username}", f"DM: \"{m.text}\" -> {nombre_regla}", "DM")
+                            print(f"\n[⚡ DM RESPONDIDO] @{username}: \"{m.text}\" -> {nombre_regla}")
 
-                        dms_procesados.add(mid)
-                        historial.setdefault("dms", []).append(mid)
-                        guardar_historial(historial)
-                        cooldown_threads[t_id] = ahora
+                            dms_procesados.add(mid)
+                            historial.setdefault("dms", []).append(mid)
+                            guardar_historial(historial)
 
-                        reply = eval_res.get("dm_response") or conf.get("welcome_message")
-                        cl.direct_send(reply, thread_ids=[thread_data.id])
+                            reply = eval_res.get("dm_response") or conf.get("welcome_message")
+                            cl.direct_send(reply, thread_ids=[thread_data.id])
 
-                        if eval_res.get("has_image") and DEFAULT_MENU_IMAGE.exists():
-                            time.sleep(1.5)
-                            try:
-                                cl.direct_send_photo(DEFAULT_MENU_IMAGE, thread_ids=[thread_data.id])
-                            except Exception:
-                                pass
-                    else:
-                        dms_procesados.add(mid)
-                        historial.setdefault("dms", []).append(mid)
-                        guardar_historial(historial)
+                            if eval_res.get("has_image") and DEFAULT_MENU_IMAGE.exists():
+                                time.sleep(1.2)
+                                try:
+                                    cl.direct_send_photo(DEFAULT_MENU_IMAGE, thread_ids=[thread_data.id])
+                                except Exception:
+                                    pass
+                        else:
+                            dms_procesados.add(mid)
+                            historial.setdefault("dms", []).append(mid)
+                            guardar_historial(historial)
                 except Exception:
                     pass
 

@@ -152,6 +152,30 @@
       "enabled": true
     },
     {
+      "id": "rule_gracias",
+      "name": "Agradecimiento y Cierre",
+      "keywords": [
+        "gracias",
+        "muchas gracias",
+        "vale",
+        "ok",
+        "listo",
+        "de una",
+        "genial",
+        "perfecto",
+        "excelente"
+      ],
+      "match_type": "contains",
+      "channels": [
+        "dm",
+        "solicitud"
+      ],
+      "reply_text": "¡Con el mayor gusto, atleta! 🍱⚡ En TapMeals estamos para potenciar tu rendimiento con comida limpia pesada en báscula digital.\n\nSi deseas agendar tu almuerzo de hoy, escribe 'Pedido' o contáctanos a WhatsApp para apartar tu porción. ¡A darle con toda!",
+      "comment_reply": "¡Con el mayor gusto atleta! A la orden en TapMeals 🍱⚡",
+      "send_image": false,
+      "enabled": true
+    },
+    {
       "id": "rule_gym",
       "name": "Convenio Gimnasios Yopal",
       "keywords": [

@@ -398,7 +398,7 @@ def bucle_trabajador_instagram(session_file: Path):
         return
 
     cl = Client()
-    cl.delay_range = [2, 4]
+    cl.delay_range = [0.3, 0.6]
 
     try:
         cl.load_settings(session_file)
@@ -414,6 +414,7 @@ def bucle_trabajador_instagram(session_file: Path):
     VERIFIED_KNOWN_THREADS = [
         "340282366841710301244259259610874989555",  # @julian.monroy10 (Julian Monroy)
         "340282366841710301244259647975719645042",  # @alitos0246 (Alexander Monroy)
+        "340282366841710301244259609051612611551",  # @juanf_elipemendoza (Juan Felipe Mendoza)
         "340282366841710301244259324659438433812",  # @tomassalazarrodriguez
         "340282366841710301244259265388784045112",  # @juan_garcia.64
         "340282366841710301244260000604202212981",  # @lucecita_2
@@ -432,6 +433,8 @@ def bucle_trabajador_instagram(session_file: Path):
     circuit_breaker_until = 0
     cached_medias = []
     ultimo_refresh_medias = 0
+    cooldown_threads = {}
+    cooldown_seg = 6
 
     ciclo = 0
     while bot_running_flag:
@@ -439,33 +442,111 @@ def bucle_trabajador_instagram(session_file: Path):
             ciclo += 1
             conf = cargar_config()
             if not conf.get("bot_enabled", True):
-                time.sleep(3)
+                time.sleep(2)
                 continue
 
             ahora = time.time()
 
-            # Descubrimiento periódico de nuevos hilos de seguidores (cada 35 ciclos)
-            if ciclo % 35 == 1:
+            # -------------------------------------------------------------
+            # 1. COMENTARIOS EN REELS Y POSTS (En CADA ciclo para respuesta ultrarrápida < 2s)
+            # -------------------------------------------------------------
+            if ahora - ultimo_refresh_medias > 45 or not cached_medias:
                 try:
-                    flw = cl.user_followers(cl.user_id, amount=30)
-                    for uid in list(flw.keys()):
-                        try:
-                            res_p = cl.private_request(f"direct_v2/threads/get_by_participants/?recipient_users=[{uid}]")
-                            th_p = res_p.get("thread", {})
-                            tid_p = th_p.get("thread_id")
-                            if tid_p and str(tid_p) not in known_threads:
-                                known_threads.add(str(tid_p))
-                                log_event("aviso", "Descubridor", f"Nuevo hilo de @{flw[uid].username} registrado: {tid_p}", "Sistema")
-                        except Exception:
-                            pass
+                    all_m = []
+                    # Obtener últimos posts del feed
+                    try:
+                        m_feed = cl.user_medias(cl.user_id, amount=3)
+                        all_m.extend([m.pk for m in m_feed])
+                    except Exception:
+                        pass
+                    # Obtener últimos reels / clips
+                    try:
+                        m_clips = cl.user_clips(cl.user_id, amount=3)
+                        all_m.extend([clip.pk for clip in m_clips])
+                    except Exception:
+                        pass
+                    # Guardar únicos manteniendo orden reciente
+                    seen_pk = set()
+                    cached_medias = []
+                    for mpk in all_m:
+                        if mpk not in seen_pk:
+                            seen_pk.add(mpk)
+                            cached_medias.append(mpk)
+                    ultimo_refresh_medias = ahora
+                except Exception:
+                    pass
+
+            for media_pk in cached_medias:
+                try:
+                    comments = cl.media_comments(media_pk, amount=6)
+                    for c in comments:
+                        cid = str(c.pk)
+                        if cid in comentarios_procesados or str(c.user.pk) == my_user_id:
+                            continue
+
+                        eval_res = evaluar_reglas(c.text, "comentario", conf)
+                        if eval_res.get("triggers"):
+                            username = c.user.username
+                            user_pk = c.user.pk
+                            regla = eval_res.get("rule")
+                            nombre_regla = regla["name"] if regla else "Regla Comentario"
+                            log_event("comentario", f"@{username}", f"Comentario: \"{c.text}\" -> {nombre_regla}", "Comentario")
+                            print(f"\n[⚡ COMENTARIO EN REEL/POST] @{username}: \"{c.text}\" -> {nombre_regla}")
+
+                            comentarios_procesados.add(cid)
+                            historial.setdefault("comentarios", []).append(cid)
+                            guardar_historial(historial)
+
+                            # A) Enviar DM con información y foto del menú de inmediato
+                            dm_ok = False
+                            try:
+                                reply = eval_res.get("dm_response") or conf.get("welcome_message")
+                                cl.direct_send(reply, user_ids=[int(user_pk)])
+                                dm_ok = True
+                                if eval_res.get("has_image") and DEFAULT_MENU_IMAGE.exists():
+                                    time.sleep(0.6)
+                                    try:
+                                        cl.direct_send_photo(DEFAULT_MENU_IMAGE, user_ids=[int(user_pk)])
+                                    except Exception:
+                                        pass
+                            except Exception:
+                                dm_ok = False
+
+                            # B) Publicar respuesta oficial en el Reel / Post (con fallback robusto)
+                            try:
+                                if dm_ok:
+                                    pub = eval_res.get("comment_reply") or conf.get("comment_public_reply")
+                                    resp = f"@{username} {pub}"
+                                else:
+                                    resp = f"@{username} {conf.get('closed_dms_reply')}"
+
+                                try:
+                                    cl.media_comment(media_pk, resp, replied_to_comment_id=c.pk)
+                                except Exception:
+                                    # Fallback directo al reel si falla respuesta anidada
+                                    try:
+                                        cl.media_comment(media_pk, resp)
+                                    except Exception as e_pub:
+                                        print(f"[Aviso] No se pudo comentar reel: {e_pub}")
+                            except Exception as e_comm_resp:
+                                print(f"[Error comentario público] {e_comm_resp}")
+
+                            # C) Registrar nuevo hilo en known_threads para monitoreo instantáneo
+                            try:
+                                res_th = cl.private_request(f"direct_v2/threads/get_by_participants/?recipient_users=[{user_pk}]")
+                                t_id_new = res_th.get("thread", {}).get("thread_id")
+                                if t_id_new and str(t_id_new) not in known_threads:
+                                    known_threads.add(str(t_id_new))
+                            except Exception:
+                                pass
                 except Exception:
                     pass
 
             # -------------------------------------------------------------
-            # 1. SOLICITUDES DE MENSAJE (Message Requests / Nuevos Atletas)
+            # 2. SOLICITUDES DE MENSAJE (Nuevos atletas que escriben por primera vez)
             # -------------------------------------------------------------
             try:
-                pending = cl.direct_pending_inbox(amount=6)
+                pending = cl.direct_pending_inbox(amount=4)
                 for thread in pending:
                     t_id = str(thread.id)
                     known_threads.add(t_id)
@@ -501,7 +582,7 @@ def bucle_trabajador_instagram(session_file: Path):
                         cl.direct_send(reply, thread_ids=[thread.id])
 
                         if eval_res.get("has_image") and DEFAULT_MENU_IMAGE.exists():
-                            time.sleep(1.2)
+                            time.sleep(0.6)
                             try:
                                 cl.direct_send_photo(DEFAULT_MENU_IMAGE, thread_ids=[thread.id])
                             except Exception:
@@ -510,65 +591,70 @@ def bucle_trabajador_instagram(session_file: Path):
                 pass
 
             # -------------------------------------------------------------
-            # 2. THREADS ACTIVOS CONOCIDOS (Monitoreo Directo 24/7)
+            # 3. THREADS ACTIVOS CONOCIDOS (Round-Robin ultra-rápido de 2 por ciclo)
             # -------------------------------------------------------------
-            for t_id in list(known_threads):
-                try:
-                    thread_data = cl.direct_thread(t_id)
-                    msgs = thread_data.messages if hasattr(thread_data, 'messages') else []
-                    if not msgs:
-                        continue
+            known_list = list(known_threads)
+            if known_list:
+                batch_size = 2
+                idx_start = (ciclo * batch_size) % len(known_list)
+                current_batch = [known_list[(idx_start + i) % len(known_list)] for i in range(min(batch_size, len(known_list)))]
+                for t_id in current_batch:
+                    try:
+                        thread_data = cl.direct_thread(t_id)
+                        msgs = thread_data.messages if hasattr(thread_data, 'messages') else []
+                        if not msgs:
+                            continue
 
-                    # Extraer mensajes entrantes que no sean nuestros y no estén procesados
-                    nuevos = []
-                    for m in msgs[:6]:
-                        if str(m.user_id) == my_user_id:
-                            break
-                        mid = str(m.id)
-                        if mid not in dms_procesados and m.text:
-                            nuevos.append(m)
+                        # Extraer mensajes entrantes que no sean nuestros y no estén procesados
+                        nuevos = []
+                        for m in msgs[:6]:
+                            if str(m.user_id) == my_user_id:
+                                break
+                            mid = str(m.id)
+                            if mid not in dms_procesados and m.text:
+                                nuevos.append(m)
 
-                    if not nuevos:
-                        continue
+                        if not nuevos:
+                            continue
 
-                    sender_user = thread_data.users[0] if getattr(thread_data, 'users', None) else None
-                    username = sender_user.username if sender_user else "atleta"
+                        sender_user = thread_data.users[0] if getattr(thread_data, 'users', None) else None
+                        username = sender_user.username if sender_user else "atleta"
 
-                    for m in reversed(nuevos):
-                        mid = str(m.id)
-                        eval_res = evaluar_reglas(m.text, "dm", conf)
-                        if eval_res.get("triggers"):
-                            regla = eval_res.get("rule")
-                            nombre_regla = regla["name"] if regla else "Asistente DM"
-                            log_event("exito", f"@{username}", f"DM: \"{m.text}\" -> {nombre_regla}", "DM")
-                            print(f"\n[⚡ DM RESPONDIDO] @{username}: \"{m.text}\" -> {nombre_regla}")
+                        for m in reversed(nuevos):
+                            mid = str(m.id)
+                            eval_res = evaluar_reglas(m.text, "dm", conf)
+                            if eval_res.get("triggers"):
+                                regla = eval_res.get("rule")
+                                nombre_regla = regla["name"] if regla else "Asistente DM"
+                                log_event("exito", f"@{username}", f"DM: \"{m.text}\" -> {nombre_regla}", "DM")
+                                print(f"\n[⚡ DM RESPONDIDO] @{username}: \"{m.text}\" -> {nombre_regla}")
 
-                            dms_procesados.add(mid)
-                            historial.setdefault("dms", []).append(mid)
-                            guardar_historial(historial)
+                                dms_procesados.add(mid)
+                                historial.setdefault("dms", []).append(mid)
+                                guardar_historial(historial)
 
-                            reply = eval_res.get("dm_response") or conf.get("welcome_message")
-                            cl.direct_send(reply, thread_ids=[thread_data.id])
+                                reply = eval_res.get("dm_response") or conf.get("welcome_message")
+                                cl.direct_send(reply, thread_ids=[thread_data.id])
 
-                            if eval_res.get("has_image") and DEFAULT_MENU_IMAGE.exists():
-                                time.sleep(1.2)
-                                try:
-                                    cl.direct_send_photo(DEFAULT_MENU_IMAGE, thread_ids=[thread_data.id])
-                                except Exception:
-                                    pass
-                        else:
-                            dms_procesados.add(mid)
-                            historial.setdefault("dms", []).append(mid)
-                            guardar_historial(historial)
-                except Exception:
-                    pass
+                                if eval_res.get("has_image") and DEFAULT_MENU_IMAGE.exists():
+                                    time.sleep(0.6)
+                                    try:
+                                        cl.direct_send_photo(DEFAULT_MENU_IMAGE, thread_ids=[thread_data.id])
+                                    except Exception:
+                                        pass
+                            else:
+                                dms_procesados.add(mid)
+                                historial.setdefault("dms", []).append(mid)
+                                guardar_historial(historial)
+                    except Exception:
+                        pass
 
             # -------------------------------------------------------------
-            # 3. DIRECT THREADS INBOX (Con Circuit Breaker anti-403)
+            # 4. DIRECT THREADS INBOX (Con Circuit Breaker anti-403)
             # -------------------------------------------------------------
             if ahora > circuit_breaker_until:
                 try:
-                    threads = cl.direct_threads(amount=4)
+                    threads = cl.direct_threads(amount=2)
                     for thread in threads:
                         t_id = str(thread.id)
                         known_threads.add(t_id)
@@ -599,7 +685,7 @@ def bucle_trabajador_instagram(session_file: Path):
                                 cl.direct_send(reply, thread_ids=[thread.id])
 
                                 if eval_res.get("has_image") and DEFAULT_MENU_IMAGE.exists():
-                                    time.sleep(1.5)
+                                    time.sleep(0.6)
                                     try:
                                         cl.direct_send_photo(DEFAULT_MENU_IMAGE, thread_ids=[thread.id])
                                     except Exception:
@@ -609,73 +695,31 @@ def bucle_trabajador_instagram(session_file: Path):
                         circuit_breaker_until = ahora + 600
                         log_event("aviso", "Circuit Breaker", "Inbox en cooldown (403). Conmutando a modo Directo & Solicitudes.", "Instagram")
 
-            # -------------------------------------------------------------
-            # 4. COMENTARIOS EN POSTS / REELS (Cada 4 ciclos)
-            # -------------------------------------------------------------
-            if ciclo % 4 == 0:
-                if ahora - ultimo_refresh_medias > 90 or not cached_medias:
-                    try:
-                        medias_list = cl.user_medias(cl.user_id, amount=2)
-                        cached_medias = [m.pk for m in medias_list]
-                        ultimo_refresh_medias = ahora
-                    except Exception:
-                        pass
-
-                for media_pk in cached_medias:
-                    try:
-                        comments = cl.media_comments(media_pk, amount=5)
-                        for c in comments:
-                            cid = str(c.pk)
-                            if cid in comentarios_procesados or str(c.user.pk) == my_user_id:
-                                continue
-
-                            eval_res = evaluar_reglas(c.text, "comentario", conf)
-                            if eval_res.get("triggers"):
-                                username = c.user.username
-                                user_pk = c.user.pk
-                                regla = eval_res.get("rule")
-                                nombre_regla = regla["name"] if regla else "Regla Comentario"
-                                log_event("comentario", f"@{username}", f"Comentario: \"{c.text}\" -> {nombre_regla}", "Comentario")
-                                print(f"\n[⚡ COMENTARIO RESPONDIDO] @{username}: \"{c.text}\" -> {nombre_regla}")
-
-                                comentarios_procesados.add(cid)
-                                historial.setdefault("comentarios", []).append(cid)
-                                guardar_historial(historial)
-
-                                dm_ok = False
-                                try:
-                                    reply = eval_res.get("dm_response") or conf.get("welcome_message")
-                                    cl.direct_send(reply, user_ids=[int(user_pk)])
-                                    dm_ok = True
-                                    if eval_res.get("has_image") and DEFAULT_MENU_IMAGE.exists():
-                                        time.sleep(1.5)
-                                        try:
-                                            cl.direct_send_photo(DEFAULT_MENU_IMAGE, user_ids=[int(user_pk)])
-                                        except Exception:
-                                            pass
-                                except Exception:
-                                    dm_ok = False
-
-                                try:
-                                    if dm_ok:
-                                        pub = eval_res.get("comment_reply") or conf.get("comment_public_reply")
-                                        resp = f"@{username} {pub}"
-                                    else:
-                                        resp = f"@{username} {conf.get('closed_dms_reply')}"
-                                    cl.media_comment(media_pk, resp, replied_to_comment_id=c.pk)
-                                except Exception:
-                                    pass
-                    except Exception:
-                        pass
+            # Descubrimiento periódico de nuevos hilos de seguidores (cada 60 ciclos)
+            if ciclo > 1 and ciclo % 60 == 0:
+                try:
+                    flw = cl.user_followers(cl.user_id, amount=20)
+                    for uid in list(flw.keys()):
+                        try:
+                            res_p = cl.private_request(f"direct_v2/threads/get_by_participants/?recipient_users=[{uid}]")
+                            th_p = res_p.get("thread", {})
+                            tid_p = th_p.get("thread_id")
+                            if tid_p and str(tid_p) not in known_threads:
+                                known_threads.add(str(tid_p))
+                                log_event("aviso", "Descubridor", f"Nuevo hilo de @{flw[uid].username} registrado: {tid_p}", "Sistema")
+                        except Exception:
+                            pass
+                except Exception:
+                    pass
 
             historial["known_threads"] = list(known_threads)[-50:]
             guardar_historial(historial)
 
-            # Pausa suave humana
-            time.sleep(random.uniform(3.0, 5.0))
+            # Pausa suave ultrarrápida (1.2 a 1.8 segundos)
+            time.sleep(random.uniform(1.2, 1.8))
 
         except Exception as e_main:
-            time.sleep(4)
+            time.sleep(2)
 
 
 def iniciar_hilo_bot_si_es_posible():

@@ -122,11 +122,11 @@ DEFAULT_RULES = [
     {
         "id": "rule_macros",
         "name": "Macros y Báscula Digital",
-        "keywords": ["macros", "proteina", "calorias", "gramos", "gramera", "peso", "deficit", "volumen", "nutricion"],
+        "keywords": ["macros", "proteina", "calorias", "gramos", "gramera", "peso", "deficit", "volumen", "nutricion", "calculadora", "calcular", "cuanta proteina"],
         "match_type": "contains",
-        "channels": ["dm", "solicitud"],
-        "reply_text": "⚡ En TapMeals no adivinamos: cada bandeja viene pesada en báscula digital con los gramos exactos de proteína cocida (36g a 54g) certificados en la etiqueta de la tapa.\n\nCero aceites quemados, cero calorías vacías.",
-        "comment_reply": "¡Detalles de macros y gramos certificados enviados a tu DM! 📊⚡",
+        "channels": ["dm", "solicitud", "comentario"],
+        "reply_text": "⚡ En TapMeals no adivinamos: cada bandeja viene pesada en báscula digital con 150g de pechuga limpia (38g proteína magra) certificados en la tapa.\n\n📊 Puedes calcular tus gramos diarios exactos según tu peso y meta en nuestra Calculadora Web gratuita:\n👉 https://tapmeals-panel-cloud.onrender.com/macros\n\n¿Quieres apartar tu cupo en la degustación piloto de Yopal?",
+        "comment_reply": "¡Calculadora de macros y detalles de proteína enviados a tu DM! 📊⚡",
         "send_image": False,
         "enabled": True
     },

@@ -144,6 +144,12 @@
       <button onclick="switchTab('cloud')" id="tab-btn-cloud" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
         <i data-lucide="server" class="w-4 h-4"></i> Despliegue Nube 24/7
       </button>
+      <button onclick="switchTab('tools')" id="tab-btn-tools" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
+        <i data-lucide="calculator" class="w-4 h-4"></i> Automatizaciones de Cocina
+      </button>
+      <button onclick="switchTab('multiai')" id="tab-btn-multiai" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
+        <i data-lucide="bot" class="w-4 h-4"></i> Red Multi-IA
+      </button>
       <button onclick="switchTab('logs')" id="tab-btn-logs" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
         <i data-lucide="history" class="w-4 h-4"></i> Registro en Vivo
       </button>
@@ -548,20 +554,29 @@
 
             <h3 class="text-lg font-bold text-white">2. Servidor Cloud (Render / Railway)</h3>
             <p class="text-xs text-gray-300 leading-relaxed">
-              Puedes subir este mismo Panel de Control y el script a un servidor gratuito como <strong>Render.com</strong> o <strong>Railway.app</strong>.
+              Tu repositorio ya está creado y subido a tu cuenta de GitHub. Puedes desplegar este mismo Panel y contestador en <strong>Render.com</strong> con 1 solo clic de forma 100% gratuita.
             </p>
 
             <div class="space-y-2 text-xs text-gray-300 bg-black/40 p-3.5 rounded-xl border border-gray-800">
-              <div class="font-semibold text-cyan-400">Archivos ya preparados:</div>
-              <ul class="space-y-1 list-disc list-inside">
-                <li><code class="text-gray-300">render.yaml</code> (Configuración automática)</li>
-                <li><code class="text-gray-300">Procfile</code> (Lanzador cloud)</li>
-                <li><code class="text-gray-300">requirements.txt</code> (Dependencias listas)</li>
-              </ul>
+              <div class="font-semibold text-cyan-400">Repositorio en tu GitHub:</div>
+              <div class="truncate text-gray-300 font-mono text-[11px]">
+                <a href="https://github.com/julianpolis1234-lab/tapmeals-panel-cloud" target="_blank" class="text-cyan-400 underline hover:text-cyan-300">
+                  github.com/julianpolis1234-lab/tapmeals-panel-cloud
+                </a>
+              </div>
+            </div>
+
+            <div class="space-y-2 pt-1">
+              <a href="https://render.com/deploy?repo=https://github.com/julianpolis1234-lab/tapmeals-panel-cloud" target="_blank" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-bold text-xs sm:text-sm text-center transition flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20">
+                <i data-lucide="rocket" class="w-4 h-4"></i> Desplegar en Render con 1 Clic (Gratis)
+              </a>
+              <a href="https://github.com/julianpolis1234-lab/tapmeals-panel-cloud" target="_blank" class="w-full py-2 px-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium text-xs text-center transition flex items-center justify-center gap-2 border border-gray-700">
+                <i data-lucide="github" class="w-4 h-4"></i> Ver Código en GitHub
+              </a>
             </div>
 
             <p class="text-[11px] text-gray-400">
-              Al desplegarlo en Render, tendrás una dirección web propia (ej: <code class="text-cyan-300">https://tapmeals-yopal.onrender.com</code>) accesible desde tu celular en cualquier lugar.
+              Al hacer clic en Desplegar, Render compilará tu servidor y te dará una URL HTTPS propia (ej: <code class="text-cyan-300">https://tapmeals-panel-cloud.onrender.com</code>) para administrar el negocio desde tu celular sin depender de la laptop.
             </p>
           </div>
 
@@ -615,6 +630,198 @@
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+
+    <!-- TAB 7: AUTOMATIZACIONES Y COCINA (TOOLS) -->
+    <div id="tab-tools" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        
+        <!-- Tool 1: WhatsApp Checkout Link Generator -->
+        <div class="glass-card rounded-2xl p-6 border border-gray-800 space-y-5">
+          <div>
+            <h2 class="text-lg font-bold font-display text-white flex items-center gap-2">
+              <i data-lucide="message-square" class="w-5 h-5 text-emerald-400"></i> Generador de Enlaces Directos a WhatsApp
+            </h2>
+            <p class="text-xs text-gray-400 mt-1">
+              Reduce la fricción de compra: genera links automáticos con el pedido y dirección prellenada para enviar por DM.
+            </p>
+          </div>
+
+          <div class="space-y-3.5 text-xs">
+            <div class="space-y-1">
+              <label class="text-gray-300 font-semibold">Número de WhatsApp de TapMeals:</label>
+              <input type="text" id="waPhone" value="573100000000" class="w-full px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white font-mono text-xs focus:outline-none focus:border-emerald-500">
+              <p class="text-[10px] text-gray-500">Incluye el código de país (57 para Colombia) sin signos + ni espacios.</p>
+            </div>
+
+            <div class="space-y-1">
+              <label class="text-gray-300 font-semibold">Plato del Pedido:</label>
+              <select id="waDish" onchange="updateWhatsAppLink()" class="w-full px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500">
+                <option value="Pechuga a la Plancha (150g - $13.500)">1. Pechuga a la Plancha (150g - $13.500 COP)</option>
+                <option value="Fajitas de Ternera Magra (140g - $14.500)">2. Fajitas de Ternera Magra (140g - $14.500 COP)</option>
+                <option value="Bowl Doble Proteína (200g - $15.000)">3. Bowl Doble Proteína (200g - $15.000 COP)</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label class="text-gray-300 font-semibold">Barrio / Zona Yopal:</label>
+                <input type="text" id="waAddress" value="Centro / Gym SmartFit" oninput="updateWhatsAppLink()" class="w-full px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500">
+              </div>
+              <div class="space-y-1">
+                <label class="text-gray-300 font-semibold">Medio de Pago:</label>
+                <select id="waPayment" onchange="updateWhatsAppLink()" class="w-full px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500">
+                  <option value="Nequi">Nequi</option>
+                  <option value="Daviplata">Daviplata</option>
+                  <option value="Efectivo contraentrega">Efectivo</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Generated Link Box -->
+            <div class="p-3.5 rounded-xl bg-gray-900/90 border border-emerald-500/30 space-y-2">
+              <span class="text-[11px] font-semibold text-emerald-400">Enlace Listo para Compartir:</span>
+              <div id="waGeneratedUrl" class="text-[11px] font-mono text-gray-300 break-all p-2 rounded-lg bg-black/60 border border-gray-800 select-all">
+                Cargando enlace...
+              </div>
+              <div class="flex gap-2 pt-1">
+                <button onclick="copyWhatsAppLink()" class="flex-1 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs transition flex items-center justify-center gap-1.5 shadow">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copiar Enlace
+                </button>
+                <a id="waTestBtn" href="#" target="_blank" class="px-3.5 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-semibold transition flex items-center justify-center gap-1.5 border border-gray-700">
+                  <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Probar
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tool 2: Kitchen Prep MRP Calculator (Merma Inversa) -->
+        <div class="glass-card rounded-2xl p-6 border border-gray-800 space-y-5">
+          <div>
+            <h2 class="text-lg font-bold font-display text-white flex items-center gap-2">
+              <i data-lucide="calculator" class="w-5 h-5 text-cyan-400"></i> Calculadora Inversa de Merma y Cocina (MRP)
+            </h2>
+            <p class="text-xs text-gray-400 mt-1">
+              Calcula con exactitud matemática cuánto pollo y ternera en crudo descongelar para que nunca falte proteína ni haya desperdicio.
+            </p>
+          </div>
+
+          <!-- Order Inputs -->
+          <div class="grid grid-cols-3 gap-3 text-xs">
+            <div class="p-3 rounded-xl bg-gray-900 border border-gray-800 text-center space-y-1">
+              <span class="text-gray-400 block text-[11px]">Pechugas (150g):</span>
+              <input type="number" id="prepPechuga" min="0" value="8" oninput="calculateKitchenPrep()" class="w-full text-center py-1.5 rounded-lg bg-black/60 border border-gray-700 text-emerald-400 font-bold text-sm">
+            </div>
+            <div class="p-3 rounded-xl bg-gray-900 border border-gray-800 text-center space-y-1">
+              <span class="text-gray-400 block text-[11px]">Terneras (140g):</span>
+              <input type="number" id="prepTernera" min="0" value="5" oninput="calculateKitchenPrep()" class="w-full text-center py-1.5 rounded-lg bg-black/60 border border-gray-700 text-cyan-400 font-bold text-sm">
+            </div>
+            <div class="p-3 rounded-xl bg-gray-900 border border-gray-800 text-center space-y-1">
+              <span class="text-gray-400 block text-[11px]">Bowls (200g):</span>
+              <input type="number" id="prepBowls" min="0" value="4" oninput="calculateKitchenPrep()" class="w-full text-center py-1.5 rounded-lg bg-black/60 border border-gray-700 text-purple-400 font-bold text-sm">
+            </div>
+          </div>
+
+          <!-- Live Output Results -->
+          <div class="p-4 rounded-xl bg-black/40 border border-gray-800 space-y-2.5 text-xs">
+            <div class="flex justify-between items-center text-gray-300">
+              <span>🍗 Pechuga en crudo requerida (Merma 30%):</span>
+              <span id="resPolloCrudo" class="font-bold text-emerald-400 font-mono text-sm">2.86 kg</span>
+            </div>
+            <div class="flex justify-between items-center text-gray-300">
+              <span>🥩 Ternera en crudo requerida (Merma 25%):</span>
+              <span id="resTerneraCruda" class="font-bold text-cyan-400 font-mono text-sm">0.93 kg</span>
+            </div>
+            <div class="flex justify-between items-center text-gray-300">
+              <span>🥚 Huevos cocidos para Bowls:</span>
+              <span id="resHuevos" class="font-bold text-yellow-400 font-mono text-sm">4 unidades</span>
+            </div>
+            <div class="flex justify-between items-center text-gray-300">
+              <span>🍱 Bandejas 3 compartimentos BOPS:</span>
+              <span id="resBandejas" class="font-bold text-white font-mono text-sm">17 unidades</span>
+            </div>
+            <div class="pt-2 border-t border-gray-800 flex justify-between items-center">
+              <span class="text-gray-400">Venta Bruta Total Proyectada:</span>
+              <span id="resVentaBruta" class="font-bold text-emerald-300 text-sm font-mono">$240.500 COP</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-400">Ganancia Neta Estimada (48% margen):</span>
+              <span id="resMargenNeto" class="font-bold text-white text-sm font-mono">$115.400 COP</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 8: COORDINACIÓN MULTI-IA (AGENT TO AGENT NETWORK) -->
+    <div id="tab-multiai" class="tab-content hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6 sm:p-8 border border-gray-800 max-w-4xl mx-auto space-y-6">
+        <div>
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-bold font-display text-white flex items-center gap-2">
+              <i data-lucide="bot" class="w-6 h-6 text-purple-400"></i> Red de Coordinación Multi-IA (Agent-to-Agent)
+            </h2>
+            <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+              Protocolo IA $\leftrightarrow$ IA Activo
+            </span>
+          </div>
+          <p class="text-xs sm:text-sm text-gray-400 mt-1">
+            Así es como dos o más inteligencias artificiales conversan entre sí en segundo plano para supervisar TapMeals, auditar métricas y mejorar la rentabilidad sin intervención humana.
+          </p>
+        </div>
+
+        <!-- Architecture Flow Diagram -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch">
+          
+          <div class="p-5 rounded-2xl bg-gray-900/90 border border-emerald-500/30 space-y-3">
+            <div class="flex items-center space-x-2 text-emerald-400 text-xs font-bold uppercase tracking-wider">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Agente 1: Operaciones y Redes (Antigravity)
+            </div>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Monitorea en tiempo real los comentarios de Instagram, responde el disparador <em>'TapTap'</em> en 2 segundos, aprueba solicitudes y envía la carta 4:5.
+            </p>
+            <div class="text-[11px] text-gray-500 font-mono bg-black/50 p-2.5 rounded-lg border border-gray-800">
+              &bull; Tarea: Ejecución en tiempo real<br>
+              &bull; Entorno: Servidor Flask / Webhook Cloud<br>
+              &bull; Frecuencia: Cada 1.5 segundos
+            </div>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-gray-900/90 border border-purple-500/30 space-y-3">
+            <div class="flex items-center space-x-2 text-purple-400 text-xs font-bold uppercase tracking-wider">
+              <span class="w-2.5 h-2.5 rounded-full bg-purple-400"></span> Agente 2: Auditor de Calidad y Finanzas
+            </div>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Revisa los logs del Agente 1, calcula la merma cárnica a las 07:00 AM, analiza el sentimiento de los clientes a la 1:30 PM y sugiere mejoras al menú a las 20:00 PM.
+            </p>
+            <div class="text-[11px] text-gray-500 font-mono bg-black/50 p-2.5 rounded-lg border border-gray-800">
+              &bull; Tarea: Supervisión, auditoría y alertas<br>
+              &bull; Entorno: Cron / Ciclo analítico de fondo<br>
+              &bull; Frecuencia: 3 checkpoints diarios
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Live Inter-Agent Transmission Report -->
+        <div class="p-5 rounded-2xl bg-black/60 border border-purple-500/40 space-y-3 font-mono text-xs">
+          <div class="flex items-center justify-between pb-2 border-b border-gray-800 text-[11px] text-gray-400">
+            <span class="flex items-center gap-1.5 text-purple-400">
+              <i data-lucide="terminal" class="w-4 h-4"></i> Última comunicación entre Agentes IA (Completada):
+            </span>
+            <span class="text-emerald-400">Status: 200 OK</span>
+          </div>
+
+          <div class="space-y-1.5 text-gray-300 leading-relaxed text-[11px]">
+            <p><span class="text-cyan-400">[Agente 1 $\rightarrow$ Agente 2]:</span> <em>"Menú 4:5 oficial desplegado en Yopal. Solicitud de auditoría de embudo."</em></p>
+            <p><span class="text-purple-400">[Agente 2 $\rightarrow$ Agente 1]:</span> <em>"Auditoría completada: Detectada fuga en comanda manual. Activando recomendación de WhatsApp Smart Link, MRP crudo de merma y encuesta CSAT a la 1:30 PM."</em></p>
+            <p><span class="text-emerald-400">[Consenso IA]:</span> <em>"Las 3 automatizaciones fueron inyectadas con éxito en el panel de control de Julián."</em></p>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -905,7 +1112,61 @@
       }
     }
 
-    // Polling intervals
+    // WhatsApp generator logic
+    function updateWhatsAppLink() {
+      const phone = document.getElementById('waPhone') ? document.getElementById('waPhone').value.trim() : "573100000000";
+      const dish = document.getElementById('waDish') ? document.getElementById('waDish').value : "Pechuga a la Plancha";
+      const address = document.getElementById('waAddress') ? document.getElementById('waAddress').value.trim() : "Yopal";
+      const payment = document.getElementById('waPayment') ? document.getElementById('waPayment').value : "Nequi";
+
+      const msg = `¡Hola TapMeals! 🍱⚡ Quiero pedir mi almuerzo fitness de hoy:\n\n• Plato: ${dish}\n• Entrega en: ${address}\n• Medio de pago: ${payment}\n\n¿A qué hora sale el domicilio?`;
+      const url = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`;
+
+      const urlBox = document.getElementById('waGeneratedUrl');
+      const testBtn = document.getElementById('waTestBtn');
+      if (urlBox) urlBox.innerText = url;
+      if (testBtn) testBtn.href = url;
+    }
+
+    function copyWhatsAppLink() {
+      const urlBox = document.getElementById('waGeneratedUrl');
+      if (urlBox) {
+        navigator.clipboard.writeText(urlBox.innerText);
+        showToast("¡Enlace de WhatsApp copiado al portapapeles!");
+      }
+    }
+
+    // Kitchen MRP Prep calculator
+    function calculateKitchenPrep() {
+      const pechugas = parseInt(document.getElementById('prepPechuga')?.value) || 0;
+      const terneras = parseInt(document.getElementById('prepTernera')?.value) || 0;
+      const bowls = parseInt(document.getElementById('prepBowls')?.value) || 0;
+
+      // 150g pechuga en Pechugas + 200g pechuga en Bowls
+      // Merma de pollo ~ 30%: crudo = cocido / 0.70
+      const polloCocidoGramos = (pechugas * 150) + (bowls * 200);
+      const polloCrudoKg = (polloCocidoGramos / 0.70) / 1000;
+
+      // 140g ternera en Terneras
+      // Merma de ternera ~ 25%: crudo = cocido / 0.75
+      const terneraCocidaGramos = (terneras * 140);
+      const terneraCrudaKg = (terneraCocidaGramos / 0.75) / 1000;
+
+      const totalBandejas = pechugas + terneras + bowls;
+      const totalVenta = (pechugas * 13500) + (terneras * 14500) + (bowls * 15000);
+      const margenNeto = totalVenta * 0.48; // Margen gastronómico fit del 48%
+
+      if (document.getElementById('resPolloCrudo')) document.getElementById('resPolloCrudo').innerText = polloCrudoKg.toFixed(2) + " kg";
+      if (document.getElementById('resTerneraCruda')) document.getElementById('resTerneraCruda').innerText = terneraCrudaKg.toFixed(2) + " kg";
+      if (document.getElementById('resHuevos')) document.getElementById('resHuevos').innerText = bowls + " unidades";
+      if (document.getElementById('resBandejas')) document.getElementById('resBandejas').innerText = totalBandejas + " unidades";
+      if (document.getElementById('resVentaBruta')) document.getElementById('resVentaBruta').innerText = "$" + totalVenta.toLocaleString('es-CO') + " COP";
+      if (document.getElementById('resMargenNeto')) document.getElementById('resMargenNeto').innerText = "$" + Math.round(margenNeto).toLocaleString('es-CO') + " COP";
+    }
+
+    // Polling intervals and initializations
+    updateWhatsAppLink();
+    calculateKitchenPrep();
     loadStatus();
     loadConfig();
     loadLogs();

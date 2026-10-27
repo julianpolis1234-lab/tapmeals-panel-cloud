@@ -101,209 +101,347 @@
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-black">
 
-  <!-- TOP NAVIGATION HEADER -->
-  <header class="sticky top-0 z-40 border-b border-gray-800 bg-[#0a0d12]/90 backdrop-blur-md px-4 lg:px-8 py-3.5 flex items-center justify-between">
-    <div class="flex items-center space-x-3.5">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 via-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 font-display font-extrabold text-xl text-black">
-        ⚡
+  <!-- FIXED COMMAND BAR (48px / Linear Style / Anti-AI-Slop) -->
+  <header class="sticky top-0 z-50 h-12 border-b border-white/[0.08] bg-[#090a0f]/95 backdrop-blur-md px-4 lg:px-6 flex items-center justify-between">
+    <!-- Left: Brand Monogram & Live Clock -->
+    <div class="flex items-center space-x-3">
+      <div class="flex items-center space-x-1.5 font-mono text-xs font-bold text-white tracking-wider">
+        <span class="text-emerald-400">⚡</span>
+        <span class="tracking-tight">TAPMEALS</span>
+        <span class="text-[10px] px-1.5 py-0.2 rounded bg-white/[0.06] text-white/50 border border-white/[0.08]">YOPAL</span>
       </div>
-      <div>
-        <div class="flex items-center space-x-2">
-          <span class="font-display font-bold text-lg text-white tracking-tight">TAPMEALS</span>
-          <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">YOPAL</span>
-          <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-emerald-500/15 text-emerald-300 rounded border border-emerald-500/30 font-mono">v2.4 Prod</span>
-        </div>
-        <p class="text-xs text-gray-400">Panel de Control Operativo 24/7 & Contestador Automático por Palabras Clave</p>
+      <div class="h-3.5 w-px bg-white/10 hidden sm:block"></div>
+      <div class="hidden sm:flex items-center space-x-1 text-[11px] text-white/40 font-mono">
+        <span id="headerLiveClock" class="num text-white/70">COT 21:45</span>
+        <span class="text-white/20">•</span>
+        <span class="text-emerald-400/80">KDS 100% Online</span>
       </div>
     </div>
 
-    <!-- Live Status Pill & Quick Toggle -->
-    <div class="flex items-center space-x-3 sm:space-x-5">
-      <div id="statusPill" class="flex items-center space-x-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-medium">
-        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 live-pulse"></span>
-        <span id="statusText">CONTESTADOR ACTIVO</span>
+    <!-- Center: 3-Zone Fast Navigation -->
+    <nav class="hidden md:flex items-center space-x-1 font-mono text-[11px]">
+      <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-btn px-2.5 py-1 rounded text-emerald-400 font-medium bg-emerald-500/15 border border-emerald-500/30 transition flex items-center gap-1.5">
+        <span>Despacho</span>
+      </button>
+      <button onclick="switchTab('menu')" id="tab-btn-menu" class="tab-btn px-2.5 py-1 rounded text-white/50 hover:text-white transition flex items-center gap-1.5 border border-transparent">
+        <span>Carta & Macros</span>
+      </button>
+      <button onclick="switchTab('tools')" id="tab-btn-tools" class="tab-btn px-2.5 py-1 rounded text-white/50 hover:text-white transition flex items-center gap-1.5 border border-transparent">
+        <span>Cocina & Merma</span>
+      </button>
+      <div class="h-3 w-px bg-white/10 mx-1"></div>
+      <button onclick="switchTab('rules')" id="tab-btn-rules" class="tab-btn px-2.5 py-1 rounded text-white/50 hover:text-white transition flex items-center gap-1.5 border border-transparent">
+        <span>Reglas</span>
+      </button>
+      <button onclick="switchTab('simulator')" id="tab-btn-simulator" class="tab-btn px-2.5 py-1 rounded text-white/50 hover:text-white transition flex items-center gap-1.5 border border-transparent">
+        <span>Simulador</span>
+      </button>
+      <button onclick="switchTab('config')" id="tab-btn-config" class="tab-btn px-2.5 py-1 rounded text-white/50 hover:text-white transition flex items-center gap-1.5 border border-transparent">
+        <span>Saludos</span>
+      </button>
+      <div class="h-3 w-px bg-white/10 mx-1"></div>
+      <button onclick="switchTab('cloud')" id="tab-btn-cloud" class="tab-btn px-2.5 py-1 rounded text-white/50 hover:text-white transition flex items-center gap-1.5 border border-transparent">
+        <span>Nube 24/7</span>
+      </button>
+      <button onclick="switchTab('logs')" id="tab-btn-logs" class="tab-btn px-2.5 py-1 rounded text-white/50 hover:text-white transition flex items-center gap-1.5 border border-transparent">
+        <span>Logs</span>
+      </button>
+    </nav>
+
+    <!-- Right: Telemetry & Bot Switch -->
+    <div class="flex items-center space-x-3">
+      <div id="statusPill" class="flex items-center space-x-2 text-xs">
+        <span class="w-1.5 h-1.5 rounded-[1px] bg-emerald-400"></span>
+        <span id="statusText" class="text-[11px] font-mono tracking-wider uppercase text-emerald-400 font-medium">CONTESTADOR ACTIVO</span>
       </div>
 
-      <!-- Master ON/OFF Switch -->
-      <button onclick="toggleBot()" id="btnToggle" class="relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-emerald-500 transition-colors duration-200 ease-in-out focus:outline-none" role="switch" aria-checked="true" title="Encender / Pausar Contestador">
-        <span id="toggleKnob" aria-hidden="true" class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-5"></span>
+      <button onclick="toggleBot()" id="btnToggle" class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border border-white/10 bg-emerald-500 transition-colors duration-150 focus:outline-none" role="switch" aria-checked="true" title="Encender / Pausar Contestador">
+        <span id="toggleKnob" aria-hidden="true" class="pointer-events-none inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-sm ring-0 transition duration-150 ease-in-out translate-x-4 mt-[2px] ml-[2px]"></span>
       </button>
     </div>
   </header>
 
+  <!-- MOBILE SUB-NAVIGATION BAR (Visible only on small screens) -->
+  <div class="md:hidden border-b border-white/[0.08] bg-[#090a0f] px-3 py-2 flex items-center space-x-1.5 overflow-x-auto custom-scrollbar font-mono text-[11px]">
+    <button onclick="switchTab('dashboard')" class="px-2.5 py-1 rounded bg-emerald-500/15 text-emerald-400 shrink-0">Despacho</button>
+    <button onclick="switchTab('menu')" class="px-2.5 py-1 rounded text-white/50 hover:text-white shrink-0">Carta</button>
+    <button onclick="switchTab('tools')" class="px-2.5 py-1 rounded text-white/50 hover:text-white shrink-0">Cocina</button>
+    <button onclick="switchTab('rules')" class="px-2.5 py-1 rounded text-white/50 hover:text-white shrink-0">Reglas</button>
+    <button onclick="switchTab('simulator')" class="px-2.5 py-1 rounded text-white/50 hover:text-white shrink-0">Simulador</button>
+    <button onclick="switchTab('cloud')" class="px-2.5 py-1 rounded text-white/50 hover:text-white shrink-0">Nube</button>
+    <button onclick="switchTab('logs')" class="px-2.5 py-1 rounded text-white/50 hover:text-white shrink-0">Logs</button>
+  </div>
+
   <!-- MAIN APP CONTAINER -->
-  <div class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
+  <div class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-6 py-5 space-y-5">
 
-    <!-- CLOUD 24/7 STATUS BANNER ALERT -->
-    <div class="rounded-2xl bg-gradient-to-r from-emerald-950/40 via-gray-900 to-cyan-950/30 border border-emerald-500/30 p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
-      <div class="flex items-start space-x-3.5">
-        <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mt-0.5">
-          <i data-lucide="cloud-lightning" class="w-6 h-6"></i>
-        </div>
-        <div>
-          <h2 class="text-sm sm:text-base font-semibold text-white flex items-center gap-2">
-            Servidor Cloud 24/7 Activo en Render & ManyChat Meta
-            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded border border-emerald-500/30">100% Gratuito</span>
-          </h2>
-          <p class="text-xs sm:text-sm text-gray-300 mt-1 max-w-3xl">
-            Tu panel y bot responden <strong>incluso con tu computador apagado</strong>. Puedes administrar todas las palabras clave y ver estadísticas desde cualquier celular visitando <a href="https://tapmeals-bot-panel.onrender.com" target="_blank" class="text-emerald-400 font-mono underline">tapmeals-bot-panel.onrender.com</a>.
-          </p>
-        </div>
-      </div>
-      <div class="flex items-center gap-2 shrink-0">
-        <button onclick="switchTab('rules')" class="px-3.5 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-medium text-xs sm:text-sm transition flex items-center gap-2 border border-gray-700">
-          <i data-lucide="sliders" class="w-4 h-4 text-emerald-400"></i> Ver Reglas
-        </button>
-        <button onclick="switchTab('cloud')" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs sm:text-sm transition flex items-center gap-2 shadow-lg shadow-emerald-500/25">
-          <i data-lucide="server" class="w-4 h-4"></i> Guía Nube
-        </button>
-      </div>
-    </div>
-
-    <!-- 3-ZONE INTENTIONAL NAVIGATION (OPERAR / AUTOMATIZAR / SISTEMA) -->
-    <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 border-b border-gray-800/80 pb-3">
-      <!-- Zone 1: OPERAR (Cocina, Despacho, Menú) -->
-      <div class="flex items-center space-x-1.5 overflow-x-auto custom-scrollbar">
-        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 px-2.5 py-1 bg-emerald-500/10 rounded-lg border border-emerald-500/20 shrink-0 flex items-center gap-1 font-mono">
-          <i data-lucide="flame" class="w-3 h-3 text-emerald-400"></i> Operar
-        </span>
-        <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shrink-0">
-          <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i> Despacho
-        </button>
-        <button onclick="switchTab('menu')" id="tab-btn-menu" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-1.5 border border-transparent shrink-0">
-          <i data-lucide="utensils" class="w-3.5 h-3.5"></i> Carta & Macros
-        </button>
-        <button onclick="switchTab('tools')" id="tab-btn-tools" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-1.5 border border-transparent shrink-0">
-          <i data-lucide="calculator" class="w-3.5 h-3.5"></i> Cocina & Merma
-        </button>
-      </div>
-
-      <!-- Zone 2: AUTOMATIZAR (Bot Instagram) -->
-      <div class="flex items-center space-x-1.5 overflow-x-auto custom-scrollbar">
-        <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400 px-2.5 py-1 bg-amber-500/10 rounded-lg border border-amber-500/20 shrink-0 flex items-center gap-1 font-mono">
-          <i data-lucide="bot" class="w-3 h-3 text-amber-400"></i> Bot IG
-        </span>
-        <button onclick="switchTab('rules')" id="tab-btn-rules" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-1.5 border border-transparent shrink-0">
-          <i data-lucide="tags" class="w-3.5 h-3.5 text-amber-400"></i> Reglas
-        </button>
-        <button onclick="switchTab('simulator')" id="tab-btn-simulator" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-1.5 border border-transparent shrink-0">
-          <i data-lucide="smartphone" class="w-3.5 h-3.5"></i> Simulador
-        </button>
-        <button onclick="switchTab('config')" id="tab-btn-config" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-1.5 border border-transparent shrink-0">
-          <i data-lucide="settings" class="w-3.5 h-3.5"></i> Saludos
-        </button>
-      </div>
-
-      <!-- Zone 3: SISTEMA (Render & Logs) -->
-      <div class="flex items-center space-x-1.5 overflow-x-auto custom-scrollbar">
-        <span class="text-[10px] font-bold uppercase tracking-wider text-cyan-400 px-2.5 py-1 bg-cyan-500/10 rounded-lg border border-cyan-500/20 shrink-0 flex items-center gap-1 font-mono">
-          <i data-lucide="cpu" class="w-3 h-3 text-cyan-400"></i> Sistema
-        </span>
-        <button onclick="switchTab('cloud')" id="tab-btn-cloud" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-1.5 border border-transparent shrink-0">
-          <i data-lucide="server" class="w-3.5 h-3.5"></i> Nube 24/7
-        </button>
-        <button onclick="switchTab('logs')" id="tab-btn-logs" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-1.5 border border-transparent shrink-0">
-          <i data-lucide="history" class="w-3.5 h-3.5"></i> Logs
-        </button>
-      </div>
-    </div>
-
-    <!-- TAB 1: TABLERO (DASHBOARD) -->
-    <div id="tab-dashboard" class="tab-content space-y-6">
-      <!-- 4 Quick Stats -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="glass-card rounded-2xl p-4 sm:p-5 border border-gray-800">
-          <div class="flex items-center justify-between text-gray-400 text-xs">
-            <span>TIEMPO ACTIVO (24/7)</span>
-            <i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i>
-          </div>
-          <div id="statUptime" class="text-xl sm:text-2xl font-bold font-display text-white mt-2">00h 00m 00s</div>
-          <p class="text-[11px] text-gray-400 mt-1">Servidor corriendo sin cortes</p>
-        </div>
-
-        <div class="glass-card rounded-2xl p-4 sm:p-5 border border-gray-800">
-          <div class="flex items-center justify-between text-gray-400 text-xs">
-            <span>REGLAS ACTIVAS</span>
-            <i data-lucide="tags" class="w-4 h-4 text-emerald-400"></i>
-          </div>
-          <div id="statRulesCount" class="text-xl sm:text-2xl font-bold font-display text-white mt-2">6 Reglas</div>
-          <p class="text-[11px] text-emerald-400 mt-1">Precios, TapTap, Macros, Gyms...</p>
-        </div>
-
-        <div class="glass-card rounded-2xl p-4 sm:p-5 border border-gray-800">
-          <div class="flex items-center justify-between text-gray-400 text-xs">
-            <span>INTERACCIONES REGISTRADAS</span>
-            <i data-lucide="send" class="w-4 h-4 text-cyan-400"></i>
-          </div>
-          <div id="statDMs" class="text-xl sm:text-2xl font-bold font-display text-white mt-2">0</div>
-          <p class="text-[11px] text-gray-400 mt-1">Comentarios y DMs procesados</p>
-        </div>
-
-        <div class="glass-card rounded-2xl p-4 sm:p-5 border border-gray-800">
-          <div class="flex items-center justify-between text-gray-400 text-xs">
-            <span>DISPARADOR PRINCIPAL</span>
-            <i data-lucide="sparkles" class="w-4 h-4 text-purple-400"></i>
-          </div>
-          <div id="statTrigger" class="text-xl sm:text-2xl font-bold font-display text-emerald-400 mt-2">TapTap</div>
-          <p class="text-[11px] text-gray-400 mt-1">Ultra flexible (espacios, mayúsculas)</p>
-        </div>
-      </div>
-
-      <!-- Operational Status & Quick Actions -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="glass-card rounded-2xl p-6 border border-gray-800 space-y-4">
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-gray-400 flex items-center gap-2">
-            <i data-lucide="activity" class="w-4 h-4 text-emerald-400"></i> Estado del Contestador
-          </h3>
-          
-          <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 space-y-3">
-            <div class="flex justify-between items-center text-sm">
-              <span class="text-gray-400">Modo de Operación:</span>
-              <span class="font-medium text-emerald-400">24/7 Cloud Ready</span>
-            </div>
-            <div class="flex justify-between items-center text-sm">
-              <span class="text-gray-400">Cooldown Anti-Doble Envío:</span>
-              <span class="font-medium text-white">45 segundos</span>
-            </div>
-            <div class="flex justify-between items-center text-sm">
-              <span class="text-gray-400">Velocidad de Respuesta:</span>
-              <span class="font-medium text-emerald-400">~1.5s (Instantáneo)</span>
-            </div>
-            <div class="flex justify-between items-center text-sm">
-              <span class="text-gray-400">Auto-Aprobación Solicitudes:</span>
-              <span class="font-medium text-emerald-400">ACTIVADA</span>
-            </div>
-          </div>
-
-          <div class="space-y-2 pt-2">
-            <button onclick="switchTab('rules')" class="w-full py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
-              <i data-lucide="sliders" class="w-4 h-4"></i> Administrar Reglas y Palabras Clave
-            </button>
-            <button onclick="switchTab('simulator')" class="w-full py-2.5 px-4 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-medium text-sm transition flex items-center justify-center gap-2 border border-gray-700">
-              <i data-lucide="play" class="w-4 h-4 text-emerald-400"></i> Probar en el Simulador
-            </button>
-          </div>
-        </div>
-
-        <!-- Recent Logs preview -->
-        <div class="lg:col-span-2 glass-card rounded-2xl p-6 border border-gray-800 flex flex-col justify-between">
+    <!-- TAB 1: TABLERO / DESPACHO (HIGH-DENSITY BENTO GRID - LINEAR STYLE) -->
+    <div id="tab-dashboard" class="tab-content space-y-4">
+      
+      <!-- Bento Grid (Hairlines 1px via gap-px and bg-white/[0.08]) -->
+      <div class="rounded-xl border border-white/[0.08] bg-white/[0.08] p-px grid grid-cols-12 gap-px overflow-hidden shadow-2xl">
+        
+        <!-- Tile 1: Hero Metric (47 Bandejas / 7.05 kg Proteína) -->
+        <article class="col-span-12 lg:col-span-4 bg-[#090a0f] p-5 flex flex-col justify-between">
           <div>
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-sm font-semibold uppercase tracking-wider text-gray-400 flex items-center gap-2">
-                <i data-lucide="list" class="w-4 h-4 text-cyan-400"></i> Últimas Interacciones
-              </h3>
-              <button onclick="switchTab('logs')" class="text-xs text-emerald-400 hover:underline">Ver todo</button>
+            <div class="flex items-center justify-between text-[11px] font-mono text-white/40 uppercase tracking-wider">
+              <span>Producción de Proteína Hoy</span>
+              <span class="text-emerald-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-[1px] bg-emerald-400"></span> 94% Meta</span>
             </div>
-            <div id="dashboardLogsList" class="space-y-2.5 text-xs text-gray-300">
-              <p class="text-gray-500 py-6 text-center">Esperando interacciones de clientes...</p>
+            <div class="mt-3 flex items-baseline gap-2">
+              <span class="num text-5xl font-bold tracking-tight text-white">47</span>
+              <span class="text-xs font-mono text-white/40 uppercase">bandejas servidas</span>
+            </div>
+            <p class="mt-2 text-xs font-mono text-white/60">
+              <strong class="text-white">7.05 kg</strong> proteína neta despachada sin aceites quemados.
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono text-white/40">
+            <span>Objetivo diario: 50 platos</span>
+            <span class="num text-emerald-400 font-semibold">Faltan 3</span>
+          </div>
+        </article>
+
+        <!-- Tile 2: Pechuga a la Plancha MRP -->
+        <article class="col-span-6 sm:col-span-3 lg:col-span-2 bg-[#090a0f] p-4 flex flex-col justify-between">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-white/40">Pechuga Cruda (30% Merma)</span>
+          <div class="my-2">
+            <div class="num text-2xl font-bold text-white">2.86 <span class="text-xs text-white/40">kg</span></div>
+            <span class="text-[11px] font-mono text-white/50 block mt-0.5">20 porciones 150g</span>
+          </div>
+          <span class="text-[10px] font-mono text-emerald-400 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-[1px] bg-emerald-400"></span> Plancha activa
+          </span>
+        </article>
+
+        <!-- Tile 3: Ternera Magra MRP -->
+        <article class="col-span-6 sm:col-span-3 lg:col-span-2 bg-[#090a0f] p-4 flex flex-col justify-between">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-white/40">Ternera Cruda (25% Merma)</span>
+          <div class="my-2">
+            <div class="num text-2xl font-bold text-white">0.93 <span class="text-xs text-white/40">kg</span></div>
+            <span class="text-[11px] font-mono text-white/50 block mt-0.5">5 porciones 140g</span>
+          </div>
+          <span class="text-[10px] font-mono text-sky-400 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-[1px] bg-sky-400"></span> Pulpa res limpia
+          </span>
+        </article>
+
+        <!-- Tile 4: Bandejas BOPS Selladas -->
+        <article class="col-span-6 sm:col-span-3 lg:col-span-2 bg-[#090a0f] p-4 flex flex-col justify-between">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-white/40">Bandejas BOPS</span>
+          <div class="my-2">
+            <div class="num text-2xl font-bold text-white">17 <span class="text-xs text-white/40">uds</span></div>
+            <span class="text-[11px] font-mono text-white/50 block mt-0.5">3 cavidades c/u</span>
+          </div>
+          <span class="text-[10px] font-mono text-white/40">
+            $1.100 COP costo unid.
+          </span>
+        </article>
+
+        <!-- Tile 5: Bot IG Disparador -->
+        <article class="col-span-6 sm:col-span-3 lg:col-span-2 bg-[#090a0f] p-4 flex flex-col justify-between">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-white/40">Disparador Instagram</span>
+          <div class="my-2">
+            <div id="statTrigger" class="num text-2xl font-bold text-emerald-400">TapTap</div>
+            <span class="text-[11px] font-mono text-white/50 block mt-0.5">Cooldown 45s</span>
+          </div>
+          <span class="text-[10px] font-mono text-emerald-400 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-[1px] bg-emerald-400"></span> Auto-Aprobación ON
+          </span>
+        </article>
+
+        <!-- Tile 6: Live Orders Queue / KDS Display (8 cols) -->
+        <article class="col-span-12 lg:col-span-8 bg-[#090a0f]">
+          <header class="flex items-center justify-between border-b border-white/[0.08] px-4 py-3">
+            <div class="flex items-center space-x-2">
+              <span class="w-1.5 h-1.5 rounded-[1px] bg-emerald-400"></span>
+              <h2 class="font-mono text-xs font-semibold uppercase tracking-wider text-white">Comandas de Cocina & Despacho · Yopal</h2>
+            </div>
+            <span class="num text-[11px] font-mono text-white/40">5 de 47 órdenes en cola</span>
+          </header>
+
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left font-mono text-xs">
+              <thead>
+                <tr class="border-b border-white/[0.08] text-[10px] uppercase tracking-wider text-white/30">
+                  <th class="py-2.5 px-4">ID</th>
+                  <th class="py-2.5 px-3">Destino / Gimnasio</th>
+                  <th class="py-2.5 px-3">Plato & Gramos</th>
+                  <th class="py-2.5 px-3 text-right">Valor</th>
+                  <th class="py-2.5 px-3 text-right">ETA</th>
+                  <th class="py-2.5 px-4 text-right">Estado</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/[0.06]">
+                <tr class="hover:bg-white/[0.02] transition-colors">
+                  <td class="py-2.5 px-4 num text-white/70">#YP-2841</td>
+                  <td class="py-2.5 px-3 text-white">SmartFit Unicentro</td>
+                  <td class="py-2.5 px-3 text-white/80">Pechuga a la Plancha (150g)</td>
+                  <td class="py-2.5 px-3 num text-right text-emerald-400">$13.500</td>
+                  <td class="py-2.5 px-3 num text-right text-white/60">12:08</td>
+                  <td class="py-2.5 px-4 text-right">
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] text-amber-400 bg-amber-400/10 border border-amber-400/20">
+                      <span class="w-1.5 h-1.5 rounded-[1px] bg-amber-400"></span> En plancha
+                    </span>
+                  </td>
+                </tr>
+                <tr class="hover:bg-white/[0.02] transition-colors">
+                  <td class="py-2.5 px-4 num text-white/70">#YP-2840</td>
+                  <td class="py-2.5 px-3 text-white">Centro · Cra 20</td>
+                  <td class="py-2.5 px-3 text-white/80">Ternera Magra Llanera (140g)</td>
+                  <td class="py-2.5 px-3 num text-right text-amber-400">$14.500</td>
+                  <td class="py-2.5 px-3 num text-right text-white/60">06:41</td>
+                  <td class="py-2.5 px-4 text-right">
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] text-sky-400 bg-sky-400/10 border border-sky-400/20">
+                      <span class="w-1.5 h-1.5 rounded-[1px] bg-sky-400"></span> En ruta
+                    </span>
+                  </td>
+                </tr>
+                <tr class="hover:bg-white/[0.02] transition-colors">
+                  <td class="py-2.5 px-4 num text-white/70">#YP-2839</td>
+                  <td class="py-2.5 px-3 text-white">Brisas del Cravo</td>
+                  <td class="py-2.5 px-3 text-white/80">Bowl Doble Proteína (200g)</td>
+                  <td class="py-2.5 px-3 num text-right text-purple-400">$15.000</td>
+                  <td class="py-2.5 px-3 num text-right text-red-400">+04:12</td>
+                  <td class="py-2.5 px-4 text-right">
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] text-red-400 bg-red-400/10 border border-red-400/20">
+                      <span class="w-1.5 h-1.5 rounded-[1px] bg-red-400"></span> Demora
+                    </span>
+                  </td>
+                </tr>
+                <tr class="hover:bg-white/[0.02] transition-colors">
+                  <td class="py-2.5 px-4 num text-white/70">#YP-2838</td>
+                  <td class="py-2.5 px-3 text-white">Bodytech Alcaraván</td>
+                  <td class="py-2.5 px-3 text-white/80">Pechuga a la Plancha (150g)</td>
+                  <td class="py-2.5 px-3 num text-right text-emerald-400">$13.500</td>
+                  <td class="py-2.5 px-3 num text-right text-white/40">00:00</td>
+                  <td class="py-2.5 px-4 text-right">
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] text-emerald-400 bg-emerald-400/10 border border-emerald-400/20">
+                      <span class="w-1.5 h-1.5 rounded-[1px] bg-emerald-400"></span> Entregado
+                    </span>
+                  </td>
+                </tr>
+                <tr class="hover:bg-white/[0.02] transition-colors">
+                  <td class="py-2.5 px-4 num text-white/70">#YP-2837</td>
+                  <td class="py-2.5 px-3 text-white">La Campiña</td>
+                  <td class="py-2.5 px-3 text-white/80">Bowl Doble Proteína (200g)</td>
+                  <td class="py-2.5 px-3 num text-right text-purple-400">$15.000</td>
+                  <td class="py-2.5 px-3 num text-right text-white/60">15:20</td>
+                  <td class="py-2.5 px-4 text-right">
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] text-amber-400 bg-amber-400/10 border border-amber-400/20">
+                      <span class="w-1.5 h-1.5 rounded-[1px] bg-amber-400"></span> En plancha
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <!-- Tile 7: Demanda por Zonas y Gimnasios en Yopal (4 cols) -->
+        <article class="col-span-12 lg:col-span-4 bg-[#090a0f] p-5 flex flex-col justify-between">
+          <div>
+            <h3 class="font-mono text-xs font-semibold uppercase tracking-wider text-white/50 mb-3">
+              Demanda por Zonas & Gimnasios
+            </h3>
+            <ul class="space-y-3 font-mono text-xs">
+              <li>
+                <div class="flex justify-between text-white/80">
+                  <span>SmartFit Unicentro</span>
+                  <span class="num text-emerald-400 font-semibold">14 pedidos</span>
+                </div>
+                <div class="mt-1 h-1 w-full bg-white/[0.06] rounded-full overflow-hidden">
+                  <div class="h-full bg-emerald-400 w-[100%]"></div>
+                </div>
+              </li>
+              <li>
+                <div class="flex justify-between text-white/80">
+                  <span>Bodytech Alcaraván</span>
+                  <span class="num text-white/70">10 pedidos</span>
+                </div>
+                <div class="mt-1 h-1 w-full bg-white/[0.06] rounded-full overflow-hidden">
+                  <div class="h-full bg-white/60 w-[71%]"></div>
+                </div>
+              </li>
+              <li>
+                <div class="flex justify-between text-white/80">
+                  <span>Centro · Cra 20</span>
+                  <span class="num text-white/70">8 pedidos</span>
+                </div>
+                <div class="mt-1 h-1 w-full bg-white/[0.06] rounded-full overflow-hidden">
+                  <div class="h-full bg-white/60 w-[57%]"></div>
+                </div>
+              </li>
+              <li>
+                <div class="flex justify-between text-white/80">
+                  <span>La Campiña</span>
+                  <span class="num text-white/70">6 pedidos</span>
+                </div>
+                <div class="mt-1 h-1 w-full bg-white/[0.06] rounded-full overflow-hidden">
+                  <div class="h-full bg-white/40 w-[43%]"></div>
+                </div>
+              </li>
+              <li>
+                <div class="flex justify-between text-white/80">
+                  <span>Brisas del Cravo</span>
+                  <span class="num text-white/70">5 pedidos</span>
+                </div>
+                <div class="mt-1 h-1 w-full bg-white/[0.06] rounded-full overflow-hidden">
+                  <div class="h-full bg-white/40 w-[36%]"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono text-white/40">
+            <span>Reparto en moto Yopal</span>
+            <span class="text-white/60">3 domiciliarios activos</span>
+          </div>
+        </article>
+
+        <!-- Tile 8: Telemetría 24/7 y Logs en Vivo (12 cols) -->
+        <article class="col-span-12 bg-[#090a0f] p-4 lg:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div class="flex flex-wrap items-center gap-4 text-xs font-mono">
+            <div class="flex items-center gap-2">
+              <span class="text-white/40 uppercase text-[10px]">Servidor:</span>
+              <span id="statUptime" class="num text-emerald-400 font-semibold">00h 00m 00s</span>
+            </div>
+            <div class="h-3 w-px bg-white/10 hidden sm:block"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-white/40 uppercase text-[10px]">Reglas Activas:</span>
+              <span id="statRulesCount" class="num text-white font-semibold">6 Reglas</span>
+            </div>
+            <div class="h-3 w-px bg-white/10 hidden sm:block"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-white/40 uppercase text-[10px]">Interacciones:</span>
+              <span id="statDMs" class="num text-white font-semibold">0</span>
             </div>
           </div>
-          <div class="pt-4 border-t border-gray-800/80 flex items-center justify-between text-xs text-gray-400">
-            <span>Monitoreando comentarios en Reels y DMs</span>
-            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Actualización en vivo</span>
+
+          <div class="flex items-center gap-2">
+            <button onclick="switchTab('rules')" class="px-3 py-1.5 rounded bg-white/[0.06] hover:bg-white/[0.1] text-white text-xs font-mono transition border border-white/10">
+              Editar Reglas
+            </button>
+            <button onclick="switchTab('simulator')" class="px-3 py-1.5 rounded bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs font-mono transition shadow-sm">
+              Abrir Simulador
+            </button>
           </div>
+        </article>
+
+      </div>
+
+      <!-- Quick Live Log Drawer -->
+      <div class="rounded-xl border border-white/[0.08] bg-[#090a0f] p-4 font-mono text-xs">
+        <div class="flex items-center justify-between border-b border-white/[0.08] pb-2 mb-2.5">
+          <span class="text-[10px] uppercase tracking-wider text-white/40 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-[1px] bg-emerald-400"></span> Interacciones Recientes de Clientes (DMs & Comentarios)
+          </span>
+          <button onclick="switchTab('logs')" class="text-[11px] text-emerald-400 hover:underline">Ver historial completo →</button>
+        </div>
+        <div id="dashboardLogsList" class="space-y-1.5 text-white/60">
+          <p class="text-white/30 text-center py-2">Esperando interacciones de clientes en Instagram...</p>
         </div>
       </div>
+
     </div>
 
     <!-- TAB 2: EDITOR DE REGLAS DE PALABRAS CLAVE (DYNAMIC RULES ENGINE) -->
@@ -1039,12 +1177,25 @@
     // Initialize Lucide icons
     lucide.createIcons();
 
+    // Live Clock for Yopal Command Bar
+    function updateLiveClock() {
+      const el = document.getElementById('headerLiveClock');
+      if (!el) return;
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      el.innerText = `COT ${h}:${m}:${s}`;
+    }
+    setInterval(updateLiveClock, 1000);
+    updateLiveClock();
+
     // Tab switcher
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('bg-emerald-500/15', 'text-emerald-400', 'border-emerald-500/30');
-        btn.classList.add('text-gray-400', 'border-transparent');
+        btn.classList.add('text-white/50', 'border-transparent');
       });
 
       const targetTab = document.getElementById(`tab-${tabName}`);
@@ -1052,7 +1203,7 @@
       if (targetTab) targetTab.classList.remove('hidden');
       if (targetBtn) {
         targetBtn.classList.add('bg-emerald-500/15', 'text-emerald-400', 'border-emerald-500/30');
-        targetBtn.classList.remove('text-gray-400', 'border-transparent');
+        targetBtn.classList.remove('text-white/50', 'border-transparent');
       }
       lucide.createIcons();
     }
@@ -1081,20 +1232,17 @@
 
     function updateBotStatusUI(enabled) {
       const pill = document.getElementById('statusPill');
-      const text = document.getElementById('statusText');
       const btn = document.getElementById('btnToggle');
       const knob = document.getElementById('toggleKnob');
 
       if (enabled) {
-        pill.className = "flex items-center space-x-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-medium";
-        text.innerText = "CONTESTADOR ACTIVO";
-        btn.className = "relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-emerald-500 transition-colors duration-200 ease-in-out focus:outline-none";
-        knob.className = "pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-5";
+        if (pill) pill.innerHTML = `<span class="w-1.5 h-1.5 rounded-[1px] bg-emerald-400"></span><span id="statusText" class="text-[11px] font-mono tracking-wider uppercase text-emerald-400 font-medium">CONTESTADOR ACTIVO</span>`;
+        if (btn) btn.className = "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border border-white/10 bg-emerald-500 transition-colors duration-150 focus:outline-none";
+        if (knob) knob.className = "pointer-events-none inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-sm ring-0 transition duration-150 ease-in-out translate-x-4 mt-[2px] ml-[2px]";
       } else {
-        pill.className = "flex items-center space-x-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-400 text-xs font-medium";
-        text.innerText = "CONTESTADOR PAUSADO";
-        btn.className = "relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-700 transition-colors duration-200 ease-in-out focus:outline-none";
-        knob.className = "pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-0";
+        if (pill) pill.innerHTML = `<span class="w-1.5 h-1.5 rounded-[1px] bg-amber-400"></span><span id="statusText" class="text-[11px] font-mono tracking-wider uppercase text-amber-400 font-medium">CONTESTADOR PAUSADO</span>`;
+        if (btn) btn.className = "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border border-white/10 bg-zinc-700 transition-colors duration-150 focus:outline-none";
+        if (knob) knob.className = "pointer-events-none inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-sm ring-0 transition duration-150 ease-in-out translate-x-0 mt-[2px] ml-[2px]";
       }
     }
 

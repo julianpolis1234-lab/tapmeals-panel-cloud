@@ -2,14 +2,17 @@
 <html lang="es" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TapMeals Yopal — Panel de Control Operativo 24/7</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>TapMeals Yopal — Sistema Operativo de Alto Rendimiento 24/7</title>
+  
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Big Shoulders Display & Instrument Sans & Geist Mono -->
+  
+  <!-- Google Fonts: Big Shoulders Display, Instrument Sans & Geist Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -20,105 +23,141 @@
         extend: {
           colors: {
             brand: {
-              bg: '#080a0e',
-              card: '#0f131a',
-              cardBorder: 'rgba(255, 255, 255, 0.08)',
+              bg: '#090a0f',
+              surface: '#0e1117',
+              surfaceHover: '#151821',
+              border: 'rgba(255, 255, 255, 0.08)',
+              borderStrong: 'rgba(255, 255, 255, 0.16)',
               emerald: '#10b981',
               emeraldNeon: '#00f59b',
-              emeraldHover: '#059669',
               amber: '#f59e0b',
-              accent: '#38bdf8'
+              sky: '#38bdf8',
+              violet: '#a855f7'
             }
           },
           fontFamily: {
-            sans: ['Instrument Sans', 'system-ui', 'sans-serif'],
+            sans: ['Instrument Sans', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
             display: ['Big Shoulders Display', 'Impact', 'sans-serif'],
-            mono: ['Geist Mono', 'ui-monospace', 'monospace']
+            mono: ['Geist Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace']
           }
         }
       }
     }
   </script>
+  
   <style>
     :root {
-      --carbon-950: #080a0e;
-      --carbon-900: #0f131a;
-      --carbon-800: #171c26;
-      --line: rgba(255, 255, 255, 0.08);
-      --line-strong: rgba(255, 255, 255, 0.16);
+      --bg: #090a0f;
+      --surface: #0e1117;
+      --surface-hover: #151821;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.16);
+      --accent: #10b981;
+      --accent-muted: rgba(16, 185, 129, 0.15);
+      --font-sans: 'Instrument Sans', sans-serif;
+      --font-mono: 'Geist Mono', monospace;
     }
+
+    * {
+      border-color: var(--border);
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
-      background-color: var(--carbon-950);
-      color: #e2e8f0;
-      font-family: 'Instrument Sans', system-ui, sans-serif;
+      background-color: var(--bg);
+      color: #f1f5f9;
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
     }
+
+    .num {
+      font-variant-numeric: tabular-nums;
+      font-family: var(--font-mono);
+    }
+
     .font-display {
       font-family: 'Big Shoulders Display', sans-serif;
-      letter-spacing: 0.01em;
+      letter-spacing: 0.02em;
       text-transform: uppercase;
     }
-    .font-mono {
-      font-family: 'Geist Mono', monospace;
-      font-variant-numeric: tabular-nums;
+
+    .hairline-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: border-color 0.15s ease;
     }
-    .metric {
-      font-family: 'Big Shoulders Display', sans-serif;
-      font-weight: 800;
-      font-variant-numeric: tabular-nums;
-      line-height: 1;
+    .hairline-card:hover {
+      border-color: var(--border-strong);
     }
-    .glass-card, .panel-card {
-      background: var(--carbon-900);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-    .glass-card:hover, .panel-card:hover {
-      border-color: rgba(16, 185, 129, 0.28);
-    }
+
+    /* Scrollbars */
     .custom-scrollbar::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
+      width: 4px;
+      height: 4px;
     }
     .custom-scrollbar::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.3);
     }
     .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.15);
       border-radius: 9999px;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
       background: rgba(16, 185, 129, 0.4);
     }
-    @keyframes pulse-slow {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.96); }
+
+    /* Table row states */
+    .rule-row {
+      transition: background-color 100ms ease;
     }
-    .live-pulse {
-      animation: pulse-slow 2.4s infinite ease-in-out;
+    .rule-row:hover {
+      background-color: var(--surface-hover);
+    }
+
+    /* Pulse animation */
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.95); }
+    }
+    .live-dot {
+      animation: pulse-subtle 2s infinite ease-in-out;
+    }
+
+    /* iPhone screen styling */
+    .chat-bubble-user {
+      border-radius: 18px 18px 4px 18px;
+    }
+    .chat-bubble-bot {
+      border-radius: 18px 18px 18px 4px;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-black">
+<body class="min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-black pb-[env(safe-area-inset-bottom)]">
 
-  <!-- FIXED COMMAND BAR (48px / Linear Style / Anti-AI-Slop) -->
+  <!-- =========================================================================
+       1. FIXED COMMAND BAR (48px / Linear Style / Anti-AI-Slop)
+       ========================================================================= -->
   <header class="sticky top-0 z-50 h-12 border-b border-white/[0.08] bg-[#090a0f]/95 backdrop-blur-md px-4 lg:px-6 flex items-center justify-between">
-    <!-- Left: Brand Monogram & Live Clock -->
+    <!-- Left: Brand & Telemetry -->
     <div class="flex items-center space-x-3">
       <div class="flex items-center space-x-1.5 font-mono text-xs font-bold text-white tracking-wider">
         <span class="text-emerald-400">⚡</span>
         <span class="tracking-tight">TAPMEALS</span>
-        <span class="text-[10px] px-1.5 py-0.2 rounded bg-white/[0.06] text-white/50 border border-white/[0.08]">YOPAL</span>
+        <span class="text-[10px] px-1.5 py-0.5 rounded bg-white/[0.06] text-white/50 border border-white/[0.08]">YOPAL</span>
       </div>
       <div class="h-3.5 w-px bg-white/10 hidden sm:block"></div>
-      <div class="hidden sm:flex items-center space-x-1 text-[11px] text-white/40 font-mono">
-        <span id="headerLiveClock" class="num text-white/70">COT 21:45</span>
+      <div class="hidden sm:flex items-center space-x-2 text-[11px] text-white/40 font-mono">
+        <span id="headerLiveClock" class="num text-white/70">COT 12:00:00</span>
         <span class="text-white/20">•</span>
-        <span class="text-emerald-400/80">KDS 100% Online</span>
+        <span class="inline-flex items-center gap-1 text-emerald-400">
+          <span class="w-1.5 h-1.5 rounded-[1px] bg-emerald-400 live-dot"></span>
+          <span>KDS 100% Operativo</span>
+        </span>
       </div>
     </div>
 
-    <!-- Center: 3-Zone Fast Navigation -->
+    <!-- Center: 8-Tab High Density Switcher (Desktop) -->
     <nav class="hidden md:flex items-center space-x-1 font-mono text-[11px]">
       <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-btn px-2.5 py-1 rounded text-emerald-400 font-medium bg-emerald-500/15 border border-emerald-500/30 transition flex items-center gap-1.5">
         <span>Despacho</span>
@@ -127,17 +166,17 @@
         <span>Carta & Macros</span>
       </button>
       <button onclick="switchTab('tools')" id="tab-btn-tools" class="tab-btn px-2.5 py-1 rounded text-white/50 hover:text-white transition flex items-center gap-1.5 border border-transparent">
-        <span>Cocina & Merma</span>
+        <span>Cocina & MRP</span>
       </button>
       <div class="h-3 w-px bg-white/10 mx-1"></div>
       <button onclick="switchTab('rules')" id="tab-btn-rules" class="tab-btn px-2.5 py-1 rounded text-white/50 hover:text-white transition flex items-center gap-1.5 border border-transparent">
         <span>Reglas</span>
       </button>
       <button onclick="switchTab('simulator')" id="tab-btn-simulator" class="tab-btn px-2.5 py-1 rounded text-white/50 hover:text-white transition flex items-center gap-1.5 border border-transparent">
-        <span>Simulador</span>
+        <span>Simulador DM</span>
       </button>
       <button onclick="switchTab('config')" id="tab-btn-config" class="tab-btn px-2.5 py-1 rounded text-white/50 hover:text-white transition flex items-center gap-1.5 border border-transparent">
-        <span>Saludos</span>
+        <span>Ajustes</span>
       </button>
       <div class="h-3 w-px bg-white/10 mx-1"></div>
       <button onclick="switchTab('cloud')" id="tab-btn-cloud" class="tab-btn px-2.5 py-1 rounded text-white/50 hover:text-white transition flex items-center gap-1.5 border border-transparent">
@@ -148,109 +187,93 @@
       </button>
     </nav>
 
-    <!-- Right: Telemetry & Bot Switch -->
+    <!-- Right: Bot Master Toggle Switch -->
     <div class="flex items-center space-x-3">
-      <div id="statusPill" class="flex items-center space-x-2 text-xs">
+      <div id="statusPill" class="flex items-center space-x-1.5 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
         <span class="w-1.5 h-1.5 rounded-[1px] bg-emerald-400"></span>
-        <span id="statusText" class="text-[11px] font-mono tracking-wider uppercase text-emerald-400 font-medium">CONTESTADOR ACTIVO</span>
+        <span id="statusText" class="text-[10px] font-mono tracking-wider uppercase text-emerald-400 font-medium">BOT ACTIVO</span>
       </div>
-
-      <button onclick="toggleBot()" id="btnToggle" class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border border-white/10 bg-emerald-500 transition-colors duration-150 focus:outline-none" role="switch" aria-checked="true" title="Encender / Pausar Contestador">
-        <span id="toggleKnob" aria-hidden="true" class="pointer-events-none inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-sm ring-0 transition duration-150 ease-in-out translate-x-4 mt-[2px] ml-[2px]"></span>
+      
+      <button id="btnToggle" onclick="toggleBot()" class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border border-white/10 bg-emerald-500 transition-colors duration-150 focus:outline-none" aria-label="Alternar contestador">
+        <span id="toggleKnob" class="pointer-events-none inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-sm ring-0 transition duration-150 ease-in-out translate-x-4 mt-[2px] ml-[2px]"></span>
       </button>
     </div>
   </header>
 
-  <!-- MOBILE SUB-NAVIGATION BAR (Visible only on small screens) -->
-  <div class="md:hidden border-b border-white/[0.08] bg-[#090a0f] px-3 py-2 flex items-center space-x-1.5 overflow-x-auto custom-scrollbar font-mono text-[11px]">
-    <button onclick="switchTab('dashboard')" class="px-2.5 py-1 rounded bg-emerald-500/15 text-emerald-400 shrink-0">Despacho</button>
-    <button onclick="switchTab('menu')" class="px-2.5 py-1 rounded text-white/50 hover:text-white shrink-0">Carta</button>
-    <button onclick="switchTab('tools')" class="px-2.5 py-1 rounded text-white/50 hover:text-white shrink-0">Cocina</button>
-    <button onclick="switchTab('rules')" class="px-2.5 py-1 rounded text-white/50 hover:text-white shrink-0">Reglas</button>
-    <button onclick="switchTab('simulator')" class="px-2.5 py-1 rounded text-white/50 hover:text-white shrink-0">Simulador</button>
-    <button onclick="switchTab('cloud')" class="px-2.5 py-1 rounded text-white/50 hover:text-white shrink-0">Nube</button>
-    <button onclick="switchTab('logs')" class="px-2.5 py-1 rounded text-white/50 hover:text-white shrink-0">Logs</button>
-  </div>
+  <!-- =========================================================================
+       MAIN WORKSPACE CONTAINER
+       ========================================================================= -->
+  <main class="flex-1 w-full max-w-[1440px] mx-auto p-3 sm:p-5 lg:p-6 space-y-6">
 
-  <!-- MAIN APP CONTAINER -->
-  <div class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-5 space-y-5 pb-24 md:pb-6">
-
-    <!-- TAB 1: TABLERO / DESPACHO (HIGH-DENSITY BENTO GRID - LINEAR STYLE) -->
-    <div id="tab-dashboard" class="tab-content space-y-4">
+    <!-- =======================================================================
+         TAB 1: DESPACHO & KDS EN VIVO (BENTO GRID HIGH-DENSITY)
+         ======================================================================= -->
+    <section id="tab-dashboard" class="tab-content space-y-4">
       
-      <!-- Bento Grid (Hairlines 1px via gap-px and bg-white/[0.08]) -->
-      <div class="rounded-xl border border-white/[0.08] bg-white/[0.08] p-px grid grid-cols-12 gap-px overflow-hidden shadow-2xl">
+      <!-- Top Bento Grid: 12 Columns -->
+      <div class="grid grid-cols-12 gap-px bg-white/[0.08] rounded-xl overflow-hidden border border-white/[0.08]">
         
-        <!-- Tile 1: Hero Metric (47 Bandejas / 7.05 kg Proteína) -->
-        <article class="col-span-12 lg:col-span-4 bg-[#090a0f] p-5 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between text-[11px] font-mono text-white/40 uppercase tracking-wider">
-              <span>Producción de Proteína Hoy</span>
-              <span class="text-emerald-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-[1px] bg-emerald-400"></span> 94% Meta</span>
-            </div>
-            <div class="mt-3 flex items-baseline gap-2">
-              <span class="num text-5xl font-bold tracking-tight text-white">47</span>
-              <span class="text-xs font-mono text-white/40 uppercase">bandejas servidas</span>
-            </div>
-            <p class="mt-2 text-xs font-mono text-white/60">
-              <strong class="text-white">7.05 kg</strong> proteína neta despachada sin aceites quemados.
-            </p>
+        <!-- Tile 1: Venta Bruta Yopal (3 cols) -->
+        <article class="col-span-6 sm:col-span-3 bg-[#090a0f] p-4 flex flex-col justify-between min-h-[110px]">
+          <header class="flex items-center justify-between text-white/40">
+            <span class="text-[10px] font-mono uppercase tracking-wider">Venta del Día · Yopal</span>
+            <span class="text-emerald-400 text-[10px] font-mono font-medium">+18.4%</span>
+          </header>
+          <div class="my-1">
+            <span class="metric text-3xl sm:text-4xl text-white block">$364.500</span>
           </div>
-          <div class="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono text-white/40">
-            <span>Objetivo diario: 50 platos</span>
-            <span class="num text-emerald-400 font-semibold">Faltan 3</span>
-          </div>
-        </article>
-
-        <!-- Tile 2: Pechuga a la Plancha MRP -->
-        <article class="col-span-6 sm:col-span-3 lg:col-span-2 bg-[#090a0f] p-4 flex flex-col justify-between">
-          <span class="font-mono text-[10px] uppercase tracking-wider text-white/40">Pechuga Cruda (30% Merma)</span>
-          <div class="my-2">
-            <div class="num text-2xl font-bold text-white">2.86 <span class="text-xs text-white/40">kg</span></div>
-            <span class="text-[11px] font-mono text-white/50 block mt-0.5">20 porciones 150g</span>
-          </div>
-          <span class="text-[10px] font-mono text-emerald-400 flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-[1px] bg-emerald-400"></span> Plancha activa
+          <span class="num text-[11px] text-white/40 flex items-center justify-between">
+            <span>27 pedidos facturados</span>
+            <span class="text-white/60">COP</span>
           </span>
         </article>
 
-        <!-- Tile 3: Ternera Magra MRP -->
-        <article class="col-span-6 sm:col-span-3 lg:col-span-2 bg-[#090a0f] p-4 flex flex-col justify-between">
-          <span class="font-mono text-[10px] uppercase tracking-wider text-white/40">Ternera Cruda (25% Merma)</span>
-          <div class="my-2">
-            <div class="num text-2xl font-bold text-white">0.93 <span class="text-xs text-white/40">kg</span></div>
-            <span class="text-[11px] font-mono text-white/50 block mt-0.5">5 porciones 140g</span>
+        <!-- Tile 2: Comandas Activas (3 cols) -->
+        <article class="col-span-6 sm:col-span-3 bg-[#090a0f] p-4 flex flex-col justify-between min-h-[110px]">
+          <header class="flex items-center justify-between text-white/40">
+            <span class="text-[10px] font-mono uppercase tracking-wider">Cola de Producción</span>
+            <span class="text-amber-400 text-[10px] font-mono font-medium">En proceso</span>
+          </header>
+          <div class="my-1">
+            <span class="metric text-3xl sm:text-4xl text-amber-400 block">5 <span class="text-sm font-normal text-white/40">/ 47</span></span>
           </div>
-          <span class="text-[10px] font-mono text-sky-400 flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-[1px] bg-sky-400"></span> Pulpa res limpia
+          <span class="num text-[11px] text-white/40 flex items-center justify-between">
+            <span>3 en plancha · 2 en ruta</span>
+            <span class="text-emerald-400">100% a tiempo</span>
           </span>
         </article>
 
-        <!-- Tile 4: Bandejas BOPS Selladas -->
-        <article class="col-span-6 sm:col-span-3 lg:col-span-2 bg-[#090a0f] p-4 flex flex-col justify-between">
-          <span class="font-mono text-[10px] uppercase tracking-wider text-white/40">Bandejas BOPS</span>
-          <div class="my-2">
-            <div class="num text-2xl font-bold text-white">17 <span class="text-xs text-white/40">uds</span></div>
-            <span class="text-[11px] font-mono text-white/50 block mt-0.5">3 cavidades c/u</span>
+        <!-- Tile 3: Gramos de Proteína Despachada (3 cols) -->
+        <article class="col-span-6 sm:col-span-3 bg-[#090a0f] p-4 flex flex-col justify-between min-h-[110px]">
+          <header class="flex items-center justify-between text-white/40">
+            <span class="text-[10px] font-mono uppercase tracking-wider">Proteína Certificada</span>
+            <span class="text-emerald-400 text-[10px] font-mono font-medium">Báscula</span>
+          </header>
+          <div class="my-1">
+            <span class="metric text-3xl sm:text-4xl text-white block">6.450 <span class="text-sm font-normal text-white/40">g</span></span>
           </div>
-          <span class="text-[10px] font-mono text-white/40">
-            $1.100 COP costo unid.
+          <span class="num text-[11px] text-white/40 flex items-center justify-between">
+            <span>150g netos por porción</span>
+            <span class="text-white/60">0% merma oculta</span>
           </span>
         </article>
 
-        <!-- Tile 5: Bot IG Disparador -->
-        <article class="col-span-6 sm:col-span-3 lg:col-span-2 bg-[#090a0f] p-4 flex flex-col justify-between">
-          <span class="font-mono text-[10px] uppercase tracking-wider text-white/40">Disparador Instagram</span>
-          <div class="my-2">
-            <div id="statTrigger" class="num text-2xl font-bold text-emerald-400">TapTap</div>
-            <span class="text-[11px] font-mono text-white/50 block mt-0.5">Cooldown 45s</span>
+        <!-- Tile 4: Lead Time / Domicilios (3 cols) -->
+        <article class="col-span-6 sm:col-span-3 bg-[#090a0f] p-4 flex flex-col justify-between min-h-[110px]">
+          <header class="flex items-center justify-between text-white/40">
+            <span class="text-[10px] font-mono uppercase tracking-wider">Lead Time Entrega</span>
+            <span class="text-sky-400 text-[10px] font-mono font-medium">Moto Yopal</span>
+          </header>
+          <div class="my-1">
+            <span class="metric text-3xl sm:text-4xl text-white block">14.2 <span class="text-sm font-normal text-white/40">min</span></span>
           </div>
-          <span class="text-[10px] font-mono text-emerald-400 flex items-center gap-1">
-            <span class="w-1.5 h-1.5 rounded-[1px] bg-emerald-400"></span> Auto-Aprobación ON
+          <span class="num text-[11px] text-white/40 flex items-center justify-between">
+            <span>Radio Centro / Unicentro</span>
+            <span class="text-white/60">3 domiciliarios</span>
           </span>
         </article>
 
-        <!-- Tile 6: Live Orders Queue / KDS Display (8 cols) -->
+        <!-- Tile 5: Live Orders Queue / KDS Display (8 cols) -->
         <article class="col-span-12 lg:col-span-8 bg-[#090a0f]">
           <header class="flex items-center justify-between border-b border-white/[0.08] px-4 py-3">
             <div class="flex items-center space-x-2">
@@ -276,7 +299,7 @@
                 <tr class="hover:bg-white/[0.02] transition-colors">
                   <td class="py-2.5 px-4 num text-white/70">#YP-2841</td>
                   <td class="py-2.5 px-3 text-white">SmartFit Unicentro</td>
-                  <td class="py-2.5 px-3 text-white/80">Pechuga a la Plancha (150g)</td>
+                  <td class="py-2.5 px-3 text-white/80">Pechuga Fit (150g)</td>
                   <td class="py-2.5 px-3 num text-right text-emerald-400">$13.500</td>
                   <td class="py-2.5 px-3 num text-right text-white/60">12:08</td>
                   <td class="py-2.5 px-4 text-right">
@@ -288,7 +311,7 @@
                 <tr class="hover:bg-white/[0.02] transition-colors">
                   <td class="py-2.5 px-4 num text-white/70">#YP-2840</td>
                   <td class="py-2.5 px-3 text-white">Centro · Cra 20</td>
-                  <td class="py-2.5 px-3 text-white/80">Ternera Magra Llanera (140g)</td>
+                  <td class="py-2.5 px-3 text-white/80">Ternera Magra (140g)</td>
                   <td class="py-2.5 px-3 num text-right text-amber-400">$14.500</td>
                   <td class="py-2.5 px-3 num text-right text-white/60">06:41</td>
                   <td class="py-2.5 px-4 text-right">
@@ -300,19 +323,19 @@
                 <tr class="hover:bg-white/[0.02] transition-colors">
                   <td class="py-2.5 px-4 num text-white/70">#YP-2839</td>
                   <td class="py-2.5 px-3 text-white">Brisas del Cravo</td>
-                  <td class="py-2.5 px-3 text-white/80">Bowl Doble Proteína (200g)</td>
+                  <td class="py-2.5 px-3 text-white/80">Bowl Hipertrofia (200g)</td>
                   <td class="py-2.5 px-3 num text-right text-purple-400">$15.000</td>
-                  <td class="py-2.5 px-3 num text-right text-red-400">+04:12</td>
+                  <td class="py-2.5 px-3 num text-right text-white/60">15:20</td>
                   <td class="py-2.5 px-4 text-right">
-                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] text-red-400 bg-red-400/10 border border-red-400/20">
-                      <span class="w-1.5 h-1.5 rounded-[1px] bg-red-400"></span> Demora
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] text-amber-400 bg-amber-400/10 border border-amber-400/20">
+                      <span class="w-1.5 h-1.5 rounded-[1px] bg-amber-400"></span> En empaque
                     </span>
                   </td>
                 </tr>
                 <tr class="hover:bg-white/[0.02] transition-colors">
                   <td class="py-2.5 px-4 num text-white/70">#YP-2838</td>
                   <td class="py-2.5 px-3 text-white">Bodytech Alcaraván</td>
-                  <td class="py-2.5 px-3 text-white/80">Pechuga a la Plancha (150g)</td>
+                  <td class="py-2.5 px-3 text-white/80">Pechuga Fit (150g)</td>
                   <td class="py-2.5 px-3 num text-right text-emerald-400">$13.500</td>
                   <td class="py-2.5 px-3 num text-right text-white/40">00:00</td>
                   <td class="py-2.5 px-4 text-right">
@@ -321,24 +344,12 @@
                     </span>
                   </td>
                 </tr>
-                <tr class="hover:bg-white/[0.02] transition-colors">
-                  <td class="py-2.5 px-4 num text-white/70">#YP-2837</td>
-                  <td class="py-2.5 px-3 text-white">La Campiña</td>
-                  <td class="py-2.5 px-3 text-white/80">Bowl Doble Proteína (200g)</td>
-                  <td class="py-2.5 px-3 num text-right text-purple-400">$15.000</td>
-                  <td class="py-2.5 px-3 num text-right text-white/60">15:20</td>
-                  <td class="py-2.5 px-4 text-right">
-                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] text-amber-400 bg-amber-400/10 border border-amber-400/20">
-                      <span class="w-1.5 h-1.5 rounded-[1px] bg-amber-400"></span> En plancha
-                    </span>
-                  </td>
-                </tr>
               </tbody>
             </table>
           </div>
         </article>
 
-        <!-- Tile 7: Demanda por Zonas y Gimnasios en Yopal (4 cols) -->
+        <!-- Tile 6: Demanda por Zonas en Yopal (4 cols) -->
         <article class="col-span-12 lg:col-span-4 bg-[#090a0f] p-5 flex flex-col justify-between">
           <div>
             <h3 class="font-mono text-xs font-semibold uppercase tracking-wider text-white/50 mb-3">
@@ -381,15 +392,6 @@
                   <div class="h-full bg-white/40 w-[43%]"></div>
                 </div>
               </li>
-              <li>
-                <div class="flex justify-between text-white/80">
-                  <span>Brisas del Cravo</span>
-                  <span class="num text-white/70">5 pedidos</span>
-                </div>
-                <div class="mt-1 h-1 w-full bg-white/[0.06] rounded-full overflow-hidden">
-                  <div class="h-full bg-white/40 w-[36%]"></div>
-                </div>
-              </li>
             </ul>
           </div>
           <div class="pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono text-white/40">
@@ -398,11 +400,11 @@
           </div>
         </article>
 
-        <!-- Tile 8: Telemetría 24/7 y Logs en Vivo (12 cols) -->
-        <article class="col-span-12 bg-[#090a0f] p-4 lg:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <!-- Tile 7: Telemetría 24/7 y Controles Rápidos (12 cols) -->
+        <article class="col-span-12 bg-[#090a0f] p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div class="flex flex-wrap items-center gap-4 text-xs font-mono">
             <div class="flex items-center gap-2">
-              <span class="text-white/40 uppercase text-[10px]">Servidor:</span>
+              <span class="text-white/40 uppercase text-[10px]">Uptime Servidor:</span>
               <span id="statUptime" class="num text-emerald-400 font-semibold">00h 00m 00s</span>
             </div>
             <div class="h-3 w-px bg-white/10 hidden sm:block"></div>
@@ -419,741 +421,952 @@
 
           <div class="flex items-center gap-2">
             <button onclick="switchTab('rules')" class="px-3 py-1.5 rounded bg-white/[0.06] hover:bg-white/[0.1] text-white text-xs font-mono transition border border-white/10">
-              Editar Reglas
+              Ver Reglas
             </button>
             <button onclick="switchTab('simulator')" class="px-3 py-1.5 rounded bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs font-mono transition shadow-sm">
               Abrir Simulador
             </button>
           </div>
         </article>
-
       </div>
 
-      <!-- Quick Live Log Drawer -->
-      <div class="rounded-xl border border-white/[0.08] bg-[#090a0f] p-4 font-mono text-xs">
+      <!-- Quick Recent Client Logs Drawer -->
+      <div class="hairline-card p-4 font-mono text-xs">
         <div class="flex items-center justify-between border-b border-white/[0.08] pb-2 mb-2.5">
           <span class="text-[10px] uppercase tracking-wider text-white/40 flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-[1px] bg-emerald-400"></span> Interacciones Recientes de Clientes (DMs & Comentarios)
+            <span class="w-1.5 h-1.5 rounded-[1px] bg-emerald-400"></span> Interacciones Recientes de Clientes (Instagram & WhatsApp)
           </span>
-          <button onclick="switchTab('logs')" class="text-[11px] text-emerald-400 hover:underline">Ver historial completo →</button>
+          <button onclick="switchTab('logs')" class="text-[11px] text-emerald-400 hover:underline">Ver terminal completa →</button>
         </div>
         <div id="dashboardLogsList" class="space-y-1.5 text-white/60">
-          <p class="text-white/30 text-center py-2">Esperando interacciones de clientes en Instagram...</p>
+          <p class="text-white/30 text-center py-2">Esperando interacciones de clientes...</p>
         </div>
       </div>
+    </section>
 
-    </div>
-
-    <!-- TAB 2: EDITOR DE REGLAS DE PALABRAS CLAVE (DYNAMIC RULES ENGINE) -->
-    <div id="tab-rules" class="tab-content hidden space-y-6">
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h2 class="text-xl font-bold font-display text-white flex items-center gap-2">
-            <i data-lucide="tags" class="w-6 h-6 text-emerald-400"></i> Editor de Reglas por Palabras Clave
-          </h2>
-          <p class="text-xs sm:text-sm text-gray-400 mt-1">
-            Crea o edita qué responde el bot cuando alguien escribe palabras como <em>'precios'</em>, <em>'domicilios'</em>, <em>'macros'</em>, <em>'smartfit'</em> o <em>'TapTap'</em>.
-          </p>
-        </div>
-        <div class="flex items-center gap-2">
-          <button onclick="resetRulesToDefaults()" class="px-3.5 py-2.5 rounded-xl bg-gray-800/80 hover:bg-gray-800 text-gray-300 text-xs font-semibold transition border border-gray-700 flex items-center gap-1.5" title="Restaurar las 6 reglas estándar fitness">
-            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Restaurar Reglas Base
-          </button>
-          <button onclick="openRuleModal()" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs sm:text-sm transition flex items-center gap-2 shadow-lg shadow-emerald-500/25">
-            <i data-lucide="plus" class="w-4 h-4"></i> Nueva Regla
-          </button>
-        </div>
-      </div>
-
-      <!-- Rules Cards Grid -->
-      <div id="rulesListContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <!-- Rendered via JS -->
-      </div>
-    </div>
-
-    <!-- TAB 3: SIMULADOR EN VIVO (LIVE TESTER) -->
-    <div id="tab-simulator" class="tab-content hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
-        <!-- Controls & Input Simulator -->
-        <div class="lg:col-span-6 glass-card rounded-2xl p-6 border border-gray-800 space-y-5">
-          <div>
-            <h2 class="text-lg font-bold font-display text-white flex items-center gap-2">
-              <i data-lucide="smartphone" class="w-5 h-5 text-emerald-400"></i> Simulador de Instagram en Vivo
-            </h2>
-            <p class="text-xs text-gray-400 mt-1">
-              Escribe cualquier mensaje como si fueras un cliente para comprobar qué regla se activa y verificar que no haya respuestas duplicadas.
-            </p>
-          </div>
-
-          <!-- Channel Selector -->
-          <div class="space-y-1.5">
-            <label class="text-xs font-semibold text-gray-300">Canal donde escribe el cliente:</label>
-            <div class="grid grid-cols-3 gap-2">
-              <button onclick="setSimChannel('dm')" id="sim-chan-dm" class="sim-chan-btn py-2 px-3 rounded-xl text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                Direct Message (DM)
-              </button>
-              <button onclick="setSimChannel('solicitud')" id="sim-chan-solicitud" class="sim-chan-btn py-2 px-3 rounded-xl text-xs font-medium bg-gray-900 text-gray-400 border border-gray-800">
-                Solicitud Pendiente
-              </button>
-              <button onclick="setSimChannel('comentario')" id="sim-chan-comentario" class="sim-chan-btn py-2 px-3 rounded-xl text-xs font-medium bg-gray-900 text-gray-400 border border-gray-800">
-                Comentario en Post
-              </button>
-            </div>
-          </div>
-
-          <!-- Message Input -->
-          <div class="space-y-1.5">
-            <label class="text-xs font-semibold text-gray-300">Mensaje del cliente:</label>
-            <textarea id="simInputText" rows="3" class="w-full px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-emerald-500 transition" placeholder="Escribe 'TapTap', 'precios', 'domicilios', 'macros', 'smartfit', etc."></textarea>
-          </div>
-
-          <!-- Quick Test Badges -->
-          <div class="space-y-1.5">
-            <span class="text-[11px] text-gray-400">Pruebas rápidas de reglas (un clic):</span>
-            <div class="flex flex-wrap gap-1.5">
-              <button onclick="fillSimInput('TapTap')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-emerald-300 border border-gray-700">TapTap</button>
-              <button onclick="fillSimInput('cuanto valen los almuerzos?')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-cyan-300 border border-gray-700">Precios</button>
-              <button onclick="fillSimInput('donde tienen cobertura de domicilio?')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-amber-300 border border-gray-700">Domicilios</button>
-              <button onclick="fillSimInput('cuanta proteina y macros tienen?')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-purple-300 border border-gray-700">Macros</button>
-              <button onclick="fillSimInput('entreno en smartfit')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-emerald-300 border border-gray-700">Gym SmartFit</button>
-              <button onclick="fillSimInput('quiero pedir por whatsapp')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-green-300 border border-gray-700">WhatsApp Pedido</button>
-            </div>
-          </div>
-
-          <button onclick="runSimulatorTest()" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-bold text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
-            <i data-lucide="send" class="w-4 h-4"></i> Enviar Mensaje y Evaluar Regla
-          </button>
-
-          <!-- Result Diagnostic -->
-          <div id="simDiagnostic" class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 space-y-2 hidden">
-            <div class="flex items-center justify-between">
-              <span class="text-xs text-gray-400">Regla Disparada:</span>
-              <span id="simResultBadge" class="px-2.5 py-1 rounded-lg text-xs font-semibold"></span>
-            </div>
-            <p id="simReasonText" class="text-xs text-gray-300 font-mono"></p>
-          </div>
-        </div>
-
-        <!-- Phone Preview Mockup -->
-        <div class="lg:col-span-6 flex justify-center">
-          <div class="w-full max-w-[360px] rounded-[38px] bg-black border-4 border-gray-800 p-3 shadow-2xl shadow-emerald-950/20">
-            <!-- Notch -->
-            <div class="w-28 h-4 bg-gray-900 rounded-full mx-auto mb-2"></div>
-
-            <!-- Instagram Header Mock -->
-            <div class="flex items-center justify-between pb-3 border-b border-gray-800/80 px-2">
-              <div class="flex items-center space-x-2.5">
-                <div class="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-xs font-bold text-emerald-400">
-                  TM
-                </div>
-                <div>
-                  <div class="text-xs font-bold text-white flex items-center gap-1">
-                    tapmeals.yopal <i data-lucide="check-circle-2" class="w-3 h-3 text-cyan-400"></i>
-                  </div>
-                  <div class="text-[10px] text-emerald-400 flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> En línea ahora
-                  </div>
-                </div>
-              </div>
-              <div class="text-gray-400 text-xs">•••</div>
-            </div>
-
-            <!-- Chat Area -->
-            <div id="simChatScroll" class="py-4 px-2 space-y-3 min-h-[420px] max-h-[460px] overflow-y-auto custom-scrollbar flex flex-col justify-end text-xs">
-              
-              <!-- User Message Bubble -->
-              <div class="flex justify-end">
-                <div id="simUserBubble" class="max-w-[78%] bg-emerald-600 text-white rounded-2xl rounded-br-sm px-3.5 py-2">
-                  TapTap
-                </div>
-              </div>
-
-              <!-- Bot Response Preview -->
-              <div id="simBotContainer" class="flex flex-col space-y-2">
-                <div id="simBotBubble" class="max-w-[85%] bg-gray-800 text-gray-100 rounded-2xl rounded-bl-sm px-3.5 py-2.5 leading-relaxed whitespace-pre-line">
-                  ¡Hola atleta! 🍱⚡ Aquí tienes el menú oficial de TapMeals en Yopal.
-                </div>
-
-                <!-- Menu Image Attachment -->
-                <div id="simMenuAttachment" class="max-w-[75%] rounded-xl overflow-hidden border border-gray-700 shadow-md">
-                  <img src="/menu-image" alt="Menú TapMeals" class="w-full h-auto object-cover">
-                </div>
-              </div>
-
-              <!-- Public Comment Toast -->
-              <div id="simPublicCommentBox" class="hidden p-2.5 rounded-xl bg-purple-950/40 border border-purple-500/30 text-[11px] text-purple-200">
-                <span class="font-bold text-purple-400">Respuesta pública al comentario:</span>
-                <p id="simPublicCommentText" class="mt-0.5"></p>
-              </div>
-
-            </div>
-
-            <!-- Bottom Mock Bar -->
-            <div class="mt-2 pt-2 border-t border-gray-800/80 flex items-center justify-between px-3 text-[10px] text-gray-500">
-              <span>Enviar mensaje...</span>
-              <i data-lucide="image" class="w-3.5 h-3.5"></i>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- TAB 4: MENSAJES GLOBALES (GLOBAL SETTINGS) -->
-    <div id="tab-config" class="tab-content hidden space-y-6">
-      <div class="glass-card rounded-2xl p-6 sm:p-8 border border-gray-800 max-w-4xl mx-auto space-y-6">
-        <div>
-          <h2 class="text-xl font-bold font-display text-white flex items-center gap-2">
-            <i data-lucide="settings" class="w-5 h-5 text-emerald-400"></i> Ajustes Generales y Cooldowns
-          </h2>
-          <p class="text-xs sm:text-sm text-gray-400 mt-1">
-            Configura el mensaje por defecto para nuevos atletas y los tiempos de protección para evitar envíos dobles.
-          </p>
-        </div>
-
-        <form id="configForm" onsubmit="saveConfig(event)" class="space-y-5">
-          <!-- Keyword Trigger -->
-          <div class="space-y-1.5">
-            <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Palabra clave activadora principal:</label>
-            <input type="text" id="cfgTriggerKeyword" class="w-full px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white font-medium text-sm focus:outline-none focus:border-emerald-500" value="TapTap">
-          </div>
-
-          <!-- Official Welcome Message -->
-          <div class="space-y-1.5">
-            <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Mensaje Oficial por Defecto (DM):</label>
-            <textarea id="cfgWelcomeMessage" rows="4" class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-emerald-500 leading-relaxed"></textarea>
-          </div>
-
-          <!-- Comment Public Reply -->
-          <div class="space-y-1.5">
-            <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Respuesta pública a comentarios en Posts/Reels:</label>
-            <input type="text" id="cfgCommentReply" class="w-full px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-emerald-500">
-          </div>
-
-          <!-- Closed DMs Fallback -->
-          <div class="space-y-1.5">
-            <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Respuesta cuando el usuario tiene DMs bloqueados (Privacidad):</label>
-            <input type="text" id="cfgClosedDmsReply" class="w-full px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-emerald-500">
-          </div>
-
-          <!-- Cooldown & Scan Interval -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="space-y-1.5">
-              <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Cooldown Anti-Duplicados (Segundos):</label>
-              <input type="number" id="cfgCooldown" min="10" max="300" class="w-full px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-emerald-500" value="45">
-            </div>
-            <div class="space-y-1.5">
-              <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Intervalo de Escaneo (Segundos):</label>
-              <input type="number" step="0.5" id="cfgScanInterval" min="1.0" max="10.0" class="w-full px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-emerald-500" value="1.5">
-            </div>
-          </div>
-
-          <div class="pt-4 flex justify-end">
-            <button type="submit" class="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm transition flex items-center gap-2 shadow-lg shadow-emerald-500/20">
-              <i data-lucide="save" class="w-4 h-4"></i> Guardar Ajustes Globales
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- TAB 5: CARTA Y MENÚ (MENU MANAGER) -->
-    <div id="tab-menu" class="tab-content hidden space-y-6">
-      <div class="glass-card rounded-2xl p-6 sm:p-8 border border-gray-800 max-w-4xl mx-auto space-y-6">
-        <div>
-          <h2 class="text-xl font-bold font-display text-white flex items-center gap-2">
-            <i data-lucide="utensils" class="w-5 h-5 text-emerald-400"></i> Gestión de la Carta y Foto del Menú
-          </h2>
-          <p class="text-xs sm:text-sm text-gray-400 mt-1">
-            Esta es la imagen oficial en formato 4:5 (1080×1350 px) que el contestador adjunta en los DMs sin recortarse.
-          </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-          <!-- Menu Preview -->
-          <div class="space-y-3">
-            <span class="text-xs font-semibold text-gray-300">Vista Previa Actual (4:5 Ratio):</span>
-            <div class="rounded-2xl overflow-hidden border border-gray-700 bg-black/40 shadow-xl max-w-xs mx-auto">
-              <img id="menuImagePreview" src="/menu-image" alt="Carta Oficial TapMeals" class="w-full h-auto object-cover">
-            </div>
-          </div>
-
-          <!-- Menu Actions -->
-          <div class="space-y-6">
-            <div class="p-5 rounded-xl bg-gray-900/80 border border-gray-800 space-y-3">
-              <h3 class="text-sm font-semibold text-white flex items-center gap-2">
-                <i data-lucide="upload" class="w-4 h-4 text-emerald-400"></i> Reemplazar imagen de la carta
-              </h3>
-              <p class="text-xs text-gray-400">
-                Sube una nueva foto (.png o .jpg) para que el bot empiece a enviar la nueva versión de inmediato.
-              </p>
-              
-              <input type="file" id="menuFileInput" accept="image/*" class="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/10 file:text-emerald-400 hover:file:bg-emerald-500/20 cursor-pointer">
-              
-              <button onclick="uploadMenuImage()" class="w-full py-2.5 px-4 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-medium text-xs transition flex items-center justify-center gap-2 border border-gray-700">
-                <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Subir y Actualizar Carta
-              </button>
-            </div>
-
-            <div class="p-5 rounded-xl bg-gray-900/80 border border-gray-800 space-y-3">
-              <h3 class="text-sm font-semibold text-white flex items-center gap-2">
-                <i data-lucide="info" class="w-4 h-4 text-cyan-400"></i> Especificaciones del Menú Oficial
-              </h3>
-              <ul class="text-xs text-gray-300 space-y-1.5 list-disc list-inside">
-                <li>Resolución nativa: <strong>1080 × 1350 px (4:5)</strong></li>
-                <li>3 opciones estelares: Pechuga a la plancha, Fajitas de ternera magra, Bowl Doble Proteína.</li>
-                <li>Gramos reales pesados en crudo y macros certificados.</li>
-                <li>Cero aceites quemados ni fritos.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- PLATES CARDS WITH VALIDATED MACROS & SPECS -->
-        <div class="pt-6 border-t border-gray-800 space-y-4">
-          <div class="flex items-center justify-between">
-            <h3 class="text-sm font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
-              <i data-lucide="award" class="w-4 h-4"></i> Platos Estelares Certificados para Atletas en Yopal
-            </h3>
-            <span class="text-[11px] text-gray-400 font-mono">Entrega diaria: 11:45 AM - 1:15 PM</span>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            
-            <!-- Plato 1 -->
-            <div class="panel-card p-4 rounded-2xl border border-gray-800 space-y-3">
-              <div class="flex justify-between items-start">
-                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Definición Magra</span>
-                <span class="text-sm font-bold font-mono text-emerald-400">$13.500 COP</span>
-              </div>
-              <div>
-                <h4 class="font-bold text-white text-base">Pechuga a la Plancha Fit</h4>
-                <p class="text-xs text-gray-400 mt-0.5">150g pechuga cocida (214g cruda, 30% merma)</p>
-              </div>
-              <div class="grid grid-cols-3 gap-1.5 p-2 rounded-xl bg-black/40 border border-gray-800/80 text-center text-xs font-mono">
-                <div><span class="text-emerald-400 font-bold block text-sm">37-45g</span><span class="text-[10px] text-gray-400">Proteína</span></div>
-                <div><span class="text-amber-400 font-bold block text-sm">40g</span><span class="text-[10px] text-gray-400">Carbos</span></div>
-                <div><span class="text-cyan-400 font-bold block text-sm">395</span><span class="text-[10px] text-gray-400">Kcal</span></div>
-              </div>
-              <div class="text-[11px] text-gray-400 flex items-center gap-1.5">
-                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Bandeja BOPS 3 divisiones
-              </div>
-            </div>
-
-            <!-- Plato 2 -->
-            <div class="panel-card p-4 rounded-2xl border border-gray-800 space-y-3">
-              <div class="flex justify-between items-start">
-                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">Hierro & Creatina</span>
-                <span class="text-sm font-bold font-mono text-amber-400">$14.500 COP</span>
-              </div>
-              <div>
-                <h4 class="font-bold text-white text-base">Ternera Magra Llanera</h4>
-                <p class="text-xs text-gray-400 mt-0.5">140g ternera magra (186g cruda, 25% merma)</p>
-              </div>
-              <div class="grid grid-cols-3 gap-1.5 p-2 rounded-xl bg-black/40 border border-gray-800/80 text-center text-xs font-mono">
-                <div><span class="text-emerald-400 font-bold block text-sm">42g</span><span class="text-[10px] text-gray-400">Proteína</span></div>
-                <div><span class="text-amber-400 font-bold block text-sm">40g</span><span class="text-[10px] text-gray-400">Carbos</span></div>
-                <div><span class="text-cyan-400 font-bold block text-sm">410</span><span class="text-[10px] text-gray-400">Kcal</span></div>
-              </div>
-              <div class="text-[11px] text-gray-400 flex items-center gap-1.5">
-                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Pulpa de res llanera magra
-              </div>
-            </div>
-
-            <!-- Plato 3 -->
-            <div class="panel-card p-4 rounded-2xl border border-gray-800 space-y-3">
-              <div class="flex justify-between items-start">
-                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">Hipertrofia Plus</span>
-                <span class="text-sm font-bold font-mono text-purple-400">$15.000 COP</span>
-              </div>
-              <div>
-                <h4 class="font-bold text-white text-base">Bowl Doble Proteína</h4>
-                <p class="text-xs text-gray-400 mt-0.5">160g pollo cocido + 1 Huevo AA campesino</p>
-              </div>
-              <div class="grid grid-cols-3 gap-1.5 p-2 rounded-xl bg-black/40 border border-gray-800/80 text-center text-xs font-mono">
-                <div><span class="text-emerald-400 font-bold block text-sm">54g</span><span class="text-[10px] text-gray-400">Proteína</span></div>
-                <div><span class="text-amber-400 font-bold block text-sm">45g</span><span class="text-[10px] text-gray-400">Carbos</span></div>
-                <div><span class="text-cyan-400 font-bold block text-sm">495</span><span class="text-[10px] text-gray-400">Kcal</span></div>
-              </div>
-              <div class="text-[11px] text-gray-400 flex items-center gap-1.5">
-                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Máxima absorción post-entreno
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 6: DESPLIEGUE NUBE 24/7 (CLOUD SETUP) -->
-    <div id="tab-cloud" class="tab-content hidden space-y-6">
-      <div class="glass-card rounded-2xl p-6 sm:p-8 border border-gray-800 max-w-4xl mx-auto space-y-6">
-        <div>
-          <h2 class="text-xl font-bold font-display text-white flex items-center gap-2">
-            <i data-lucide="cloud" class="w-5 h-5 text-emerald-400"></i> ¿Cómo dejarlo 24/7 con el computador apagado?
-          </h2>
-          <p class="text-xs sm:text-sm text-gray-400 mt-1">
-            Aquí tienes las 2 soluciones definitivas para que tu contestador de TapMeals responda automáticamente todo el día y la noche sin importar si apagas tu PC.
-          </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
-          <!-- Option A: ManyChat Official (Recommended) -->
-          <div class="rounded-2xl bg-gradient-to-b from-emerald-950/40 to-gray-900 border-2 border-emerald-500/40 p-6 space-y-4 shadow-xl">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">MÉTODO OFICIAL DE META</span>
-              <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400"></i>
-            </div>
-            
-            <h3 class="text-lg font-bold text-white">1. ManyChat Cloud (Oficial)</h3>
-            <p class="text-xs text-gray-300 leading-relaxed">
-              Es el socio verificado oficial de Instagram. Corre directamente en los servidores de Meta. <strong>No requiere tener el computador prendido</strong> y tiene <strong>0% de riesgo de baneo</strong>.
-            </p>
-
-            <div class="space-y-2 text-xs text-gray-300 bg-black/40 p-3.5 rounded-xl border border-gray-800">
-              <div class="font-semibold text-emerald-400">Pasos en 3 minutos:</div>
-              <ol class="list-decimal list-inside space-y-1">
-                <li>Crea cuenta gratis en <a href="https://manychat.com" target="_blank" class="text-cyan-400 underline">manychat.com</a></li>
-                <li>Conecta tu cuenta <code class="text-emerald-300">@tapmeals.yopal</code></li>
-                <li>Crea la regla: <em>"Cuando comenten o envíen <strong>TapTap</strong> o palabras clave $\rightarrow$ Enviar DM con texto y carta"</em>.</li>
-              </ol>
-            </div>
-          </div>
-
-          <!-- Option B: Render.com Cloud Webhook -->
-          <div class="rounded-2xl bg-gray-900 border border-gray-800 p-6 space-y-4">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">SERVIDOR EN LA NUBE GRATIS</span>
-              <i data-lucide="server" class="w-5 h-5 text-cyan-400"></i>
-            </div>
-
-            <h3 class="text-lg font-bold text-white">2. Servidor Cloud en Render</h3>
-            <p class="text-xs text-gray-300 leading-relaxed">
-              Tu servidor ya está desplegado y activo en Render de forma 100% gratuita. Puedes entrar desde tu teléfono en cualquier momento:
-            </p>
-
-            <div class="space-y-2 text-xs text-gray-300 bg-black/40 p-3.5 rounded-xl border border-gray-800">
-              <div class="font-semibold text-cyan-400">URL de Producción Cloud:</div>
-              <div class="truncate text-gray-300 font-mono text-xs">
-                <a href="https://tapmeals-bot-panel.onrender.com" target="_blank" class="text-emerald-400 underline hover:text-emerald-300">
-                  https://tapmeals-bot-panel.onrender.com
-                </a>
-              </div>
-            </div>
-
-            <div class="space-y-2 pt-1">
-              <a href="https://tapmeals-bot-panel.onrender.com" target="_blank" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-bold text-xs sm:text-sm text-center transition flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20">
-                <i data-lucide="external-link" class="w-4 h-4"></i> Abrir Panel en la Nube
-              </a>
-              <a href="https://github.com/julianpolis1234-lab/tapmeals-panel-cloud" target="_blank" class="w-full py-2 px-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium text-xs text-center transition flex items-center justify-center gap-2 border border-gray-700">
-                <i data-lucide="github" class="w-4 h-4"></i> Ver Repositorio GitHub
-              </a>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 7: AUTOMATIZACIONES Y COCINA (TOOLS) -->
-    <div id="tab-tools" class="tab-content hidden space-y-6">
+    <!-- =======================================================================
+         TAB 2: CARTA & MACROS (SHOWCASE TÉCNICO DE ALTO RENDIMIENTO)
+         ======================================================================= -->
+    <section id="tab-menu" class="tab-content hidden space-y-6">
       
-      <!-- CALCULADORA INTERACTIVA DE MACROS PARA ATLETAS (INNOVACIÓN 3) -->
-      <div class="glass-card rounded-2xl p-6 border border-emerald-500/30 space-y-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-lg font-bold font-display text-white flex items-center gap-2">
-              <i data-lucide="flame" class="w-5 h-5 text-amber-400"></i> Calculadora Interactiva de Macros para Atletas (Yopal Fitness)
-            </h2>
-            <p class="text-xs text-gray-400 mt-1">
-              Calcula la meta de proteína y calorías según el peso del cliente ($2.0\text{g de proteína / kg}$) y recomienda el plato exacto de TapMeals.
-            </p>
-          </div>
-          <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/25">
-            Herramienta de Cierre de Ventas
+      <!-- Header Toolbar -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
+        <div>
+          <h2 class="text-xl font-bold font-display tracking-wide text-white flex items-center gap-2">
+            <span class="text-emerald-400">🍱</span> Carta & Especificaciones Nutricionales
+          </h2>
+          <p class="text-xs text-white/50 font-mono mt-0.5">
+            Alimentos fitness pesados en báscula digital · Merma inversa certificada · Bandejas BOPS 3 compartimentos
+          </p>
+        </div>
+        <div class="flex items-center gap-2 text-xs font-mono">
+          <span class="px-2.5 py-1 rounded bg-white/[0.06] border border-white/[0.08] text-white/70">
+            Horario Despacho: 11:45 AM - 1:15 PM
           </span>
         </div>
+      </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-          <div class="space-y-1">
-            <label class="text-gray-300 font-semibold">Peso del atleta (kg):</label>
-            <input type="number" id="athleteWeight" value="75" min="40" max="150" oninput="calculateAthleteMacros()" class="w-full px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-emerald-400 font-bold text-sm focus:outline-none focus:border-emerald-500">
+      <!-- 3 Master Plates: Industrial Specification Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        <!-- Plato 1: Pechuga a la Plancha Fit -->
+        <article class="hairline-card p-5 flex flex-col justify-between space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-start justify-between">
+              <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">
+                Definición Magra
+              </span>
+              <span class="num text-base font-bold text-emerald-400">$13.500 COP</span>
+            </div>
+
+            <div>
+              <h3 class="text-base font-bold text-white tracking-tight">Pechuga a la Plancha Fit</h3>
+              <p class="text-xs text-white/50 font-mono mt-0.5">150g pechuga cocida (214g cruda · 30% merma)</p>
+            </div>
+
+            <!-- Stacked Macro Bar -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-[10px] font-mono text-white/60">
+                <span class="text-sky-400">Prot 42g</span>
+                <span class="text-amber-400">Carb 38g</span>
+                <span class="text-emerald-400">Grasa 7g</span>
+                <span class="text-white font-semibold">385 Kcal</span>
+              </div>
+              <div class="h-1.5 w-full bg-white/[0.06] rounded-full overflow-hidden flex">
+                <div class="bg-sky-400 h-full w-[48%]" title="Proteína"></div>
+                <div class="bg-amber-400 h-full w-[43%]" title="Carbohidratos"></div>
+                <div class="bg-emerald-400 h-full w-[9%]" title="Grasas"></div>
+              </div>
+            </div>
+
+            <!-- Technical Breakdown -->
+            <ul class="text-[11px] font-mono text-white/60 space-y-1 border-t border-white/[0.06] pt-2">
+              <li class="flex justify-between">
+                <span>Carbohidrato:</span>
+                <span class="text-white/80">Arroz integral o papa vapor (120g)</span>
+              </li>
+              <li class="flex justify-between">
+                <span>Vegetal:</span>
+                <span class="text-white/80">Zanahoria y habichuela al vapor</span>
+              </li>
+              <li class="flex justify-between">
+                <span>Aceite:</span>
+                <span class="text-emerald-400">Cero fritos ni aceites quemados</span>
+              </li>
+            </ul>
           </div>
-          <div class="space-y-1">
-            <label class="text-gray-300 font-semibold">Objetivo del atleta:</label>
-            <select id="athleteGoal" onchange="calculateAthleteMacros()" class="w-full px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500">
-              <option value="definicion">Definición Muscular (Déficit Limpio)</option>
-              <option value="volumen">Volumen Magro / Rendimiento</option>
-              <option value="mantenimiento">Mantenimiento y Salud Fit</option>
-            </select>
+
+          <div class="pt-2 border-t border-white/[0.06] flex items-center justify-between text-[10px] font-mono text-white/40">
+            <span>Empaque: BOPS 3 divisiones</span>
+            <span class="text-emerald-400 font-semibold">Alta Demanda</span>
           </div>
-          <div class="space-y-1">
-            <label class="text-gray-300 font-semibold">Gimnasio donde entrena:</label>
-            <input type="text" id="athleteGym" value="SmartFit Unicentro Yopal" oninput="calculateAthleteMacros()" class="w-full px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500">
+        </article>
+
+        <!-- Plato 2: Ternera Magra Llanera -->
+        <article class="hairline-card p-5 flex flex-col justify-between space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-start justify-between">
+              <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-semibold">
+                Hierro & Creatina
+              </span>
+              <span class="num text-base font-bold text-amber-400">$14.500 COP</span>
+            </div>
+
+            <div>
+              <h3 class="text-base font-bold text-white tracking-tight">Ternera Magra Llanera</h3>
+              <p class="text-xs text-white/50 font-mono mt-0.5">140g ternera magra (186g cruda · 25% merma)</p>
+            </div>
+
+            <!-- Stacked Macro Bar -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-[10px] font-mono text-white/60">
+                <span class="text-sky-400">Prot 44g</span>
+                <span class="text-amber-400">Carb 40g</span>
+                <span class="text-amber-400">Grasa 9g</span>
+                <span class="text-white font-semibold">415 Kcal</span>
+              </div>
+              <div class="h-1.5 w-full bg-white/[0.06] rounded-full overflow-hidden flex">
+                <div class="bg-sky-400 h-full w-[47%]" title="Proteína"></div>
+                <div class="bg-amber-400 h-full w-[43%]" title="Carbohidratos"></div>
+                <div class="bg-amber-500 h-full w-[10%]" title="Grasas"></div>
+              </div>
+            </div>
+
+            <!-- Technical Breakdown -->
+            <ul class="text-[11px] font-mono text-white/60 space-y-1 border-t border-white/[0.06] pt-2">
+              <li class="flex justify-between">
+                <span>Corte:</span>
+                <span class="text-white/80">Pulpa negra llanera desgrasada</span>
+              </li>
+              <li class="flex justify-between">
+                <span>Carbohidrato:</span>
+                <span class="text-white/80">Plátano maduro al horno (110g)</span>
+              </li>
+              <li class="flex justify-between">
+                <span>Micronutrientes:</span>
+                <span class="text-amber-400">Hierro hemo + B12 activo</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="pt-2 border-t border-white/[0.06] flex items-center justify-between text-[10px] font-mono text-white/40">
+            <span>Empaque: BOPS 3 divisiones</span>
+            <span class="text-amber-400 font-semibold">Fuerza & Recuperación</span>
+          </div>
+        </article>
+
+        <!-- Plato 3: Bowl Doble Proteína (Hipertrofia) -->
+        <article class="hairline-card p-5 flex flex-col justify-between space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-start justify-between">
+              <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 font-semibold">
+                Hipertrofia Plus
+              </span>
+              <span class="num text-base font-bold text-purple-400">$15.000 COP</span>
+            </div>
+
+            <div>
+              <h3 class="text-base font-bold text-white tracking-tight">Bowl Doble Proteína</h3>
+              <p class="text-xs text-white/50 font-mono mt-0.5">160g pechuga cocida + 1 Huevo AA campesino</p>
+            </div>
+
+            <!-- Stacked Macro Bar -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-[10px] font-mono text-white/60">
+                <span class="text-sky-400">Prot 56g</span>
+                <span class="text-amber-400">Carb 44g</span>
+                <span class="text-purple-400">Grasa 11g</span>
+                <span class="text-white font-semibold">495 Kcal</span>
+              </div>
+              <div class="h-1.5 w-full bg-white/[0.06] rounded-full overflow-hidden flex">
+                <div class="bg-sky-400 h-full w-[51%]" title="Proteína"></div>
+                <div class="bg-amber-400 h-full w-[39%]" title="Carbohidratos"></div>
+                <div class="bg-purple-400 h-full w-[10%]" title="Grasas"></div>
+              </div>
+            </div>
+
+            <!-- Technical Breakdown -->
+            <ul class="text-[11px] font-mono text-white/60 space-y-1 border-t border-white/[0.06] pt-2">
+              <li class="flex justify-between">
+                <span>Proteína combinada:</span>
+                <span class="text-white/80">Aminograma completo de alta absorción</span>
+              </li>
+              <li class="flex justify-between">
+                <span>Carbohidrato:</span>
+                <span class="text-white/80">Arroz parbolizado fit (130g)</span>
+              </li>
+              <li class="flex justify-between">
+                <span>Destino:</span>
+                <span class="text-purple-400">Atletas de alto volumen calórico</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="pt-2 border-t border-white/[0.06] flex items-center justify-between text-[10px] font-mono text-white/40">
+            <span>Empaque: Bowl Hermético 32oz</span>
+            <span class="text-purple-400 font-semibold">Máxima Densidad</span>
+          </div>
+        </article>
+      </div>
+
+      <!-- Menu Image Preview & 4:5 Delivery Manager -->
+      <div class="hairline-card p-5 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+        <div class="md:col-span-4 flex justify-center">
+          <div class="relative w-48 aspect-[4/5] rounded-xl overflow-hidden border border-white/10 bg-black/50 shadow-lg">
+            <img id="menuImagePreview" src="/menu-image" alt="Carta Oficial 4:5 TapMeals" class="w-full h-full object-cover">
+            <div class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/80 text-[9px] font-mono text-white/60">
+              1080×1350 (4:5)
+            </div>
           </div>
         </div>
 
-        <!-- Calculated Macros Output -->
-        <div class="p-4 rounded-xl bg-black/50 border border-gray-800 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-          <div class="p-3 rounded-lg bg-gray-900/60 border border-gray-800">
-            <span class="text-[11px] text-gray-400 block">Proteína Diaria Recomendada:</span>
-            <span id="resMacroProteina" class="text-xl font-bold font-mono text-emerald-400">150g / día</span>
-            <span class="text-[10px] text-gray-500 block mt-0.5">Estándar de 2.0 g/kg</span>
+        <div class="md:col-span-8 space-y-4">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <i data-lucide="image" class="w-4 h-4 text-emerald-400"></i> Imagen Oficial de la Carta (Instagram 4:5)
+            </h3>
+            <p class="text-xs text-white/50 font-mono mt-1 leading-relaxed">
+              Esta es la imagen exacta que el contestador automático envía a los clientes en Instagram y WhatsApp cuando escriben <em>"TapTap"</em>, <em>"precios"</em> o <em>"menú"</em>. No se recorta en la bandeja de entrada.
+            </p>
           </div>
-          <div class="p-3 rounded-lg bg-gray-900/60 border border-gray-800">
-            <span class="text-[11px] text-gray-400 block">Calorías Estimadas:</span>
-            <span id="resMacroCalorias" class="text-xl font-bold font-mono text-amber-400">2.100 kcal</span>
-            <span class="text-[10px] text-gray-500 block mt-0.5">Cero aceites quemados</span>
-          </div>
-          <div class="p-3 rounded-lg bg-gray-900/60 border border-gray-800">
-            <span class="text-[11px] text-gray-400 block">Plato TapMeals Sugerido:</span>
-            <span id="resMacroPlato" class="text-sm font-bold text-white block mt-1">Bowl Doble Proteína (54g)</span>
-            <span class="text-[10px] text-emerald-400 block">Cubre el 36% de su día</span>
+
+          <div class="p-4 rounded-lg bg-black/40 border border-white/[0.06] space-y-3">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <input type="file" id="menuFileInput" accept="image/*" class="text-xs font-mono text-white/60 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-mono file:bg-white/[0.08] file:text-white hover:file:bg-white/[0.12] cursor-pointer">
+              
+              <button onclick="uploadMenuImage()" class="px-4 py-2 rounded bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs font-mono transition flex items-center gap-1.5 shrink-0">
+                <i data-lucide="upload" class="w-3.5 h-3.5"></i> Actualizar Carta
+              </button>
+            </div>
+            <p class="text-[10px] font-mono text-white/40">
+              Recomendación técnica: PNG o JPG de alta nitidez con texto legible en dispositivos móviles de 375px.
+            </p>
           </div>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+    </section>
+
+    <!-- =======================================================================
+         TAB 3: COCINA MRP & OPERACIONES (CALCULADORA INVERSA & COMANDAS)
+         ======================================================================= -->
+    <section id="tab-tools" class="tab-content hidden space-y-6">
+      
+      <!-- Toolbar Header -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
+        <div>
+          <h2 class="text-xl font-bold font-display tracking-wide text-white flex items-center gap-2">
+            <span class="text-amber-400">🔥</span> Consola de Operaciones de Cocina & Merma (MRP)
+          </h2>
+          <p class="text-xs text-white/50 font-mono mt-0.5">
+            Cálculo matemático de compras en crudo · Control de rendimiento térmico · Generador express de pedidos
+          </p>
+        </div>
+        <div class="flex items-center gap-2 text-xs font-mono">
+          <span class="px-2.5 py-1 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400">
+            Margen Objetivo: 48.0%
+          </span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        <!-- Tool 1: WhatsApp Checkout Link Generator -->
-        <div class="glass-card rounded-2xl p-6 border border-gray-800 space-y-5">
-          <div>
-            <h2 class="text-lg font-bold font-display text-white flex items-center gap-2">
-              <i data-lucide="message-square" class="w-5 h-5 text-emerald-400"></i> Generador de Enlaces Directos a WhatsApp
-            </h2>
-            <p class="text-xs text-gray-400 mt-1">
-              Reduce la fricción de compra: genera links automáticos con el pedido y dirección prellenada para enviar por DM.
-            </p>
+        <!-- Left: Calculadora Inversa de Merma (7 cols) -->
+        <article class="lg:col-span-7 hairline-card p-5 space-y-5">
+          <header class="flex items-center justify-between border-b border-white/[0.06] pb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-[1px] bg-amber-400"></span>
+              <h3 class="font-mono text-xs font-bold uppercase tracking-wider text-white">Explosión de Materiales en Crudo (Batch Cocina)</h3>
+            </div>
+            <span class="text-[10px] font-mono text-white/40">Descongelamiento 07:00 AM</span>
+          </header>
+
+          <!-- Input Steppers -->
+          <div class="grid grid-cols-3 gap-3">
+            <div class="p-3 rounded-lg bg-black/40 border border-white/[0.06] text-center space-y-1">
+              <label class="text-[10px] font-mono uppercase text-white/50 block">Pechugas (150g):</label>
+              <input type="number" id="prepPechuga" min="0" value="8" oninput="calculateKitchenPrep()" class="w-full text-center py-2 rounded bg-white/[0.04] border border-white/[0.1] text-emerald-400 font-bold font-mono text-base focus:outline-none focus:border-emerald-400">
+            </div>
+            <div class="p-3 rounded-lg bg-black/40 border border-white/[0.06] text-center space-y-1">
+              <label class="text-[10px] font-mono uppercase text-white/50 block">Terneras (140g):</label>
+              <input type="number" id="prepTernera" min="0" value="5" oninput="calculateKitchenPrep()" class="w-full text-center py-2 rounded bg-white/[0.04] border border-white/[0.1] text-amber-400 font-bold font-mono text-base focus:outline-none focus:border-amber-400">
+            </div>
+            <div class="p-3 rounded-lg bg-black/40 border border-white/[0.06] text-center space-y-1">
+              <label class="text-[10px] font-mono uppercase text-white/50 block">Bowls (200g):</label>
+              <input type="number" id="prepBowls" min="0" value="4" oninput="calculateKitchenPrep()" class="w-full text-center py-2 rounded bg-white/[0.04] border border-white/[0.1] text-purple-400 font-bold font-mono text-base focus:outline-none focus:border-purple-400">
+            </div>
           </div>
 
-          <div class="space-y-3.5 text-xs">
-            <div class="space-y-1">
-              <label class="text-gray-300 font-semibold">Número de WhatsApp de TapMeals:</label>
-              <input type="text" id="waPhone" value="573100000000" class="w-full px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white font-mono text-xs focus:outline-none focus:border-emerald-500">
+          <!-- Live Material Output Rows -->
+          <div class="space-y-2 font-mono text-xs">
+            <div class="p-3 rounded-lg bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                <span class="text-white/80">Pechuga de pollo en crudo requerida (Merma 30%):</span>
+              </div>
+              <span id="resPolloCrudo" class="num font-bold text-emerald-400 text-sm">2.86 kg</span>
             </div>
 
-            <div class="space-y-1">
-              <label class="text-gray-300 font-semibold">Plato del Pedido:</label>
-              <select id="waDish" onchange="updateWhatsAppLink()" class="w-full px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500">
-                <option value="Pechuga a la Plancha (150g - $13.500)">1. Pechuga a la Plancha (150g - $13.500 COP)</option>
-                <option value="Fajitas de Ternera Magra (140g - $14.500)">2. Fajitas de Ternera Magra (140g - $14.500 COP)</option>
-                <option value="Bowl Doble Proteína (200g - $15.000)">3. Bowl Doble Proteína (200g - $15.000 COP)</option>
-              </select>
+            <div class="p-3 rounded-lg bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                <span class="text-white/80">Pulpa de res llanera en crudo (Merma 25%):</span>
+              </div>
+              <span id="resTerneraCruda" class="num font-bold text-amber-400 text-sm">0.93 kg</span>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
+            <div class="p-3 rounded-lg bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                <span class="text-white/80">Huevos campesinos tipo AA a cocer:</span>
+              </div>
+              <span id="resHuevos" class="num font-bold text-white text-sm">4 unidades</span>
+            </div>
+
+            <div class="p-3 rounded-lg bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-white/40"></span>
+                <span class="text-white/80">Bandejas BOPS 3 divisiones a alistar:</span>
+              </div>
+              <span id="resBandejas" class="num font-bold text-white text-sm">17 unidades</span>
+            </div>
+          </div>
+
+          <!-- Financial Projection Banner -->
+          <div class="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20 grid grid-cols-2 gap-4 font-mono">
+            <div>
+              <span class="text-[10px] uppercase text-emerald-400/80 block">Venta Bruta Proyectada:</span>
+              <span id="resVentaBruta" class="num text-xl font-bold text-emerald-300 block">$240.500 COP</span>
+            </div>
+            <div>
+              <span class="text-[10px] uppercase text-emerald-400/80 block">Margen Neto Estimado (48%):</span>
+              <span id="resMargenNeto" class="num text-xl font-bold text-white block">$115.400 COP</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Right: Comanda Express WhatsApp & Macro Athlete Tool (5 cols) -->
+        <div class="lg:col-span-5 space-y-6">
+          
+          <!-- Tool A: Generador de Comandas Express para WhatsApp -->
+          <article class="hairline-card p-5 space-y-4">
+            <header class="flex items-center justify-between border-b border-white/[0.06] pb-3">
+              <h3 class="font-mono text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
+                <i data-lucide="message-square" class="w-4 h-4 text-emerald-400"></i> Comanda Express WhatsApp
+              </h3>
+              <span class="text-[10px] font-mono text-emerald-400">1-Clic Enlace</span>
+            </header>
+
+            <div class="space-y-3 font-mono text-xs">
               <div class="space-y-1">
-                <label class="text-gray-300 font-semibold">Barrio / Zona Yopal:</label>
-                <input type="text" id="waAddress" value="Centro / Gym SmartFit" oninput="updateWhatsAppLink()" class="w-full px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500">
+                <label class="text-[10px] text-white/50 uppercase">Plato Seleccionado:</label>
+                <select id="waDish" onchange="updateWhatsAppLink()" class="w-full px-3 py-2 rounded bg-black/50 border border-white/10 text-white text-xs focus:outline-none focus:border-emerald-400">
+                  <option value="Pechuga a la Plancha Fit (150g - $13.500)">1. Pechuga a la Plancha Fit (150g - $13.500 COP)</option>
+                  <option value="Ternera Magra Llanera (140g - $14.500)">2. Ternera Magra Llanera (140g - $14.500 COP)</option>
+                  <option value="Bowl Doble Proteína (200g - $15.000)">3. Bowl Doble Proteína (200g - $15.000 COP)</option>
+                </select>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <div class="space-y-1">
+                  <label class="text-[10px] text-white/50 uppercase">Destino / Gimnasio:</label>
+                  <input type="text" id="waAddress" value="SmartFit Unicentro Yopal" oninput="updateWhatsAppLink()" class="w-full px-3 py-2 rounded bg-black/50 border border-white/10 text-white text-xs focus:outline-none focus:border-emerald-400">
+                </div>
+                <div class="space-y-1">
+                  <label class="text-[10px] text-white/50 uppercase">Método Pago:</label>
+                  <select id="waPayment" onchange="updateWhatsAppLink()" class="w-full px-3 py-2 rounded bg-black/50 border border-white/10 text-white text-xs focus:outline-none focus:border-emerald-400">
+                    <option value="Nequi">Nequi</option>
+                    <option value="Daviplata">Daviplata</option>
+                    <option value="Efectivo contraentrega">Efectivo</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Enlace Generado Box -->
+              <div class="p-3 rounded bg-black/60 border border-white/[0.08] space-y-2">
+                <div id="waGeneratedUrl" class="text-[10px] font-mono text-white/60 break-all select-all max-h-16 overflow-y-auto custom-scrollbar">
+                  Cargando enlace...
+                </div>
+                <div class="flex gap-2 pt-1">
+                  <button onclick="copyWhatsAppLink()" class="flex-1 py-2 rounded bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs transition flex items-center justify-center gap-1.5 shadow">
+                    <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copiar Comanda
+                  </button>
+                  <a id="waTestBtn" href="#" target="_blank" class="px-3 py-2 rounded bg-white/[0.08] hover:bg-white/[0.12] text-white text-xs font-semibold transition flex items-center justify-center gap-1.5">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Abrir
+                  </a>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Tool B: Calculadora Deportiva de Atletas (2.0g/kg) -->
+          <article class="hairline-card p-5 space-y-4">
+            <header class="flex items-center justify-between border-b border-white/[0.06] pb-3">
+              <h3 class="font-mono text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
+                <i data-lucide="user-check" class="w-4 h-4 text-sky-400"></i> Dosificador Nutricional de Atletas
+              </h3>
+              <span class="text-[10px] font-mono text-sky-400">2.0 g/kg</span>
+            </header>
+
+            <div class="grid grid-cols-2 gap-3 font-mono text-xs">
+              <div class="space-y-1">
+                <label class="text-[10px] text-white/50 uppercase">Peso Atleta (kg):</label>
+                <input type="number" id="athleteWeight" value="75" min="45" max="140" oninput="calculateAthleteMacros()" class="w-full px-3 py-2 rounded bg-black/50 border border-white/10 text-emerald-400 font-bold focus:outline-none focus:border-emerald-400">
               </div>
               <div class="space-y-1">
-                <label class="text-gray-300 font-semibold">Medio de Pago:</label>
-                <select id="waPayment" onchange="updateWhatsAppLink()" class="w-full px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500">
-                  <option value="Nequi">Nequi</option>
-                  <option value="Daviplata">Daviplata</option>
-                  <option value="Efectivo contraentrega">Efectivo</option>
+                <label class="text-[10px] text-white/50 uppercase">Objetivo:</label>
+                <select id="athleteGoal" onchange="calculateAthleteMacros()" class="w-full px-3 py-2 rounded bg-black/50 border border-white/10 text-white text-xs focus:outline-none focus:border-emerald-400">
+                  <option value="definicion">Definición Magra</option>
+                  <option value="volumen">Volumen / Hipertrofia</option>
+                  <option value="mantenimiento">Mantenimiento</option>
                 </select>
               </div>
             </div>
 
-            <!-- Generated Link Box -->
-            <div class="p-3.5 rounded-xl bg-gray-900/90 border border-emerald-500/30 space-y-2">
-              <span class="text-[11px] font-semibold text-emerald-400">Enlace Listo para Compartir:</span>
-              <div id="waGeneratedUrl" class="text-[11px] font-mono text-gray-300 break-all p-2 rounded-lg bg-black/60 border border-gray-800 select-all">
-                Cargando enlace...
+            <div class="p-3 rounded bg-black/40 border border-white/[0.06] space-y-1.5 font-mono text-xs">
+              <div class="flex justify-between">
+                <span class="text-white/50">Proteína Diaria Meta:</span>
+                <span id="resMacroProteina" class="num font-bold text-emerald-400">150g / día</span>
               </div>
-              <div class="flex gap-2 pt-1">
-                <button onclick="copyWhatsAppLink()" class="flex-1 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs transition flex items-center justify-center gap-1.5 shadow">
-                  <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copiar Enlace
-                </button>
-                <a id="waTestBtn" href="#" target="_blank" class="px-3.5 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-semibold transition flex items-center justify-center gap-1.5 border border-gray-700">
-                  <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Probar
-                </a>
+              <div class="flex justify-between">
+                <span class="text-white/50">Gasto Calórico Estimado:</span>
+                <span id="resMacroCalorias" class="num font-bold text-amber-400">2.100 kcal</span>
+              </div>
+              <div class="flex justify-between pt-1 border-t border-white/[0.06]">
+                <span class="text-white/50">Plato TapMeals Ideal:</span>
+                <span id="resMacroPlato" class="font-bold text-white">Bowl Doble Proteína (56g)</span>
               </div>
             </div>
-          </div>
-        </div>
+          </article>
 
-        <!-- Tool 2: Kitchen Prep MRP Calculator (Merma Inversa) -->
-        <div class="glass-card rounded-2xl p-6 border border-gray-800 space-y-5">
-          <div>
-            <h2 class="text-lg font-bold font-display text-white flex items-center gap-2">
-              <i data-lucide="calculator" class="w-5 h-5 text-cyan-400"></i> Calculadora Inversa de Merma y Cocina (MRP)
-            </h2>
-            <p class="text-xs text-gray-400 mt-1">
-              Calcula con exactitud matemática cuánto pollo y ternera en crudo descongelar para que nunca falte proteína ni haya desperdicio.
-            </p>
-          </div>
-
-          <!-- Order Inputs -->
-          <div class="grid grid-cols-3 gap-3 text-xs">
-            <div class="p-3 rounded-xl bg-gray-900 border border-gray-800 text-center space-y-1">
-              <span class="text-gray-400 block text-[11px]">Pechugas (150g):</span>
-              <input type="number" id="prepPechuga" min="0" value="8" oninput="calculateKitchenPrep()" class="w-full text-center py-1.5 rounded-lg bg-black/60 border border-gray-700 text-emerald-400 font-bold text-sm">
-            </div>
-            <div class="p-3 rounded-xl bg-gray-900 border border-gray-800 text-center space-y-1">
-              <span class="text-gray-400 block text-[11px]">Terneras (140g):</span>
-              <input type="number" id="prepTernera" min="0" value="5" oninput="calculateKitchenPrep()" class="w-full text-center py-1.5 rounded-lg bg-black/60 border border-gray-700 text-cyan-400 font-bold text-sm">
-            </div>
-            <div class="p-3 rounded-xl bg-gray-900 border border-gray-800 text-center space-y-1">
-              <span class="text-gray-400 block text-[11px]">Bowls (200g):</span>
-              <input type="number" id="prepBowls" min="0" value="4" oninput="calculateKitchenPrep()" class="w-full text-center py-1.5 rounded-lg bg-black/60 border border-gray-700 text-purple-400 font-bold text-sm">
-            </div>
-          </div>
-
-          <!-- Live Output Results -->
-          <div class="p-4 rounded-xl bg-black/40 border border-gray-800 space-y-2.5 text-xs">
-            <div class="flex justify-between items-center text-gray-300">
-              <span>🍗 Pechuga en crudo requerida (Merma 30%):</span>
-              <span id="resPolloCrudo" class="font-bold text-emerald-400 font-mono text-sm">2.86 kg</span>
-            </div>
-            <div class="flex justify-between items-center text-gray-300">
-              <span>🥩 Ternera en crudo requerida (Merma 25%):</span>
-              <span id="resTerneraCruda" class="font-bold text-cyan-400 font-mono text-sm">0.93 kg</span>
-            </div>
-            <div class="flex justify-between items-center text-gray-300">
-              <span>🥚 Huevos cocidos para Bowls:</span>
-              <span id="resHuevos" class="font-bold text-yellow-400 font-mono text-sm">4 unidades</span>
-            </div>
-            <div class="flex justify-between items-center text-gray-300">
-              <span>🍱 Bandejas 3 compartimentos BOPS:</span>
-              <span id="resBandejas" class="font-bold text-white font-mono text-sm">17 unidades</span>
-            </div>
-            <div class="pt-2 border-t border-gray-800 flex justify-between items-center">
-              <span class="text-gray-400">Venta Bruta Total Proyectada:</span>
-              <span id="resVentaBruta" class="font-bold text-emerald-300 text-sm font-mono">$240.500 COP</span>
-            </div>
-            <div class="flex justify-between items-center">
-              <span class="text-gray-400">Ganancia Neta Estimada (48% margen):</span>
-              <span id="resMargenNeto" class="font-bold text-white text-sm font-mono">$115.400 COP</span>
-            </div>
-          </div>
         </div>
 
       </div>
-    </div>
 
-    <!-- TAB 8: REGISTRO DE ACTIVIDAD (LOGS) -->
-    <div id="tab-logs" class="tab-content hidden space-y-4">
-      <div class="glass-card rounded-2xl p-6 border border-gray-800 space-y-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-lg font-bold font-display text-white flex items-center gap-2">
-              <i data-lucide="history" class="w-5 h-5 text-emerald-400"></i> Registro de Actividad en Tiempo Real
-            </h2>
-            <p class="text-xs text-gray-400 mt-0.5">Historial en vivo de comentarios detectados, DMs enviados y solicitudes aprobadas.</p>
-          </div>
-          <button onclick="clearLogs()" class="px-3 py-1.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs text-gray-300 transition border border-gray-700">
-            Limpiar Registro
-          </button>
+    </section>
+
+    <!-- =======================================================================
+         TAB 4: REGLAS DE RESPUESTA (COMMAND PALETTE STYLE LINEAR)
+         ======================================================================= -->
+    <section id="tab-rules" class="tab-content hidden space-y-4">
+      
+      <!-- Linear Style Toolbar -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
+        <div class="flex items-center space-x-3">
+          <h2 class="text-xl font-bold font-display tracking-wide text-white flex items-center gap-2">
+            <span class="text-emerald-400">⚡</span> Motor de Reglas & Automatización
+          </h2>
+          <span id="rulesCounterBadge" class="num text-[11px] font-mono px-2 py-0.5 rounded bg-white/[0.06] text-white/60 border border-white/[0.08]">
+            6 reglas
+          </span>
         </div>
 
-        <!-- Logs Table -->
-        <div class="overflow-x-auto rounded-xl border border-gray-800 bg-gray-900/60">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-gray-900 text-gray-400 uppercase text-[10px] tracking-wider border-b border-gray-800">
-              <tr>
-                <th class="py-3 px-4">Hora</th>
-                <th class="py-3 px-4">Canal</th>
-                <th class="py-3 px-4">Remitente</th>
-                <th class="py-3 px-4">Detalle de la acción</th>
-                <th class="py-3 px-4">Estado</th>
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <!-- Search input -->
+          <div class="relative flex-1 sm:w-64">
+            <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 transform -translate-y-1/2 text-white/30"></i>
+            <input type="text" id="rulesSearchInput" oninput="filterRulesByText()" placeholder="Buscar palabras clave (ej: smartfit)..." class="w-full pl-9 pr-3 py-1.5 rounded-lg bg-black/40 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-emerald-400">
+          </div>
+
+          <button onclick="resetRulesToDefaults()" class="px-3 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-white/70 hover:text-white font-mono text-xs transition border border-white/10 flex items-center gap-1.5 shrink-0" title="Restaurar las 6 reglas estándar">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Restaurar</span>
+          </button>
+
+          <button onclick="openRuleModal()" class="px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-bold font-mono text-xs transition flex items-center gap-1.5 shadow-sm shrink-0">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>Nueva Regla</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- High-Density Rules Table (Linear/Raycast style) -->
+      <div class="hairline-card overflow-hidden">
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-left font-mono text-xs">
+            <thead>
+              <tr class="border-b border-white/[0.08] bg-white/[0.02] text-[10px] uppercase tracking-wider text-white/40">
+                <th class="py-2.5 px-4 w-12 text-center">Estado</th>
+                <th class="py-2.5 px-3 min-w-[160px]">Nombre de la Regla</th>
+                <th class="py-2.5 px-3 min-w-[180px]">Palabras Clave Activadoras</th>
+                <th class="py-2.5 px-3 min-w-[100px]">Canal</th>
+                <th class="py-2.5 px-3 min-w-[220px]">Respuesta Asignada (DM)</th>
+                <th class="py-2.5 px-3 text-center w-16">Foto 4:5</th>
+                <th class="py-2.5 px-4 text-right w-28">Acciones</th>
               </tr>
             </thead>
-            <tbody id="logsTableBody" class="divide-y divide-gray-800/60">
+            <tbody id="rulesTableBody" class="divide-y divide-white/[0.04]">
+              <!-- Dynamic Rows inserted via JS -->
               <tr>
-                <td colspan="5" class="py-8 text-center text-gray-500">No hay eventos registrados recientemente.</td>
+                <td colspan="7" class="py-8 text-center text-white/30">Cargando reglas...</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-    </div>
+    </section>
 
-  </div>
-
-  <!-- MODAL: CREAR / EDITAR REGLA DE PALABRAS CLAVE (MOBILE BOTTOM SHEET & DESKTOP DIALOG) -->
-  <div id="ruleModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/80 backdrop-blur-sm hidden">
-    <div class="glass-card rounded-t-3xl sm:rounded-2xl p-5 sm:p-7 border border-white/10 max-w-xl w-full max-h-[92dvh] flex flex-col shadow-2xl relative bg-[#0f131a] overflow-hidden">
+    <!-- =======================================================================
+         TAB 5: SIMULADOR DE INSTAGRAM DM (HIGH-FIDELITY DARK MODE & TELEMETRY)
+         ======================================================================= -->
+    <section id="tab-simulator" class="tab-content hidden space-y-4">
       
-      <!-- Mobile Drag Handle -->
+      <!-- Toolbar Header -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
+        <div>
+          <h2 class="text-xl font-bold font-display tracking-wide text-white flex items-center gap-2">
+            <span class="text-emerald-400">📱</span> Simulador Instagram DM en Vivo
+          </h2>
+          <p class="text-xs text-white/50 font-mono mt-0.5">
+            Comprobación en tiempo real del motor de reglas · Cero respuestas duplicadas · Inspección de latencia
+          </p>
+        </div>
+        
+        <!-- Channel Selector Tabs -->
+        <div class="flex items-center space-x-1 p-1 rounded-lg bg-black/60 border border-white/10 text-xs font-mono">
+          <button onclick="setSimChannel('dm')" id="sim-chan-dm" class="sim-chan-btn px-3 py-1 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            Direct (DM)
+          </button>
+          <button onclick="setSimChannel('solicitud')" id="sim-chan-solicitud" class="sim-chan-btn px-3 py-1 rounded text-white/50 hover:text-white border border-transparent">
+            Solicitud
+          </button>
+          <button onclick="setSimChannel('comentario')" id="sim-chan-comentario" class="sim-chan-btn px-3 py-1 rounded text-white/50 hover:text-white border border-transparent">
+            Comentario
+          </button>
+        </div>
+      </div>
+
+      <!-- 3-Panel High Density Simulator Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Left: Quick Trigger Controls (4 cols) -->
+        <div class="lg:col-span-4 hairline-card p-5 space-y-4">
+          <div>
+            <h3 class="font-mono text-xs font-bold uppercase tracking-wider text-white">Disparador de Mensajes</h3>
+            <p class="text-[11px] text-white/40 font-mono mt-1">Escribe o toca una píldora rápida para evaluar.</p>
+          </div>
+
+          <!-- Quick Test Pills -->
+          <div class="space-y-1.5">
+            <span class="text-[10px] uppercase font-mono tracking-wider text-white/40">Pruebas directas de 1 toque:</span>
+            <div class="flex flex-wrap gap-1.5">
+              <button onclick="fillSimInput('TapTap')" class="px-2.5 py-1 rounded bg-white/[0.06] hover:bg-emerald-500/20 text-emerald-400 border border-white/10 font-mono text-xs transition">TapTap</button>
+              <button onclick="fillSimInput('cuanto cuestan los almuerzos?')" class="px-2.5 py-1 rounded bg-white/[0.06] hover:bg-sky-500/20 text-sky-400 border border-white/10 font-mono text-xs transition">Precios</button>
+              <button onclick="fillSimInput('llevan a smartfit unicentro?')" class="px-2.5 py-1 rounded bg-white/[0.06] hover:bg-amber-500/20 text-amber-400 border border-white/10 font-mono text-xs transition">SmartFit</button>
+              <button onclick="fillSimInput('cuanta proteina y macros tienen?')" class="px-2.5 py-1 rounded bg-white/[0.06] hover:bg-purple-500/20 text-purple-400 border border-white/10 font-mono text-xs transition">Macros</button>
+              <button onclick="fillSimInput('cobertura de domicilios')" class="px-2.5 py-1 rounded bg-white/[0.06] hover:bg-white/20 text-white/80 border border-white/10 font-mono text-xs transition">Domicilios</button>
+            </div>
+          </div>
+
+          <!-- Message Textarea -->
+          <div class="space-y-1.5">
+            <label class="text-[10px] uppercase font-mono tracking-wider text-white/40">Mensaje del cliente:</label>
+            <textarea id="simInputText" rows="3" class="w-full px-3.5 py-2.5 rounded-lg bg-black/60 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-emerald-400 resize-none" placeholder="Escribe 'TapTap', 'precios', etc..."></textarea>
+          </div>
+
+          <button onclick="runSimulatorTest()" class="w-full py-2.5 px-4 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs font-mono transition flex items-center justify-center gap-2 shadow-sm">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i> Evaluar Disparo de Regla
+          </button>
+
+          <!-- Telemetry Inspector Panel -->
+          <div id="simDiagnostic" class="p-3.5 rounded-lg bg-black/60 border border-white/[0.08] space-y-2 font-mono text-xs hidden">
+            <div class="flex items-center justify-between">
+              <span class="text-white/40 text-[10px] uppercase">Regla Activada:</span>
+              <span id="simResultBadge" class="px-2 py-0.5 rounded text-[10px] font-bold"></span>
+            </div>
+            <div class="text-[11px] text-white/70 space-y-1">
+              <div class="flex justify-between">
+                <span class="text-white/40">Diagnóstico:</span>
+                <span id="simReasonText" class="text-white text-right"></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-white/40">Latencia estimada:</span>
+                <span class="text-emerald-400">~64 ms</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center: Instagram Direct Chat View (Mockup Fiel Dark Mode) (5 cols) -->
+        <div class="lg:col-span-5 flex justify-center">
+          <div class="w-full max-w-[360px] rounded-2xl bg-[#090a0f] border border-white/10 p-3 shadow-2xl space-y-3">
+            
+            <!-- Instagram Direct Top Header -->
+            <div class="flex items-center justify-between border-b border-white/[0.08] pb-2.5 px-1">
+              <div class="flex items-center space-x-2.5">
+                <div class="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center font-bold text-xs text-emerald-400">
+                  TM
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-white flex items-center gap-1 font-sans">
+                    tapmeals.yopal 
+                    <span class="text-sky-400">●</span>
+                  </div>
+                  <div class="text-[10px] text-emerald-400 font-mono flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> En línea ahora
+                  </div>
+                </div>
+              </div>
+              <div class="text-white/30 text-xs font-mono">•••</div>
+            </div>
+
+            <!-- Messages Stream -->
+            <div id="simChatScroll" class="py-2 px-1 space-y-3 min-h-[380px] max-h-[440px] overflow-y-auto custom-scrollbar flex flex-col justify-end text-xs">
+              
+              <!-- Customer Bubble -->
+              <div class="flex justify-end">
+                <div id="simUserBubble" class="chat-bubble-user max-w-[80%] bg-emerald-600 text-white px-3.5 py-2 font-sans leading-relaxed text-xs">
+                  TapTap
+                </div>
+              </div>
+
+              <!-- Bot Response Preview Container -->
+              <div id="simBotContainer" class="flex flex-col space-y-2">
+                <div id="simBotBubble" class="chat-bubble-bot max-w-[85%] bg-white/[0.08] text-white px-3.5 py-2.5 font-sans leading-relaxed text-xs whitespace-pre-line border border-white/[0.06]">
+                  ¡Hola atleta! 🍱⚡ Aquí tienes el menú oficial de TapMeals en Yopal.
+                </div>
+
+                <!-- Menu Image Attachment -->
+                <div id="simMenuAttachment" class="max-w-[75%] rounded-xl overflow-hidden border border-white/10 shadow-md">
+                  <img src="/menu-image" alt="Menú TapMeals" class="w-full h-auto object-cover">
+                </div>
+              </div>
+
+              <!-- Public Comment Box (If applicable) -->
+              <div id="simPublicCommentBox" class="hidden p-2.5 rounded-lg bg-purple-950/40 border border-purple-500/30 text-[11px] font-mono text-purple-200">
+                <span class="font-bold text-purple-400 block text-[10px]">RESPUESTA AL COMENTARIO PÚBLICO:</span>
+                <p id="simPublicCommentText" class="mt-0.5 text-xs font-sans"></p>
+              </div>
+
+            </div>
+
+            <!-- Mock Bottom Bar -->
+            <div class="pt-2 border-t border-white/[0.08] flex items-center justify-between px-2 text-[10px] font-mono text-white/30">
+              <span>Enviar mensaje como cliente...</span>
+              <i data-lucide="image" class="w-3.5 h-3.5"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Diagnostic Rule Trace (3 cols) -->
+        <div class="lg:col-span-3 hairline-card p-4 space-y-3 font-mono text-xs">
+          <div class="border-b border-white/[0.06] pb-2">
+            <h3 class="text-[11px] font-bold uppercase tracking-wider text-white">Traza de Ejecución</h3>
+            <span class="text-[10px] text-white/40">Filtro de coincidencias</span>
+          </div>
+
+          <div id="simTraceLog" class="space-y-2 text-[11px] text-white/60">
+            <div class="p-2 rounded bg-black/40 border border-white/[0.04]">
+              <span class="text-emerald-400 block font-bold">1. Cooldown Check</span>
+              <span class="text-white/40 text-[10px]">Pasa filtro de 45 segundos anti-duplicados</span>
+            </div>
+            <div class="p-2 rounded bg-black/40 border border-white/[0.04]">
+              <span class="text-sky-400 block font-bold">2. Canal Detectado</span>
+              <span class="text-white/40 text-[10px]">Instagram DM Entrante</span>
+            </div>
+            <div class="p-2 rounded bg-black/40 border border-white/[0.04]">
+              <span class="text-amber-400 block font-bold">3. Normalización</span>
+              <span class="text-white/40 text-[10px]">Cero tildes, minúsculas, trim</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =======================================================================
+         TAB 6: SALUDOS & AJUSTES GLOBALES (CLEAN SETTINGS)
+         ======================================================================= -->
+    <section id="tab-config" class="tab-content hidden space-y-6">
+      
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
+        <div>
+          <h2 class="text-xl font-bold font-display tracking-wide text-white flex items-center gap-2">
+            <span class="text-emerald-400">⚙️</span> Ajustes Globales & Cooldowns
+          </h2>
+          <p class="text-xs text-white/50 font-mono mt-0.5">
+            Configuración del contestador por defecto, tiempos de protección y respuestas públicas en Reels
+          </p>
+        </div>
+      </div>
+
+      <div class="hairline-card p-6 max-w-3xl mx-auto space-y-5">
+        <form id="configForm" onsubmit="saveConfig(event)" class="space-y-4 font-mono text-xs">
+          
+          <div class="space-y-1">
+            <label class="text-white/60 text-[11px] uppercase tracking-wider">Palabra clave activadora por defecto:</label>
+            <input type="text" id="cfgTriggerKeyword" class="w-full px-3.5 py-2.5 rounded-lg bg-black/50 border border-white/10 text-emerald-400 font-bold focus:outline-none focus:border-emerald-400" value="TapTap">
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-white/60 text-[11px] uppercase tracking-wider">Mensaje oficial de bienvenida (DM):</label>
+            <textarea id="cfgWelcomeMessage" rows="4" class="w-full px-3.5 py-2.5 rounded-lg bg-black/50 border border-white/10 text-white font-sans text-xs focus:outline-none focus:border-emerald-400 leading-relaxed"></textarea>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-white/60 text-[11px] uppercase tracking-wider">Respuesta pública a comentarios en Posts/Reels:</label>
+            <input type="text" id="cfgCommentReply" class="w-full px-3.5 py-2 rounded-lg bg-black/50 border border-white/10 text-white font-sans text-xs focus:outline-none focus:border-emerald-400">
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-white/60 text-[11px] uppercase tracking-wider">Respuesta si el usuario tiene DMs cerrados por privacidad:</label>
+            <input type="text" id="cfgClosedDmsReply" class="w-full px-3.5 py-2 rounded-lg bg-black/50 border border-white/10 text-white font-sans text-xs focus:outline-none focus:border-emerald-400">
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <div class="space-y-1">
+              <label class="text-white/60 text-[11px] uppercase tracking-wider">Cooldown Anti-Spam (Segundos):</label>
+              <input type="number" id="cfgCooldown" min="10" max="300" class="w-full px-3.5 py-2 rounded-lg bg-black/50 border border-white/10 text-white focus:outline-none focus:border-emerald-400" value="45">
+            </div>
+            <div class="space-y-1">
+              <label class="text-white/60 text-[11px] uppercase tracking-wider">Intervalo de Escaneo (Segundos):</label>
+              <input type="number" step="0.5" id="cfgScanInterval" min="1.0" max="10.0" class="w-full px-3.5 py-2 rounded-lg bg-black/50 border border-white/10 text-white focus:outline-none focus:border-emerald-400" value="1.5">
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-white/[0.08] flex justify-end">
+            <button type="submit" class="px-5 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs font-mono transition flex items-center gap-1.5 shadow-sm">
+              <i data-lucide="save" class="w-3.5 h-3.5"></i> Guardar Ajustes
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </section>
+
+    <!-- =======================================================================
+         TAB 7: NUBE 24/7 (RENDER & MANYCHAT CLOUD TELEMETRY)
+         ======================================================================= -->
+    <section id="tab-cloud" class="tab-content hidden space-y-6">
+      
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
+        <div>
+          <h2 class="text-xl font-bold font-display tracking-wide text-white flex items-center gap-2">
+            <span class="text-sky-400">☁️</span> Infraestructura Cloud 24/7 (Sin Computador Encendido)
+          </h2>
+          <p class="text-xs text-white/50 font-mono mt-0.5">
+            Servidor productivo en la nube y configuración oficial de Instagram Meta
+          </p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        
+        <!-- Cloud Node 1: Render.com Cloud Webhook -->
+        <article class="hairline-card p-6 space-y-4">
+          <header class="flex items-center justify-between border-b border-white/[0.06] pb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-[1px] bg-emerald-400"></span>
+              <h3 class="font-mono text-xs font-bold uppercase tracking-wider text-white">Servidor Productivo Render Cloud</h3>
+            </div>
+            <span class="text-[10px] font-mono text-emerald-400 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
+              ACTIVO 24/7
+            </span>
+          </header>
+
+          <p class="text-xs text-white/60 font-mono leading-relaxed">
+            Tu servidor Flask está compilado y corriendo en los servidores de Render en la nube con certificado SSL automático y cero costo.
+          </p>
+
+          <div class="p-3.5 rounded-lg bg-black/50 border border-white/[0.06] space-y-1.5 font-mono text-xs">
+            <span class="text-white/40 text-[10px] uppercase">URL de Producción Cloud:</span>
+            <div class="truncate text-emerald-400">
+              <a href="https://tapmeals-bot-panel.onrender.com" target="_blank" class="hover:underline">
+                https://tapmeals-bot-panel.onrender.com
+              </a>
+            </div>
+          </div>
+
+          <div class="pt-2 flex flex-col sm:flex-row gap-2 font-mono text-xs">
+            <a href="https://tapmeals-bot-panel.onrender.com" target="_blank" class="flex-1 py-2.5 px-4 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-center transition flex items-center justify-center gap-1.5 shadow-sm">
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Abrir Panel Cloud
+            </a>
+            <a href="https://github.com/julianpolis1234-lab/tapmeals-panel-cloud" target="_blank" class="py-2.5 px-4 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-white text-center transition flex items-center justify-center gap-1.5 border border-white/10">
+              <i data-lucide="github" class="w-3.5 h-3.5"></i> Repositorio GitHub
+            </a>
+          </div>
+        </article>
+
+        <!-- Cloud Node 2: ManyChat Meta Cloud Official -->
+        <article class="hairline-card p-6 space-y-4">
+          <header class="flex items-center justify-between border-b border-white/[0.06] pb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-[1px] bg-sky-400"></span>
+              <h3 class="font-mono text-xs font-bold uppercase tracking-wider text-white">ManyChat Meta Cloud (Socio Oficial)</h3>
+            </div>
+            <span class="text-[10px] font-mono text-sky-400 px-2 py-0.5 rounded bg-sky-500/10 border border-sky-500/20">
+              0% RIESGO BANEO
+            </span>
+          </header>
+
+          <p class="text-xs text-white/60 font-mono leading-relaxed">
+            ManyChat opera directamente a través del Graph API oficial de Meta. Permite responder DMs instantáneamente sin requerir que dejes ningún script ni navegador abierto en tu computador.
+          </p>
+
+          <div class="p-3.5 rounded-lg bg-black/50 border border-white/[0.06] space-y-1.5 font-mono text-xs">
+            <span class="text-sky-400 font-semibold block text-[11px]">Pasos de conexión en 3 minutos:</span>
+            <ol class="list-decimal list-inside space-y-1 text-white/60 text-[11px]">
+              <li>Crea cuenta gratis en <a href="https://manychat.com" target="_blank" class="text-sky-300 underline">manychat.com</a></li>
+              <li>Conecta tu cuenta @tapmeals.yopal</li>
+              <li>Crea el disparador de palabra clave <code class="text-emerald-300">TapTap</code></li>
+            </ol>
+          </div>
+        </article>
+
+      </div>
+
+    </section>
+
+    <!-- =======================================================================
+         TAB 8: LOGS EN VIVO (HACKER TERMINAL MONOSPACE)
+         ======================================================================= -->
+    <section id="tab-logs" class="tab-content hidden space-y-4">
+      
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
+        <div>
+          <h2 class="text-xl font-bold font-display tracking-wide text-white flex items-center gap-2">
+            <span class="text-emerald-400">📟</span> Registro de Operaciones en Tiempo Real
+          </h2>
+          <p class="text-xs text-white/50 font-mono mt-0.5">
+            Streaming de eventos de clientes, respuestas de DMs y estado de peticiones
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 font-mono text-xs">
+          <button onclick="clearLogs()" class="px-3 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-white/70 hover:text-white transition border border-white/10 flex items-center gap-1.5">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Limpiar Registro
+          </button>
+        </div>
+      </div>
+
+      <div class="hairline-card overflow-hidden">
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-left font-mono text-xs">
+            <thead class="bg-white/[0.02] border-b border-white/[0.08] text-[10px] uppercase tracking-wider text-white/40">
+              <tr>
+                <th class="py-2.5 px-4 w-28">Timestamp</th>
+                <th class="py-2.5 px-3 w-20">Canal</th>
+                <th class="py-2.5 px-3 w-36">Remitente</th>
+                <th class="py-2.5 px-3">Detalle de la Acción</th>
+                <th class="py-2.5 px-4 text-right w-24">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="logsTableBody" class="divide-y divide-white/[0.04]">
+              <tr>
+                <td colspan="5" class="py-8 text-center text-white/30">Esperando eventos en vivo...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       MODAL BOTTOM SHEET: CREAR / EDITAR REGLAS (MOBILE + DESKTOP)
+       ========================================================================= -->
+  <div id="ruleModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/80 backdrop-blur-sm hidden">
+    <div class="hairline-card rounded-t-2xl sm:rounded-xl p-5 sm:p-6 max-w-xl w-full max-h-[92dvh] flex flex-col shadow-2xl relative bg-[#0e1117] overflow-hidden border border-white/10">
+      
+      <!-- Mobile Drag Indicator -->
       <div class="w-10 h-1 bg-white/20 rounded-full mx-auto mb-3 sm:hidden shrink-0"></div>
 
       <div class="flex items-center justify-between pb-3 border-b border-white/[0.08] shrink-0">
-        <h3 id="modalTitle" class="text-base sm:text-lg font-bold font-mono text-white flex items-center gap-2">
+        <h3 id="modalTitle" class="text-sm sm:text-base font-bold font-mono text-white flex items-center gap-2">
           <span class="w-2 h-2 rounded-[1px] bg-emerald-400"></span>
-          <span>Nueva Regla de Respuesta</span>
+          <span>Nueva Regla de Automatización</span>
         </h3>
-        <button type="button" onclick="closeRuleModal()" class="text-white/40 hover:text-white p-2 rounded-lg hover:bg-white/[0.06] transition min-w-[36px] min-h-[36px] flex items-center justify-center">
-          <i data-lucide="x" class="w-5 h-5"></i>
+        <button type="button" onclick="closeRuleModal()" class="text-white/40 hover:text-white p-1 rounded hover:bg-white/[0.06] transition" aria-label="Cerrar modal">
+          <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <form id="ruleForm" onsubmit="saveRuleForm(event)" class="flex-1 overflow-y-auto custom-scrollbar space-y-4 py-3 pr-1 text-xs">
+      <form id="ruleForm" onsubmit="saveRuleForm(event)" class="flex-1 overflow-y-auto custom-scrollbar space-y-4 py-3 pr-1 font-mono text-xs">
         <input type="hidden" id="modalRuleId" value="">
 
-        <!-- Rule Name -->
+        <!-- Name -->
         <div class="space-y-1">
-          <label class="text-white/70 font-semibold uppercase tracking-wider text-[11px]">Nombre descriptivo:</label>
-          <input type="text" id="modalRuleName" required placeholder="Ej: Convenio SmartFit, Horarios..." class="w-full px-3.5 py-2.5 rounded-xl bg-black/50 border border-white/10 text-white text-base sm:text-xs focus:outline-none focus:border-emerald-500">
+          <label class="text-white/60 text-[10px] uppercase tracking-wider">Nombre de la Regla:</label>
+          <input type="text" id="modalRuleName" required placeholder="Ej: Convenio SmartFit, Horarios..." class="w-full px-3 py-2 rounded bg-black/50 border border-white/10 text-white text-base sm:text-xs focus:outline-none focus:border-emerald-400">
         </div>
 
-        <!-- Keywords input -->
+        <!-- Keywords -->
         <div class="space-y-1">
-          <label class="text-white/70 font-semibold uppercase tracking-wider text-[11px]">Palabras clave activadoras (separadas por coma):</label>
-          <input type="text" id="modalRuleKeywords" required placeholder="smartfit, gym, gimnasio, descuento" class="w-full px-3.5 py-2.5 rounded-xl bg-black/50 border border-white/10 text-emerald-400 font-mono text-base sm:text-xs focus:outline-none focus:border-emerald-500">
-          <p class="text-[10px] text-white/40">Detecta sin importar mayúsculas, minúsculas o tildes.</p>
+          <label class="text-white/60 text-[10px] uppercase tracking-wider">Palabras Clave (separadas por coma):</label>
+          <input type="text" id="modalRuleKeywords" required placeholder="smartfit, gym, descuento, gimnasio" class="w-full px-3 py-2 rounded bg-black/50 border border-white/10 text-emerald-400 text-base sm:text-xs focus:outline-none focus:border-emerald-400">
+          <p class="text-[10px] text-white/40">Detecta sin importar mayúsculas, minúsculas ni tildes.</p>
         </div>
 
-        <!-- Channel & Match Type Selector -->
+        <!-- Channel & Match Type -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div class="space-y-1">
-            <label class="text-white/70 font-semibold uppercase tracking-wider text-[11px]">Canal de activación:</label>
-            <select id="modalRuleChannel" class="w-full px-3 py-2.5 rounded-xl bg-black/50 border border-white/10 text-white text-sm sm:text-xs focus:outline-none focus:border-emerald-500">
+            <label class="text-white/60 text-[10px] uppercase tracking-wider">Canal:</label>
+            <select id="modalRuleChannel" class="w-full px-3 py-2 rounded bg-black/50 border border-white/10 text-white text-sm sm:text-xs focus:outline-none focus:border-emerald-400">
               <option value="dm,solicitud">Mensajes Directos (DMs)</option>
               <option value="comentario">Solo Comentarios</option>
               <option value="dm,solicitud,comentario">Ambos Canales (DMs + Comentarios)</option>
             </select>
           </div>
           <div class="space-y-1">
-            <label class="text-white/70 font-semibold uppercase tracking-wider text-[11px]">Tipo de coincidencia:</label>
-            <select id="modalRuleMatchType" class="w-full px-3 py-2.5 rounded-xl bg-black/50 border border-white/10 text-white text-sm sm:text-xs focus:outline-none focus:border-emerald-500">
+            <label class="text-white/60 text-[10px] uppercase tracking-wider">Tipo Coincidencia:</label>
+            <select id="modalRuleMatchType" class="w-full px-3 py-2 rounded bg-black/50 border border-white/10 text-white text-sm sm:text-xs focus:outline-none focus:border-emerald-400">
               <option value="contains">Contiene la palabra</option>
               <option value="exact">Frase exacta</option>
-              <option value="starts_with">Empieza por la palabra</option>
+              <option value="starts_with">Empieza por</option>
             </select>
           </div>
         </div>
 
         <!-- Reply Text (DM) -->
         <div class="space-y-1">
-          <label class="text-white/70 font-semibold uppercase tracking-wider text-[11px]">Mensaje privado al DM:</label>
-          <textarea id="modalRuleReplyText" rows="3" required placeholder="¡Hola! 🍱⚡ Aquí tienes la respuesta..." class="w-full px-3.5 py-2 rounded-xl bg-black/50 border border-white/10 text-white text-base sm:text-xs focus:outline-none focus:border-emerald-500 leading-relaxed"></textarea>
+          <label class="text-white/60 text-[10px] uppercase tracking-wider">Respuesta privada al DM:</label>
+          <textarea id="modalRuleReplyText" rows="3" required placeholder="¡Hola! 🍱⚡ Aquí tienes..." class="w-full px-3 py-2 rounded bg-black/50 border border-white/10 text-white text-base sm:text-xs focus:outline-none focus:border-emerald-400 font-sans leading-relaxed"></textarea>
         </div>
 
-        <!-- Comment Reply (if applies) -->
+        <!-- Comment Reply -->
         <div class="space-y-1">
-          <label class="text-white/70 font-semibold uppercase tracking-wider text-[11px]">Respuesta pública al comentario (opcional):</label>
-          <input type="text" id="modalRuleCommentReply" placeholder="¡Te respondimos al DM! Revisa tu bandeja 📩⚡" class="w-full px-3.5 py-2 rounded-xl bg-black/50 border border-white/10 text-white text-base sm:text-xs focus:outline-none focus:border-emerald-500">
+          <label class="text-white/60 text-[10px] uppercase tracking-wider">Respuesta pública a comentario (opcional):</label>
+          <input type="text" id="modalRuleCommentReply" placeholder="¡Te respondimos al DM! Revisa tu bandeja 📩⚡" class="w-full px-3 py-2 rounded bg-black/50 border border-white/10 text-white text-base sm:text-xs focus:outline-none focus:border-emerald-400 font-sans">
         </div>
 
-        <!-- Attach Menu Image Checkbox -->
-        <div class="p-3 rounded-xl bg-black/40 border border-white/[0.08] flex items-center justify-between">
-          <div class="space-y-0.5 pr-2">
-            <span class="text-xs font-semibold text-white">¿Adjuntar foto de la carta 4:5?</span>
-            <p class="text-[10px] text-white/40">Envía la imagen oficial del menú junto al texto.</p>
+        <!-- Send Menu Image -->
+        <div class="p-3 rounded bg-black/40 border border-white/[0.06] flex items-center justify-between">
+          <div>
+            <span class="text-xs font-semibold text-white block">¿Adjuntar carta oficial 4:5?</span>
+            <span class="text-[10px] text-white/40">Envía la imagen del menú en alta resolución</span>
           </div>
-          <input type="checkbox" id="modalRuleSendImage" class="w-5 h-5 rounded text-emerald-500 focus:ring-emerald-400 bg-gray-800 border-gray-700 shrink-0">
+          <input type="checkbox" id="modalRuleSendImage" class="w-4 h-4 rounded text-emerald-500 focus:ring-emerald-400 bg-black/60 border-white/20">
         </div>
 
-        <!-- Sticky Form Footer -->
-        <div class="pt-3 border-t border-white/[0.08] flex justify-end gap-2 bg-[#0f131a] pb-[max(0.5rem,env(safe-area-inset-bottom))]">
-          <button type="button" onclick="closeRuleModal()" class="px-4 py-2.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-white/80 font-medium text-xs font-mono transition min-h-[44px]">
+        <!-- Footer Buttons -->
+        <div class="pt-3 border-t border-white/[0.08] flex justify-end gap-2">
+          <button type="button" onclick="closeRuleModal()" class="px-4 py-2 rounded bg-white/[0.06] hover:bg-white/[0.1] text-white/80 font-mono text-xs transition">
             Cancelar
           </button>
-          <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs font-mono transition flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 min-h-[44px]">
+          <button type="submit" class="px-5 py-2 rounded bg-emerald-500 hover:bg-emerald-400 text-black font-bold font-mono text-xs transition flex items-center gap-1.5 shadow-sm">
             <i data-lucide="check" class="w-3.5 h-3.5"></i> Guardar Regla
           </button>
         </div>
@@ -1161,20 +1374,19 @@
     </div>
   </div>
 
-  <!-- TOAST NOTIFICATION POPUP (Positioned safely above mobile dock) -->
-  <div id="toast" class="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-    <div class="flex items-center space-x-2.5 px-4 py-3 rounded-2xl bg-[#090a0f] border border-emerald-500/40 text-white shadow-2xl">
-      <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
-      <span id="toastMsg" class="text-xs font-mono">Configuración guardada</span>
+  <!-- =========================================================================
+       TOAST NOTIFICATION (ABOVE MOBILE DOCK)
+       ========================================================================= -->
+  <div id="toast" class="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-200 pointer-events-none">
+    <div class="flex items-center space-x-2.5 px-4 py-2.5 rounded-xl bg-[#0e1117] border border-emerald-500/40 text-white shadow-2xl">
+      <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+      <span id="toastMsg" class="text-xs font-mono">Operación completada</span>
     </div>
   </div>
 
-  <!-- FOOTER -->
-  <footer class="border-t border-white/[0.08] py-4 text-center text-xs text-white/30 font-mono mt-auto pb-24 md:pb-4">
-    TapMeals Yopal &bull; Emprendimiento Grupo 7 &bull; Liceo Moderno Celestín Freinet
-  </footer>
-
-  <!-- MOBILE BOTTOM DOCK (Thumb Zone Navigation / iOS & Linear Style) -->
+  <!-- =========================================================================
+       MOBILE BOTTOM DOCK (THUMB ZONE NAVIGATION / 5 TABS)
+       ========================================================================= -->
   <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#090a0f]/95 backdrop-blur-md border-t border-white/[0.08] px-2 py-1.5 flex items-center justify-around pb-[max(0.5rem,env(safe-area-inset-bottom))] shadow-2xl">
     <button onclick="switchTab('dashboard')" id="mob-btn-dashboard" class="mob-tab-btn flex flex-col items-center justify-center py-1 px-2 rounded-lg text-emerald-400 font-mono text-[10px] min-w-[52px] min-h-[44px] transition active:scale-95">
       <i data-lucide="layout-dashboard" class="w-4 h-4 mb-0.5"></i>
@@ -1198,15 +1410,24 @@
     </button>
   </nav>
 
-  <!-- SCRIPT LOGIC -->
+  <!-- =========================================================================
+       FOOTER
+       ========================================================================= -->
+  <footer class="border-t border-white/[0.08] py-4 text-center text-xs text-white/30 font-mono mt-auto pb-24 md:pb-4">
+    TapMeals Yopal &bull; Nutrición de Alto Rendimiento &bull; Grado 10°, Liceo Moderno Celestín Freinet
+  </footer>
+
+  <!-- =========================================================================
+       JAVASCRIPT APPLICATION CONTROLLER
+       ========================================================================= -->
   <script>
     let activeSimChannel = 'dm';
     let currentRules = [];
 
-    // Initialize Lucide icons
+    // Initialize Lucide Icons
     lucide.createIcons();
 
-    // Live Clock for Yopal Command Bar
+    // Live Clock (Colombian COT Timezone)
     function updateLiveClock() {
       const el = document.getElementById('headerLiveClock');
       if (!el) return;
@@ -1219,11 +1440,13 @@
     setInterval(updateLiveClock, 1000);
     updateLiveClock();
 
-    // Tab switcher
+    // -------------------------------------------------------------------------
+    // TAB SWITCHER CONTROLLER
+    // -------------------------------------------------------------------------
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      
-      // Desktop nav buttons
+
+      // Desktop Buttons
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('bg-emerald-500/15', 'text-emerald-400', 'border-emerald-500/30');
         btn.classList.add('text-white/50', 'border-transparent');
@@ -1234,7 +1457,7 @@
         targetBtn.classList.remove('text-white/50', 'border-transparent');
       }
 
-      // Mobile bottom dock buttons
+      // Mobile Dock Buttons
       document.querySelectorAll('.mob-tab-btn').forEach(btn => {
         btn.classList.remove('text-emerald-400');
         btn.classList.add('text-white/50');
@@ -1247,7 +1470,7 @@
 
       const targetTab = document.getElementById(`tab-${tabName}`);
       if (targetTab) targetTab.classList.remove('hidden');
-      
+
       lucide.createIcons();
     }
 
@@ -1258,10 +1481,12 @@
       toast.classList.remove('translate-y-20', 'opacity-0');
       setTimeout(() => {
         toast.classList.add('translate-y-20', 'opacity-0');
-      }, 3000);
+      }, 2500);
     }
 
-    // Toggle bot ON/OFF
+    // -------------------------------------------------------------------------
+    // BOT TOGGLE CONTROLLER
+    // -------------------------------------------------------------------------
     async function toggleBot() {
       try {
         const res = await fetch('/api/toggle-bot', { method: 'POST' });
@@ -1279,129 +1504,138 @@
       const knob = document.getElementById('toggleKnob');
 
       if (enabled) {
-        if (pill) pill.innerHTML = `<span class="w-1.5 h-1.5 rounded-[1px] bg-emerald-400"></span><span id="statusText" class="text-[11px] font-mono tracking-wider uppercase text-emerald-400 font-medium">CONTESTADOR ACTIVO</span>`;
+        if (pill) pill.innerHTML = `<span class="w-1.5 h-1.5 rounded-[1px] bg-emerald-400"></span><span id="statusText" class="text-[10px] font-mono tracking-wider uppercase text-emerald-400 font-medium">BOT ACTIVO</span>`;
         if (btn) btn.className = "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border border-white/10 bg-emerald-500 transition-colors duration-150 focus:outline-none";
         if (knob) knob.className = "pointer-events-none inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-sm ring-0 transition duration-150 ease-in-out translate-x-4 mt-[2px] ml-[2px]";
       } else {
-        if (pill) pill.innerHTML = `<span class="w-1.5 h-1.5 rounded-[1px] bg-amber-400"></span><span id="statusText" class="text-[11px] font-mono tracking-wider uppercase text-amber-400 font-medium">CONTESTADOR PAUSADO</span>`;
+        if (pill) pill.innerHTML = `<span class="w-1.5 h-1.5 rounded-[1px] bg-amber-400"></span><span id="statusText" class="text-[10px] font-mono tracking-wider uppercase text-amber-400 font-medium">BOT PAUSADO</span>`;
         if (btn) btn.className = "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border border-white/10 bg-zinc-700 transition-colors duration-150 focus:outline-none";
         if (knob) knob.className = "pointer-events-none inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-sm ring-0 transition duration-150 ease-in-out translate-x-0 mt-[2px] ml-[2px]";
       }
     }
 
     // -------------------------------------------------------------------------
-    // RULES MANAGEMENT LOGIC (CRUD)
+    // RULES MANAGEMENT CONTROLLER (LINEAR-STYLE HIGH-DENSITY TABLE)
     // -------------------------------------------------------------------------
-
     async function loadRules() {
       try {
         const res = await fetch('/api/rules');
         const data = await res.json();
         currentRules = data.rules || [];
-        renderRulesList();
+        renderRulesTable(currentRules);
         const activeCount = currentRules.filter(r => r.enabled).length;
         if (document.getElementById('statRulesCount')) {
           document.getElementById('statRulesCount').innerText = `${activeCount} Activas`;
+        }
+        if (document.getElementById('rulesCounterBadge')) {
+          document.getElementById('rulesCounterBadge').innerText = `${currentRules.length} reglas`;
         }
       } catch (e) {
         console.error("Error al cargar reglas:", e);
       }
     }
 
-    function renderRulesList() {
-      const container = document.getElementById('rulesListContainer');
-      if (!container) return;
+    function renderRulesTable(rules) {
+      const tbody = document.getElementById('rulesTableBody');
+      if (!tbody) return;
 
-      if (!currentRules.length) {
-        container.innerHTML = `
-          <div class="col-span-full py-12 text-center text-gray-500 glass-card rounded-2xl border border-gray-800">
-            <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
-            <p>No hay reglas configuradas. Haz clic en 'Nueva Regla' o 'Restaurar Reglas Base'.</p>
-          </div>
+      if (!rules.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="py-8 text-center text-white/30 font-mono">
+              No hay reglas configuradas. Haz clic en 'Nueva Regla' o 'Restaurar'.
+            </td>
+          </tr>
         `;
-        lucide.createIcons();
         return;
       }
 
-      container.innerHTML = currentRules.map((r, index) => {
+      tbody.innerHTML = rules.map(r => {
         const keywords = r.keywords || [];
         const isEnabled = r.enabled !== false;
         const channels = r.channels || ['dm'];
-        const channelLabel = channels.includes('comentario') && (channels.includes('dm') || channels.includes('solicitud')) 
-          ? 'Ambos Canales' 
-          : (channels.includes('comentario') ? 'Solo Comentarios' : 'Direct Message (DM)');
+        const isCommentOnly = channels.includes('comentario') && !channels.includes('dm') && !channels.includes('solicitud');
+        const isBoth = channels.includes('comentario') && (channels.includes('dm') || channels.includes('solicitud'));
         
+        let channelBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono bg-sky-500/10 text-sky-400 border border-sky-500/20">DM</span>';
+        if (isCommentOnly) channelBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono bg-purple-500/10 text-purple-400 border border-purple-500/20">Comentario</span>';
+        else if (isBoth) channelBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">DM + Post</span>';
+
         return `
-          <div class="glass-card rounded-2xl p-5 border ${isEnabled ? 'border-gray-800' : 'border-gray-800/40 opacity-60'} flex flex-col justify-between space-y-4 hover:border-gray-700 transition">
-            <div class="space-y-3">
-              <!-- Header: Name, Channel & Toggle -->
-              <div class="flex items-start justify-between gap-2">
-                <div>
-                  <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
-                    ${r.name || 'Regla sin nombre'}
-                  </h3>
-                  <div class="flex items-center gap-1.5 mt-1">
-                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full ${channels.includes('comentario') ? 'bg-purple-500/15 text-purple-400 border border-purple-500/20' : 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/20'}">
-                      ${channelLabel}
-                    </span>
-                    ${r.send_image ? '<span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">Foto Menú 4:5</span>' : ''}
-                  </div>
-                </div>
-
-                <button onclick="toggleRuleActive('${r.id}')" class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent ${isEnabled ? 'bg-emerald-500' : 'bg-gray-700'} transition-colors duration-200" title="Activar / Desactivar regla">
-                  <span class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ${isEnabled ? 'translate-x-4' : 'translate-x-0'}"></span>
-                </button>
-              </div>
-
-              <!-- Keywords Chips -->
-              <div class="space-y-1">
-                <span class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Palabras Clave:</span>
-                <div class="flex flex-wrap gap-1">
-                  ${keywords.map(kw => `
-                    <span class="text-[11px] font-mono px-2 py-0.5 rounded-md bg-gray-900 border border-gray-800 text-emerald-300">
-                      ${kw}
-                    </span>
-                  `).join('')}
-                </div>
-              </div>
-
-              <!-- Reply Preview -->
-              <div class="space-y-1">
-                <span class="text-[10px] uppercase font-bold tracking-wider text-gray-500">Respuesta DM:</span>
-                <p class="text-xs text-gray-300 line-clamp-3 bg-black/40 p-2.5 rounded-xl border border-gray-800/80 leading-relaxed font-sans">
-                  ${r.reply_text || 'Sin texto asignado'}
-                </p>
-              </div>
-
-              ${r.comment_reply ? `
-                <div class="space-y-1">
-                  <span class="text-[10px] uppercase font-bold tracking-wider text-purple-400">Respuesta Pública al Comentario:</span>
-                  <p class="text-[11px] text-gray-400 italic line-clamp-2">
-                    "${r.comment_reply}"
-                  </p>
-                </div>
-              ` : ''}
-            </div>
-
-            <!-- Actions Footer -->
-            <div class="pt-3 border-t border-gray-800/80 flex items-center justify-between text-xs">
-              <button onclick="testRuleInSimulator('${keywords[0] || ''}')" class="text-emerald-400 hover:text-emerald-300 font-medium flex items-center gap-1">
-                <i data-lucide="play" class="w-3.5 h-3.5"></i> Probar
+          <tr class="rule-row hover:bg-white/[0.02] transition-colors ${isEnabled ? '' : 'opacity-40'}">
+            <!-- Col 1: Toggle Switch -->
+            <td class="py-3 px-4 text-center">
+              <button onclick="toggleRuleActive('${r.id}')" class="relative inline-flex h-4 w-7 shrink-0 cursor-pointer rounded-full border border-white/10 ${isEnabled ? 'bg-emerald-500' : 'bg-zinc-700'} transition-colors duration-150" title="Activar/Desactivar">
+                <span class="pointer-events-none inline-block h-3 w-3 transform rounded-full bg-white transition duration-150 ${isEnabled ? 'translate-x-3' : 'translate-x-0'} mt-[1px] ml-[1px]"></span>
               </button>
-              <div class="flex items-center gap-1.5">
-                <button onclick="editRule('${r.id}')" class="p-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition" title="Editar regla">
-                  <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+            </td>
+
+            <!-- Col 2: Name -->
+            <td class="py-3 px-3 text-white font-medium">
+              <span class="block truncate max-w-[180px]">${r.name || 'Sin nombre'}</span>
+            </td>
+
+            <!-- Col 3: Keywords Pills -->
+            <td class="py-3 px-3">
+              <div class="flex flex-wrap gap-1 max-w-[240px]">
+                ${keywords.slice(0, 3).map(kw => `
+                  <span class="px-1.5 py-0.5 rounded bg-white/[0.06] text-emerald-300 border border-white/[0.08] text-[10px]">
+                    ${kw}
+                  </span>
+                `).join('')}
+                ${keywords.length > 3 ? `<span class="text-[10px] text-white/40 font-mono">+${keywords.length - 3}</span>` : ''}
+              </div>
+            </td>
+
+            <!-- Col 4: Channel -->
+            <td class="py-3 px-3">
+              ${channelBadge}
+            </td>
+
+            <!-- Col 5: Reply Preview -->
+            <td class="py-3 px-3 text-white/70">
+              <span class="block truncate max-w-[260px] font-sans">${r.reply_text || '(Sin texto)'}</span>
+            </td>
+
+            <!-- Col 6: Image Attachment -->
+            <td class="py-3 px-3 text-center">
+              ${r.send_image ? '<span class="text-emerald-400 text-xs" title="Envía la carta 4:5">✓</span>' : '<span class="text-white/20">—</span>'}
+            </td>
+
+            <!-- Col 7: Actions -->
+            <td class="py-3 px-4 text-right">
+              <div class="flex items-center justify-end gap-1.5">
+                <button onclick="testRuleInSimulator('${keywords[0] || ''}')" class="px-2 py-1 rounded bg-white/[0.06] hover:bg-emerald-500 hover:text-black text-white/80 font-mono text-[10px] transition" title="Probar en simulador">
+                  Probar
                 </button>
-                <button onclick="deleteRule('${r.id}')" class="p-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/60 text-red-400 hover:text-red-300 transition" title="Eliminar regla">
-                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                <button onclick="editRule('${r.id}')" class="p-1 rounded bg-white/[0.06] hover:bg-white/[0.12] text-white/80 transition" title="Editar">
+                  <i data-lucide="edit-2" class="w-3 h-3"></i>
+                </button>
+                <button onclick="deleteRule('${r.id}')" class="p-1 rounded bg-red-950/40 hover:bg-red-900/60 text-red-400 transition" title="Eliminar">
+                  <i data-lucide="trash-2" class="w-3 h-3"></i>
                 </button>
               </div>
-            </div>
-          </div>
+            </td>
+          </tr>
         `;
       }).join('');
 
       lucide.createIcons();
+    }
+
+    function filterRulesByText() {
+      const q = document.getElementById('rulesSearchInput').value.toLowerCase().trim();
+      if (!q) {
+        renderRulesTable(currentRules);
+        return;
+      }
+      const filtered = currentRules.filter(r => {
+        const nameMatch = (r.name || '').toLowerCase().includes(q);
+        const kwMatch = (r.keywords || []).some(k => k.toLowerCase().includes(q));
+        const replyMatch = (r.reply_text || '').toLowerCase().includes(q);
+        return nameMatch || kwMatch || replyMatch;
+      });
+      renderRulesTable(filtered);
     }
 
     function openRuleModal(rule = null) {
@@ -1417,8 +1651,8 @@
       document.getElementById('modalRuleSendImage').checked = rule ? !!rule.send_image : false;
 
       document.getElementById('modalTitle').innerHTML = rule 
-        ? `<i data-lucide="edit" class="w-5 h-5 text-emerald-400"></i> Editar Regla: ${rule.name}`
-        : `<i data-lucide="plus-circle" class="w-5 h-5 text-emerald-400"></i> Nueva Regla de Respuesta`;
+        ? `<span class="w-2 h-2 rounded-[1px] bg-emerald-400"></span><span>Editar Regla: ${rule.name}</span>`
+        : `<span class="w-2 h-2 rounded-[1px] bg-emerald-400"></span><span>Nueva Regla de Automatización</span>`;
 
       document.getElementById('ruleModal').classList.remove('hidden');
       lucide.createIcons();
@@ -1466,7 +1700,7 @@
           alert("Error: " + data.error);
         }
       } catch (err) {
-        alert("Error al guardar: " + err);
+        alert("Error al guardar regla: " + err);
       }
     }
 
@@ -1484,7 +1718,7 @@
     }
 
     async function deleteRule(ruleId) {
-      if (!confirm("¿Seguro que deseas eliminar esta regla?")) return;
+      if (!confirm("¿Deseas eliminar esta regla de respuesta?")) return;
       try {
         const res = await fetch(`/api/rules/${ruleId}`, { method: 'DELETE' });
         const data = await res.json();
@@ -1509,12 +1743,12 @@
     }
 
     async function resetRulesToDefaults() {
-      if (!confirm("¿Deseas restaurar las 6 reglas predeterminadas de TapMeals?")) return;
+      if (!confirm("¿Restaurar las 6 reglas predeterminadas oficiales de TapMeals?")) return;
       try {
         const res = await fetch('/api/rules/reset-defaults', { method: 'POST' });
         const data = await res.json();
         if (data.success) {
-          showToast("Reglas restauradas a los 6 valores oficiales fitness");
+          showToast("Reglas restauradas a los 6 valores estándar fitness");
           loadRules();
         }
       } catch (e) {
@@ -1523,15 +1757,14 @@
     }
 
     // -------------------------------------------------------------------------
-    // SIMULATOR LOGIC
+    // SIMULATOR CONTROLLER
     // -------------------------------------------------------------------------
-
     function setSimChannel(channel) {
       activeSimChannel = channel;
       document.querySelectorAll('.sim-chan-btn').forEach(btn => {
-        btn.className = "sim-chan-btn py-2 px-3 rounded-xl text-xs font-medium bg-gray-900 text-gray-400 border border-gray-800";
+        btn.className = "sim-chan-btn px-3 py-1 rounded text-white/50 hover:text-white border border-transparent";
       });
-      document.getElementById(`sim-chan-${channel}`).className = "sim-chan-btn py-2 px-3 rounded-xl text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+      document.getElementById(`sim-chan-${channel}`).className = "sim-chan-btn px-3 py-1 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
     }
 
     function fillSimInput(val) {
@@ -1547,7 +1780,7 @@
       });
       const data = await res.json();
 
-      // Update phone mockup
+      // Update phone bubble
       document.getElementById('simUserBubble').innerText = text || "(Mensaje vacío)";
       
       const botContainer = document.getElementById('simBotContainer');
@@ -1563,8 +1796,8 @@
       reason.innerText = data.reason;
 
       if (data.triggers) {
-        badge.className = "px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
-        badge.innerText = `REGLA: ${data.rule_name || 'TapTap Base'}`;
+        badge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+        badge.innerText = `DISPARÓ: ${data.rule_name || 'TapTap Base'}`;
         
         botContainer.classList.remove('hidden');
         botBubble.innerText = data.dm_response;
@@ -1582,7 +1815,7 @@
           commentBox.classList.add('hidden');
         }
       } else {
-        badge.className = "px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-800 text-gray-400 border border-gray-700";
+        badge.className = "px-2 py-0.5 rounded text-[10px] font-semibold bg-white/[0.06] text-white/40 border border-white/10";
         badge.innerText = "NO DISPARÓ (IGNORADO)";
         
         botContainer.classList.add('hidden');
@@ -1594,7 +1827,9 @@
       chat.scrollTop = chat.scrollHeight;
     }
 
-    // Save global config
+    // -------------------------------------------------------------------------
+    // GLOBAL CONFIG CONTROLLER
+    // -------------------------------------------------------------------------
     async function saveConfig(e) {
       e.preventDefault();
       const payload = {
@@ -1614,62 +1849,10 @@
         });
         const data = await res.json();
         if (data.success) {
-          showToast("Ajustes globales guardados con éxito");
-          document.getElementById('statTrigger').innerText = payload.trigger_keyword;
+          showToast("Ajustes globales guardados");
         }
       } catch (err) {
         alert("Error al guardar: " + err);
-      }
-    }
-
-    // Upload menu image
-    async function uploadMenuImage() {
-      const fileInput = document.getElementById('menuFileInput');
-      if (!fileInput.files.length) {
-        alert("Por favor selecciona un archivo de imagen primero.");
-        return;
-      }
-      const formData = new FormData();
-      formData.append('file', fileInput.files[0]);
-
-      try {
-        const res = await fetch('/api/upload-menu', {
-          method: 'POST',
-          body: formData
-        });
-        const data = await res.json();
-        if (data.success) {
-          showToast("Menú actualizado con éxito");
-          document.getElementById('menuImagePreview').src = '/menu-image?t=' + Date.now();
-        } else {
-          alert("Error: " + data.error);
-        }
-      } catch (e) {
-        alert("Error al subir archivo: " + e);
-      }
-    }
-
-    // Clear logs
-    async function clearLogs() {
-      await fetch('/api/clear-logs', { method: 'POST' });
-      loadLogs();
-      showToast("Registro limpiado");
-    }
-
-    // Load server status
-    async function loadStatus() {
-      try {
-        const res = await fetch('/api/status');
-        const data = await res.json();
-        document.getElementById('statUptime').innerText = data.uptime;
-        document.getElementById('statDMs').innerText = data.total_dms;
-        document.getElementById('statTrigger').innerText = data.trigger_keyword;
-        if (document.getElementById('statRulesCount') && data.active_rules !== undefined) {
-          document.getElementById('statRulesCount').innerText = `${data.active_rules} Activas`;
-        }
-        updateBotStatusUI(data.bot_enabled);
-      } catch (e) {
-        console.error(e);
       }
     }
 
@@ -1683,10 +1866,47 @@
         document.getElementById('cfgClosedDmsReply').value = cfg.closed_dms_reply || "";
         document.getElementById('cfgCooldown').value = cfg.cooldown_seconds || 45;
         document.getElementById('cfgScanInterval').value = cfg.scan_interval_seconds || 1.5;
-        document.getElementById('statTrigger').innerText = cfg.trigger_keyword || "TapTap";
       } catch (e) {
         console.error(e);
       }
+    }
+
+    // -------------------------------------------------------------------------
+    // UPLOAD MENU IMAGE CONTROLLER
+    // -------------------------------------------------------------------------
+    async function uploadMenuImage() {
+      const fileInput = document.getElementById('menuFileInput');
+      if (!fileInput.files.length) {
+        alert("Selecciona un archivo de imagen primero.");
+        return;
+      }
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+
+      try {
+        const res = await fetch('/api/upload-menu', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast("Menú 4:5 actualizado");
+          document.getElementById('menuImagePreview').src = '/menu-image?t=' + Date.now();
+        } else {
+          alert("Error: " + data.error);
+        }
+      } catch (e) {
+        alert("Error al subir archivo: " + e);
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // LOGS CONTROLLER
+    // -------------------------------------------------------------------------
+    async function clearLogs() {
+      await fetch('/api/clear-logs', { method: 'POST' });
+      loadLogs();
+      showToast("Registro limpiado");
     }
 
     async function loadLogs() {
@@ -1695,42 +1915,45 @@
         const data = await res.json();
         const logs = data.logs || [];
 
-        // Update dashboard preview
+        // Preview in Dashboard
         const preview = document.getElementById('dashboardLogsList');
-        if (logs.length === 0) {
-          preview.innerHTML = `<p class="text-gray-500 py-6 text-center">Esperando interacciones de clientes...</p>`;
-        } else {
-          preview.innerHTML = logs.slice(0, 4).map(l => `
-            <div class="flex items-center justify-between p-2.5 rounded-xl bg-gray-900/60 border border-gray-800">
-              <div class="flex items-center space-x-2.5">
-                <span class="w-1.5 h-1.5 rounded-full ${l.tipo === 'exito' ? 'bg-emerald-400' : (l.tipo === 'comentario' ? 'bg-purple-400' : 'bg-cyan-400')}"></span>
-                <span class="font-semibold text-white">${l.remitente}</span>
-                <span class="text-gray-400 truncate max-w-xs">${l.detalle}</span>
+        if (preview) {
+          if (logs.length === 0) {
+            preview.innerHTML = `<p class="text-white/30 py-3 text-center">Esperando interacciones de clientes en Instagram...</p>`;
+          } else {
+            preview.innerHTML = logs.slice(0, 4).map(l => `
+              <div class="flex items-center justify-between p-2 rounded bg-black/40 border border-white/[0.04]">
+                <div class="flex items-center space-x-2">
+                  <span class="w-1.5 h-1.5 rounded-full ${l.tipo === 'exito' ? 'bg-emerald-400' : (l.tipo === 'comentario' ? 'bg-purple-400' : 'bg-sky-400')}"></span>
+                  <span class="font-semibold text-white">${l.remitente}</span>
+                  <span class="text-white/50 truncate max-w-xs font-sans">${l.detalle}</span>
+                </div>
+                <span class="text-white/40 text-[10px]">${l.timestamp}</span>
               </div>
-              <span class="text-gray-500 text-[10px] font-mono">${l.timestamp}</span>
-            </div>
-          `).join('');
+            `).join('');
+          }
         }
 
-        // Update full table
+        // Table in Tab Logs
         const tbody = document.getElementById('logsTableBody');
-        if (logs.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-gray-500">No hay eventos registrados recientemente.</td></tr>`;
-        } else {
-          tbody.innerHTML = logs.map(l => `
-            <tr class="hover:bg-gray-800/40 transition">
-              <td class="py-2.5 px-4 font-mono text-gray-400">${l.timestamp}</td>
-              <td class="py-2.5 px-4">
-                <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${l.canal === 'DM' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'}">${l.canal}</span>
-              </td>
-              <td class="py-2.5 px-4 font-medium text-white">${l.remitente}</td>
-              <td class="py-2.5 px-4 text-gray-300">${l.detalle}</td>
-              <td class="py-2.5 px-4">
-                <span class="flex items-center gap-1 text-emerald-400"><i data-lucide="check" class="w-3.5 h-3.5"></i> Procesado</span>
-              </td>
-            </tr>
-          `).join('');
-          lucide.createIcons();
+        if (tbody) {
+          if (logs.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-white/30">No hay eventos registrados recientemente.</td></tr>`;
+          } else {
+            tbody.innerHTML = logs.map(l => `
+              <tr class="hover:bg-white/[0.02] transition">
+                <td class="py-2.5 px-4 text-white/50">${l.timestamp}</td>
+                <td class="py-2.5 px-3">
+                  <span class="px-1.5 py-0.5 rounded text-[10px] ${l.canal === 'DM' ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20' : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'}">${l.canal}</span>
+                </td>
+                <td class="py-2.5 px-3 font-semibold text-white">${l.remitente}</td>
+                <td class="py-2.5 px-3 text-white/80 font-sans">${l.detalle}</td>
+                <td class="py-2.5 px-4 text-right">
+                  <span class="text-emerald-400 text-[10px]">✓ Procesado</span>
+                </td>
+              </tr>
+            `).join('');
+          }
         }
 
       } catch (e) {
@@ -1739,17 +1962,15 @@
     }
 
     // -------------------------------------------------------------------------
-    // TOOLS LOGIC (WHATSAPP, KITCHEN PREP, MACRO TRACKER)
+    // TOOLS LOGIC (KITCHEN MRP, WHATSAPP, ATHLETE CALCULATOR)
     // -------------------------------------------------------------------------
-
     function updateWhatsAppLink() {
-      const phone = document.getElementById('waPhone') ? document.getElementById('waPhone').value.trim() : "573100000000";
-      const dish = document.getElementById('waDish') ? document.getElementById('waDish').value : "Pechuga a la Plancha";
+      const dish = document.getElementById('waDish') ? document.getElementById('waDish').value : "Pechuga Fit";
       const address = document.getElementById('waAddress') ? document.getElementById('waAddress').value.trim() : "Yopal";
       const payment = document.getElementById('waPayment') ? document.getElementById('waPayment').value : "Nequi";
 
-      const msg = `¡Hola TapMeals! 🍱⚡ Quiero pedir mi almuerzo fitness de hoy:\n\n• Plato: ${dish}\n• Entrega en: ${address}\n• Medio de pago: ${payment}\n\n¿A qué hora sale el domicilio?`;
-      const url = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`;
+      const msg = `¡Hola TapMeals! 🍱⚡ Quiero pedir mi almuerzo fitness de hoy:\n\n• Plato: ${dish}\n• Destino: ${address}\n• Medio de Pago: ${payment}\n\n¿A qué hora sale el domiciliario?`;
+      const url = `https://api.whatsapp.com/send?phone=573100000000&text=${encodeURIComponent(msg)}`;
 
       const urlBox = document.getElementById('waGeneratedUrl');
       const testBtn = document.getElementById('waTestBtn');
@@ -1761,7 +1982,7 @@
       const urlBox = document.getElementById('waGeneratedUrl');
       if (urlBox) {
         navigator.clipboard.writeText(urlBox.innerText);
-        showToast("¡Enlace de WhatsApp copiado al portapapeles!");
+        showToast("¡Comanda de WhatsApp copiada!");
       }
     }
 
@@ -1771,7 +1992,7 @@
       const bowls = parseInt(document.getElementById('prepBowls')?.value) || 0;
 
       // Merma de pollo ~ 30%: crudo = cocido / 0.70
-      const polloCocidoGramos = (pechugas * 150) + (bowls * 200);
+      const polloCocidoGramos = (pechugas * 150) + (bowls * 160);
       const polloCrudoKg = (polloCocidoGramos / 0.70) / 1000;
 
       // Merma de ternera ~ 25%: crudo = cocido / 0.75
@@ -1800,13 +2021,28 @@
       if (goal === 'volumen') calorias = Math.round(weight * 34);
       if (goal === 'mantenimiento') calorias = Math.round(weight * 30);
 
-      let platoSugerido = "Bowl Doble Proteína (54g proteína magra)";
-      if (weight < 65) platoSugerido = "Pechuga a la Plancha (37g proteína magra)";
-      else if (goal === 'definicion') platoSugerido = "Fajitas de Ternera Magra (42g proteína magra)";
+      let platoSugerido = "Bowl Doble Proteína (56g proteína)";
+      if (weight < 65) platoSugerido = "Pechuga a la Plancha Fit (42g proteína)";
+      else if (goal === 'definicion') platoSugerido = "Ternera Magra Llanera (44g proteína)";
 
       if (document.getElementById('resMacroProteina')) document.getElementById('resMacroProteina').innerText = proteina + "g / día";
       if (document.getElementById('resMacroCalorias')) document.getElementById('resMacroCalorias').innerText = calorias.toLocaleString('es-CO') + " kcal";
       if (document.getElementById('resMacroPlato')) document.getElementById('resMacroPlato').innerText = platoSugerido;
+    }
+
+    async function loadStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        if (document.getElementById('statUptime')) document.getElementById('statUptime').innerText = data.uptime;
+        if (document.getElementById('statDMs')) document.getElementById('statDMs').innerText = data.total_dms;
+        if (document.getElementById('statRulesCount') && data.active_rules !== undefined) {
+          document.getElementById('statRulesCount').innerText = `${data.active_rules} Activas`;
+        }
+        updateBotStatusUI(data.bot_enabled);
+      } catch (e) {
+        console.error(e);
+      }
     }
 
     // Initializations

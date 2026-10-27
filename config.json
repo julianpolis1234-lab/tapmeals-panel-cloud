@@ -40,7 +40,9 @@
         "cuanto vale",
         "costo",
         "valor",
-        "cuanto cuesta"
+        "cuanto cuesta",
+        "tarifa",
+        "tarifas"
       ],
       "match_type": "contains",
       "channels": [
@@ -49,7 +51,34 @@
       ],
       "reply_text": "¡Hola! 🍱⚡ Nuestros precios oficiales en Yopal son:\n\n1. Pechuga a la Plancha (150g proteína magra): $13.500 COP\n2. Fajitas de Ternera Magra (140g proteína magra): $14.500 COP\n3. Bowl Doble Proteína (200g pollo + huevo cocido): $15.000 COP\n\nTodos incluyen porción de carbohidrato limpio medido al gramo y vegetales frescos.",
       "comment_reply": "¡Precios enviados al DM! Revisa tu bandeja de entrada 🍱⚡",
-      "send_image": false,
+      "send_image": true,
+      "enabled": true
+    },
+    {
+      "id": "rule_saludo",
+      "name": "Saludo e Información General",
+      "keywords": [
+        "hola",
+        "buenas",
+        "buenos dias",
+        "buenas tardes",
+        "buenas noches",
+        "info",
+        "informacion",
+        "almuerzo",
+        "almuerzos",
+        "comida",
+        "fitness",
+        "saludos"
+      ],
+      "match_type": "contains",
+      "channels": [
+        "dm",
+        "solicitud"
+      ],
+      "reply_text": "¡Hola atleta! 🍱⚡ Bienvenido a TapMeals Yopal.\n\nPreparamos almuerzos fitness con macros certificados, proteína magra pesada en báscula digital y carbohidratos limpios. Cero aceites quemados.\n\nPuedes escribir 'Precio' para ver los costos o 'TapTap' para recibir la carta completa con fotos. ¿Qué plato te gustaría ordenar hoy?",
+      "comment_reply": "¡Hola atleta! Te enviamos toda la información por mensaje directo 🍱⚡",
+      "send_image": true,
       "enabled": true
     },
     {
@@ -62,7 +91,8 @@
         "cobertura",
         "horario",
         "a que hora",
-        "entrega"
+        "entrega",
+        "despacho"
       ],
       "match_type": "contains",
       "channels": [
@@ -85,7 +115,8 @@
         "gramera",
         "peso",
         "deficit",
-        "volumen"
+        "volumen",
+        "nutricion"
       ],
       "match_type": "contains",
       "channels": [
@@ -107,7 +138,8 @@
         "comprar",
         "ordenar",
         "whatsapp",
-        "agendar"
+        "agendar",
+        "quiero un almuerzo"
       ],
       "match_type": "contains",
       "channels": [
@@ -129,12 +161,14 @@
         "bodytech",
         "convenio",
         "descuento",
-        "atleta"
+        "atleta",
+        "entreno"
       ],
       "match_type": "contains",
       "channels": [
         "dm",
-        "solicitud"
+        "solicitud",
+        "comentario"
       ],
       "reply_text": "🏋️‍♂️ ¿Entrenas en SmartFit, Bodytech o algún box de Yopal? Tienes $2.000 COP de descuento en tu primer almuerzo mostrando tu membresía activa al repartidor.\n\nEscribe 'TapTap' para ver la carta completa.",
       "comment_reply": "¡Beneficio de gimnasio enviado a tu DM! Revisa tu bandeja 🏋️‍♂️⚡",

@@ -20,6 +20,7 @@ import re
 import unicodedata
 import threading
 import webbrowser
+import random
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify, send_file
 from werkzeug.utils import secure_filename
@@ -35,9 +36,9 @@ PROJECT_DIR = Path(r"C:\Users\MSI\.gemini\antigravity\scratch\tapmeals_project")
 KIT_DIR = Path(r"C:\Users\MSI\Downloads\TapMeals_Kit_Editable_ApoloStyle")
 
 CONFIG_FILE = BASE_DIR / "config.json"
-HISTORY_FILE = PROJECT_DIR / "taptap_processed_history.json"
-if not HISTORY_FILE.exists():
-    HISTORY_FILE = BASE_DIR / "taptap_processed_history.json"
+HISTORY_FILE = BASE_DIR / "taptap_processed_history.json"
+if not HISTORY_FILE.exists() and (PROJECT_DIR / "taptap_processed_history.json").exists():
+    HISTORY_FILE = PROJECT_DIR / "taptap_processed_history.json"
 
 DEFAULT_MENU_IMAGE = BASE_DIR / "Menu_Oficial_TapMeals_Yopal.png"
 if not DEFAULT_MENU_IMAGE.exists():
@@ -77,18 +78,40 @@ DEFAULT_RULES = [
     {
         "id": "rule_precios",
         "name": "Precios y Opciones",
-        "keywords": ["precio", "precios", "cuanto vale", "costo", "valor", "cuanto cuesta"],
+        "keywords": ["precio", "precios", "cuanto vale", "costo", "valor", "cuanto cuesta", "tarifa", "tarifas"],
         "match_type": "contains",
         "channels": ["dm", "solicitud"],
-        "reply_text": "¡Hola! 🍱⚡ Nuestros precios oficiales en Yopal son:\n\n1. Pechuga a la Plancha (150g proteína magra): $13.500 COP\n2. Fajitas de Ternera Magra (140g proteína magra): $14.500 COP\n3. Bowl Doble Proteína (200g pollo + huevo cocido): $15.000 COP\n\nTodos incluyen porción de carbohidrato limpio medido al gramo y vegetales frescos.",
+        "reply_text": "¡Hola! 🍱⚡ Nuestros precios oficiales en Yopal son:\n\n1. Pechuga a la Plancha Fit (150g proteína magra): $13.500 COP\n2. Ternera Magra Llanera (140g proteína magra): $14.500 COP\n3. Bowl Doble Proteína (200g pollo + huevo cocido): $15.000 COP\n\nTodos incluyen porción de carbohidrato limpio medido al gramo y vegetales frescos.",
         "comment_reply": "¡Precios enviados al DM! Revisa tu bandeja de entrada 🍱⚡",
+        "send_image": True,
+        "enabled": True
+    },
+    {
+        "id": "rule_saludo",
+        "name": "Saludo e Información General",
+        "keywords": ["hola", "buenas", "buenos dias", "buenas tardes", "buenas noches", "info", "informacion", "almuerzo", "almuerzos", "comida", "fitness", "saludos"],
+        "match_type": "contains",
+        "channels": ["dm", "solicitud"],
+        "reply_text": "¡Hola atleta! 🍱⚡ Bienvenido a TapMeals Yopal.\n\nPreparamos almuerzos fitness con macros certificados, proteína magra pesada en báscula digital y carbohidratos limpios. Cero aceites quemados.\n\nPuedes escribir 'Precio' para ver los costos o 'TapTap' para recibir la carta completa con fotos. ¿Qué plato te gustaría ordenar hoy?",
+        "comment_reply": "¡Hola atleta! Te enviamos toda la información por mensaje directo 🍱⚡",
+        "send_image": True,
+        "enabled": True
+    },
+    {
+        "id": "rule_gracias",
+        "name": "Agradecimiento y Cierre",
+        "keywords": ["gracias", "muchas gracias", "vale", "ok", "listo", "de una", "genial", "perfecto"],
+        "match_type": "contains",
+        "channels": ["dm", "solicitud"],
+        "reply_text": "¡Con el mayor gusto, atleta! 🍱⚡ En TapMeals estamos para potenciar tu rendimiento con comida limpia pesada en báscula digital.\n\nSi deseas agendar tu almuerzo de hoy, escribe 'Pedido' o contáctanos a WhatsApp para apartar tu porción. ¡A darle con toda!",
+        "comment_reply": "¡Con el mayor gusto atleta! A la orden en TapMeals 🍱⚡",
         "send_image": False,
         "enabled": True
     },
     {
         "id": "rule_domicilios",
         "name": "Horarios y Zonas de Entrega",
-        "keywords": ["domicilio", "domicilios", "donde entregan", "cobertura", "horario", "a que hora", "entrega"],
+        "keywords": ["domicilio", "domicilios", "donde entregan", "cobertura", "horario", "a que hora", "entrega", "despacho"],
         "match_type": "contains",
         "channels": ["dm", "solicitud"],
         "reply_text": "📍 Cobertura: Todo el casco urbano de Yopal (gimnasios, oficinas y residencias).\n\n⏰ Horario de pedidos: 07:00 AM a 10:30 AM.\n🚀 Despachos calientes: Entre 11:30 AM y 01:00 PM listos para comer.",
@@ -99,7 +122,7 @@ DEFAULT_RULES = [
     {
         "id": "rule_macros",
         "name": "Macros y Báscula Digital",
-        "keywords": ["macros", "proteina", "calorias", "gramos", "gramera", "peso", "deficit", "volumen"],
+        "keywords": ["macros", "proteina", "calorias", "gramos", "gramera", "peso", "deficit", "volumen", "nutricion"],
         "match_type": "contains",
         "channels": ["dm", "solicitud"],
         "reply_text": "⚡ En TapMeals no adivinamos: cada bandeja viene pesada en báscula digital con los gramos exactos de proteína cocida (36g a 54g) certificados en la etiqueta de la tapa.\n\nCero aceites quemados, cero calorías vacías.",
@@ -110,7 +133,7 @@ DEFAULT_RULES = [
     {
         "id": "rule_pedido",
         "name": "Hacer Pedido / WhatsApp Directo",
-        "keywords": ["pedir", "pedido", "quiero pedir", "comprar", "ordenar", "whatsapp", "agendar"],
+        "keywords": ["pedir", "pedido", "quiero pedir", "comprar", "ordenar", "whatsapp", "agendar", "quiero un almuerzo"],
         "match_type": "contains",
         "channels": ["dm", "solicitud"],
         "reply_text": "¡Excelente elección, atleta! 📲⚡ Puedes agendar tu pedido en 30 segundos directamente en nuestro WhatsApp oficial con el plato que deseas:\n\n👉 https://api.whatsapp.com/send?phone=573100000000&text=Hola%20TapMeals!%20Quiero%20agendar%20mi%20almuerzo%20fitness%20de%20hoy%20🍱",
@@ -121,7 +144,7 @@ DEFAULT_RULES = [
     {
         "id": "rule_gym",
         "name": "Convenio Gimnasios Yopal",
-        "keywords": ["gym", "gimnasio", "smartfit", "bodytech", "convenio", "descuento", "atleta"],
+        "keywords": ["gym", "gimnasio", "smartfit", "bodytech", "convenio", "descuento", "atleta", "entreno"],
         "match_type": "contains",
         "channels": ["dm", "solicitud", "comentario"],
         "reply_text": "🏋️‍♂️ ¿Entrenas en SmartFit, Bodytech o algún box de Yopal? Tienes $2.000 COP de descuento en tu primer almuerzo mostrando tu membresía activa al repartidor.\n\nEscribe 'TapTap' para ver la carta completa.",
@@ -281,23 +304,30 @@ def evaluar_reglas(texto: str, canal: str, conf: dict) -> dict:
             "image_url": "/menu-image"
         }
         
-    if canal in ["dm", "solicitud"] and es_solicitud_menu(texto_limpio):
+    if canal in ["dm", "solicitud"]:
         return {
             "triggers": True,
             "rule": None,
-            "matched_kw": "solicitud_menu",
-            "reason": "Detectó solicitud genérica de menú/precios",
-            "dm_response": conf.get("welcome_message"),
-            "comment_reply": conf.get("comment_public_reply"),
+            "matched_kw": "asistente_general",
+            "reason": "Respuesta asistida para nuevo contacto por mensaje directo",
+            "dm_response": (
+                "¡Hola atleta! 🍱⚡ Bienvenido a TapMeals en Yopal.\n\n"
+                "Para ayudarte con tu almuerzo fitness de inmediato, cuéntanos qué necesitas o escribe una de estas palabras clave:\n"
+                "• *Precio*: Lista y valores de nuestros 3 platos.\n"
+                "• *TapTap* o *Menú*: Para ver la carta completa con fotos y gramajes.\n"
+                "• *Domicilio*: Cobertura y horarios de entrega.\n"
+                "• *Pedido*: Enlace directo de WhatsApp para agendar tu entrega."
+            ),
+            "comment_reply": None,
             "has_image": True,
             "image_url": "/menu-image"
         }
-        
+
     return {
         "triggers": False,
         "rule": None,
         "matched_kw": None,
-        "reason": f"El mensaje no coincide con ninguna de las {len(rules)} reglas activas para el canal '{canal}'",
+        "reason": f"El comentario no coincide con ninguna de las {len(rules)} reglas activas para comentarios",
         "dm_response": None,
         "comment_reply": None,
         "has_image": False,
@@ -339,7 +369,309 @@ def cargar_historial() -> dict:
             return json.loads(HISTORY_FILE.read_text(encoding="utf-8"))
         except Exception:
             pass
-    return {"comentarios": [], "dms": []}
+    return {"comentarios": [], "dms": [], "known_threads": []}
+
+
+def guardar_historial(historial: dict):
+    try:
+        historial["comentarios"] = historial.get("comentarios", [])[-2000:]
+        historial["dms"] = historial.get("dms", [])[-2000:]
+        historial["known_threads"] = historial.get("known_threads", [])[-50:]
+        HISTORY_FILE.write_text(json.dumps(historial, indent=2, ensure_ascii=False), encoding="utf-8")
+    except Exception as e:
+        print(f"[Aviso] No se pudo guardar historial: {e}")
+
+
+def bucle_trabajador_instagram(session_file: Path):
+    """
+    Bucle en segundo plano de ultra-resistencia para responder automáticamente en Instagram:
+    - Message Requests / Solicitudes de mensajes de nuevos usuarios (direct_pending_inbox)
+    - DMs en threads conocidos y nuevos (direct_thread / direct_threads con Circuit Breaker)
+    - Comentarios en publicaciones y reels (media_comments)
+    - Delays humanos aleatorios de 3 a 5 seg para proteger la cuenta contra bloqueos
+    """
+    global bot_running_flag
+    try:
+        from instagrapi import Client
+    except ImportError:
+        log_event("aviso", "Sistema", "instagrapi no instalado, bot local en pausa.", "Sistema")
+        return
+
+    cl = Client()
+    cl.delay_range = [2, 4]
+
+    try:
+        cl.load_settings(session_file)
+        account = cl.account_info()
+        my_user_id = str(account.pk)
+        log_event("exito", f"@{account.username}", "Sesión de Instagram verificada y conectada.", "Instagram")
+        print(f"[TapMeals Bot] Sesión activa como @{account.username} (pk={my_user_id})")
+    except Exception as e:
+        log_event("aviso", "Instagram", f"Error validando sesión: {e}", "Instagram")
+        print(f"[TapMeals Bot] Error cargando sesión: {e}")
+        return
+
+    historial = cargar_historial()
+    dms_procesados = set(historial.get("dms", []))
+    comentarios_procesados = set(historial.get("comentarios", []))
+    known_threads = set(historial.get("known_threads", []))
+    # Thread verificado de Alexander Monroy
+    known_threads.add("340282366841710301244259647975719645042")
+
+    cooldown_usuarios = {}
+    cooldown_threads = {}
+    circuit_breaker_until = 0
+    cached_medias = []
+    ultimo_refresh_medias = 0
+
+    ciclo = 0
+    while bot_running_flag:
+        try:
+            ciclo += 1
+            conf = cargar_config()
+            if not conf.get("bot_enabled", True):
+                time.sleep(3)
+                continue
+
+            ahora = time.time()
+            cooldown_seg = conf.get("cooldown_seconds", 45)
+
+            # -------------------------------------------------------------
+            # 1. SOLICITUDES DE MENSAJE (Message Requests / Nuevos Atletas)
+            # -------------------------------------------------------------
+            try:
+                pending = cl.direct_pending_inbox(amount=4)
+                for thread in pending:
+                    t_id = str(thread.id)
+                    known_threads.add(t_id)
+                    if ahora - cooldown_threads.get(t_id, 0) < cooldown_seg:
+                        continue
+                    
+                    user = thread.users[0] if thread.users else None
+                    username = user.username if user else "usuario"
+                    target_pk = str(user.pk) if user else ""
+                    
+                    msgs = thread.messages if thread.messages else []
+                    if not msgs:
+                        continue
+                    m = msgs[0]
+                    m_id = str(m.id)
+                    if m_id in dms_procesados or str(m.user_id) == my_user_id:
+                        continue
+
+                    eval_res = evaluar_reglas(m.text, "solicitud", conf)
+                    if eval_res.get("triggers"):
+                        regla = eval_res.get("rule")
+                        nombre_regla = regla["name"] if regla else "TapTap Base"
+                        log_event("exito", f"@{username}", f"Solicitud: \"{m.text}\" -> {nombre_regla}", "DM")
+                        print(f"\n[⚡ SOLICITUD RESPONDIDA] @{username}: \"{m.text}\" -> {nombre_regla}")
+
+                        dms_procesados.add(m_id)
+                        historial.setdefault("dms", []).append(m_id)
+                        guardar_historial(historial)
+                        cooldown_threads[t_id] = ahora
+                        if target_pk:
+                            cooldown_usuarios[target_pk] = ahora
+
+                        try:
+                            cl.direct_pending_approve(thread.id)
+                        except Exception:
+                            pass
+
+                        reply = eval_res.get("dm_response") or conf.get("welcome_message")
+                        cl.direct_send(reply, thread_ids=[thread.id])
+
+                        if eval_res.get("has_image") and DEFAULT_MENU_IMAGE.exists():
+                            time.sleep(1.5)
+                            try:
+                                cl.direct_send_photo(DEFAULT_MENU_IMAGE, thread_ids=[thread.id])
+                            except Exception:
+                                pass
+            except Exception:
+                pass
+
+            # -------------------------------------------------------------
+            # 2. THREADS ACTIVOS CONOCIDOS (Inspección directa de chat)
+            # -------------------------------------------------------------
+            for t_id in list(known_threads)[-30:]:
+                if ahora - cooldown_threads.get(t_id, 0) < cooldown_seg:
+                    continue
+                try:
+                    thread_data = cl.direct_thread(t_id)
+                    msgs = thread_data.messages if hasattr(thread_data, 'messages') else []
+                    if not msgs:
+                        continue
+                    latest = msgs[0]
+                    mid = str(latest.id)
+                    if mid in dms_procesados or str(latest.user_id) == my_user_id:
+                        continue
+
+                    sender_user = thread_data.users[0] if getattr(thread_data, 'users', None) else None
+                    username = sender_user.username if sender_user else "atleta"
+
+                    eval_res = evaluar_reglas(latest.text, "dm", conf)
+                    if eval_res.get("triggers"):
+                        regla = eval_res.get("rule")
+                        nombre_regla = regla["name"] if regla else "Asistente DM"
+                        log_event("exito", f"@{username}", f"DM: \"{latest.text}\" -> {nombre_regla}", "DM")
+                        print(f"\n[⚡ DM RESPONDIDO] @{username}: \"{latest.text}\" -> {nombre_regla}")
+
+                        dms_procesados.add(mid)
+                        historial.setdefault("dms", []).append(mid)
+                        guardar_historial(historial)
+                        cooldown_threads[t_id] = ahora
+
+                        reply = eval_res.get("dm_response") or conf.get("welcome_message")
+                        cl.direct_send(reply, thread_ids=[thread_data.id])
+
+                        if eval_res.get("has_image") and DEFAULT_MENU_IMAGE.exists():
+                            time.sleep(1.5)
+                            try:
+                                cl.direct_send_photo(DEFAULT_MENU_IMAGE, thread_ids=[thread_data.id])
+                            except Exception:
+                                pass
+                    else:
+                        dms_procesados.add(mid)
+                        historial.setdefault("dms", []).append(mid)
+                        guardar_historial(historial)
+                except Exception:
+                    pass
+
+            # -------------------------------------------------------------
+            # 3. DIRECT THREADS INBOX (Con Circuit Breaker anti-403)
+            # -------------------------------------------------------------
+            if ahora > circuit_breaker_until:
+                try:
+                    threads = cl.direct_threads(amount=4)
+                    for thread in threads:
+                        t_id = str(thread.id)
+                        known_threads.add(t_id)
+                        if ahora - cooldown_threads.get(t_id, 0) < cooldown_seg:
+                            continue
+
+                        msgs = thread.messages[:2] if thread.messages else []
+                        for m in msgs:
+                            mid = str(m.id)
+                            if mid in dms_procesados or str(m.user_id) == my_user_id:
+                                continue
+
+                            eval_res = evaluar_reglas(m.text, "dm", conf)
+                            if eval_res.get("triggers"):
+                                user = thread.users[0] if thread.users else None
+                                username = user.username if user else "atleta"
+                                regla = eval_res.get("rule")
+                                nombre_regla = regla["name"] if regla else "Regla DM"
+                                log_event("exito", f"@{username}", f"DM: \"{m.text}\" -> {nombre_regla}", "DM")
+                                print(f"\n[⚡ DM INBOX RESPONDIDO] @{username}: \"{m.text}\" -> {nombre_regla}")
+
+                                dms_procesados.add(mid)
+                                historial.setdefault("dms", []).append(mid)
+                                guardar_historial(historial)
+                                cooldown_threads[t_id] = ahora
+
+                                reply = eval_res.get("dm_response") or conf.get("welcome_message")
+                                cl.direct_send(reply, thread_ids=[thread.id])
+
+                                if eval_res.get("has_image") and DEFAULT_MENU_IMAGE.exists():
+                                    time.sleep(1.5)
+                                    try:
+                                        cl.direct_send_photo(DEFAULT_MENU_IMAGE, thread_ids=[thread.id])
+                                    except Exception:
+                                        pass
+                except Exception as e_th:
+                    if "403" in str(e_th) or "item_ack" in str(e_th):
+                        circuit_breaker_until = ahora + 600
+                        log_event("aviso", "Circuit Breaker", "Inbox en cooldown (403). Conmutando a modo Directo & Solicitudes.", "Instagram")
+
+            # -------------------------------------------------------------
+            # 4. COMENTARIOS EN POSTS / REELS (Cada 4 ciclos)
+            # -------------------------------------------------------------
+            if ciclo % 4 == 0:
+                if ahora - ultimo_refresh_medias > 90 or not cached_medias:
+                    try:
+                        medias_list = cl.user_medias(cl.user_id, amount=2)
+                        cached_medias = [m.pk for m in medias_list]
+                        ultimo_refresh_medias = ahora
+                    except Exception:
+                        pass
+
+                for media_pk in cached_medias:
+                    try:
+                        comments = cl.media_comments(media_pk, amount=5)
+                        for c in comments:
+                            cid = str(c.pk)
+                            if cid in comentarios_procesados or str(c.user.pk) == my_user_id:
+                                continue
+
+                            eval_res = evaluar_reglas(c.text, "comentario", conf)
+                            if eval_res.get("triggers"):
+                                username = c.user.username
+                                user_pk = c.user.pk
+                                regla = eval_res.get("rule")
+                                nombre_regla = regla["name"] if regla else "Regla Comentario"
+                                log_event("comentario", f"@{username}", f"Comentario: \"{c.text}\" -> {nombre_regla}", "Comentario")
+                                print(f"\n[⚡ COMENTARIO RESPONDIDO] @{username}: \"{c.text}\" -> {nombre_regla}")
+
+                                comentarios_procesados.add(cid)
+                                historial.setdefault("comentarios", []).append(cid)
+                                guardar_historial(historial)
+
+                                dm_ok = False
+                                try:
+                                    reply = eval_res.get("dm_response") or conf.get("welcome_message")
+                                    cl.direct_send(reply, user_ids=[int(user_pk)])
+                                    dm_ok = True
+                                    if eval_res.get("has_image") and DEFAULT_MENU_IMAGE.exists():
+                                        time.sleep(1.5)
+                                        try:
+                                            cl.direct_send_photo(DEFAULT_MENU_IMAGE, user_ids=[int(user_pk)])
+                                        except Exception:
+                                            pass
+                                except Exception:
+                                    dm_ok = False
+
+                                try:
+                                    if dm_ok:
+                                        pub = eval_res.get("comment_reply") or conf.get("comment_public_reply")
+                                        resp = f"@{username} {pub}"
+                                    else:
+                                        resp = f"@{username} {conf.get('closed_dms_reply')}"
+                                    cl.media_comment(media_pk, resp, replied_to_comment_id=c.pk)
+                                except Exception:
+                                    pass
+                    except Exception:
+                        pass
+
+            historial["known_threads"] = list(known_threads)[-50:]
+            guardar_historial(historial)
+
+            # Pausa suave humana
+            time.sleep(random.uniform(3.0, 5.0))
+
+        except Exception as e_main:
+            time.sleep(4)
+
+
+def iniciar_hilo_bot_si_es_posible():
+    global bot_worker_thread, bot_running_flag
+    if bot_worker_thread is not None and bot_worker_thread.is_alive():
+        return
+    session_file = BASE_DIR / "tapmeals_ig_session.json"
+    if not session_file.exists():
+        session_file = PROJECT_DIR / "tapmeals_ig_session.json"
+    if not session_file.exists():
+        session_file = Path(r"C:\Users\MSI\tapmeals_ig_session.json")
+    if session_file.exists():
+        bot_running_flag = True
+        bot_worker_thread = threading.Thread(target=bucle_trabajador_instagram, args=(session_file,), daemon=True)
+        bot_worker_thread.start()
+        log_event("exito", "Bot Instagram", "Motor automático iniciado en segundo plano.", "Instagram")
+        print(f"[TapMeals Bot] Hilo trabajador de Instagram iniciado con sesión: {session_file.name}")
+
+
+# Lanzar automáticamente al cargar el servidor
+iniciar_hilo_bot_si_es_posible()
+
 
 
 # -----------------------------------------------------------------------------
@@ -395,10 +727,15 @@ def get_status():
 
 @app.route('/api/toggle-bot', methods=['POST'])
 def toggle_bot():
+    global bot_running_flag
     conf = cargar_config()
     nuevo_estado = not conf.get("bot_enabled", True)
     conf["bot_enabled"] = nuevo_estado
     guardar_config(conf)
+    if nuevo_estado:
+        iniciar_hilo_bot_si_es_posible()
+    else:
+        bot_running_flag = False
     estado_str = "ACTIVADO" if nuevo_estado else "PAUSADO"
     log_event("aviso", "Sistema", f"El contestador automático fue {estado_str} desde el panel web.", "Control")
     return jsonify({"success": True, "bot_enabled": nuevo_estado})
@@ -627,6 +964,9 @@ if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     is_cloud = bool(os.environ.get("PORT") or os.environ.get("RENDER"))
     log_event("aviso", "Sistema", f"Servidor iniciado en puerto {port} ({'Modo Cloud 24/7' if is_cloud else 'Modo Local'}).", "Nube")
+    
+    # Asegurar que el hilo del bot de Instagram esté activo
+    iniciar_hilo_bot_si_es_posible()
     
     # Abrir navegador automáticamente solo si estamos en local y no es recarga automática
     if not is_cloud and not os.environ.get("WERKZEUG_RUN_MAIN"):

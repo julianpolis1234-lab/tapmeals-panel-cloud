@@ -173,7 +173,7 @@
   </div>
 
   <!-- MAIN APP CONTAINER -->
-  <div class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-6 py-5 space-y-5">
+  <div class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-5 space-y-5 pb-24 md:pb-6">
 
     <!-- TAB 1: TABLERO / DESPACHO (HIGH-DENSITY BENTO GRID - LINEAR STYLE) -->
     <div id="tab-dashboard" class="tab-content space-y-4">
@@ -1074,81 +1074,86 @@
 
   </div>
 
-  <!-- MODAL: CREAR / EDITAR REGLA DE PALABRAS CLAVE -->
-  <div id="ruleModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
-    <div class="glass-card rounded-3xl p-6 sm:p-8 border border-gray-700 max-w-xl w-full space-y-5 shadow-2xl relative">
-      <div class="flex items-center justify-between pb-3 border-b border-gray-800">
-        <h3 id="modalTitle" class="text-lg font-bold font-display text-white flex items-center gap-2">
-          <i data-lucide="plus-circle" class="w-5 h-5 text-emerald-400"></i> Nueva Regla de Respuesta
+  <!-- MODAL: CREAR / EDITAR REGLA DE PALABRAS CLAVE (MOBILE BOTTOM SHEET & DESKTOP DIALOG) -->
+  <div id="ruleModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/80 backdrop-blur-sm hidden">
+    <div class="glass-card rounded-t-3xl sm:rounded-2xl p-5 sm:p-7 border border-white/10 max-w-xl w-full max-h-[92dvh] flex flex-col shadow-2xl relative bg-[#0f131a] overflow-hidden">
+      
+      <!-- Mobile Drag Handle -->
+      <div class="w-10 h-1 bg-white/20 rounded-full mx-auto mb-3 sm:hidden shrink-0"></div>
+
+      <div class="flex items-center justify-between pb-3 border-b border-white/[0.08] shrink-0">
+        <h3 id="modalTitle" class="text-base sm:text-lg font-bold font-mono text-white flex items-center gap-2">
+          <span class="w-2 h-2 rounded-[1px] bg-emerald-400"></span>
+          <span>Nueva Regla de Respuesta</span>
         </h3>
-        <button onclick="closeRuleModal()" class="text-gray-400 hover:text-white p-1 rounded-lg hover:bg-gray-800 transition">
+        <button type="button" onclick="closeRuleModal()" class="text-white/40 hover:text-white p-2 rounded-lg hover:bg-white/[0.06] transition min-w-[36px] min-h-[36px] flex items-center justify-center">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <form id="ruleForm" onsubmit="saveRuleForm(event)" class="space-y-4 text-xs">
+      <form id="ruleForm" onsubmit="saveRuleForm(event)" class="flex-1 overflow-y-auto custom-scrollbar space-y-4 py-3 pr-1 text-xs">
         <input type="hidden" id="modalRuleId" value="">
 
         <!-- Rule Name -->
         <div class="space-y-1">
-          <label class="text-gray-300 font-semibold uppercase tracking-wider text-[11px]">Nombre descriptivo de la regla:</label>
-          <input type="text" id="modalRuleName" required placeholder="Ej: Convenio SmartFit, Horarios de Domicilio..." class="w-full px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500">
+          <label class="text-white/70 font-semibold uppercase tracking-wider text-[11px]">Nombre descriptivo:</label>
+          <input type="text" id="modalRuleName" required placeholder="Ej: Convenio SmartFit, Horarios..." class="w-full px-3.5 py-2.5 rounded-xl bg-black/50 border border-white/10 text-white text-base sm:text-xs focus:outline-none focus:border-emerald-500">
         </div>
 
         <!-- Keywords input -->
         <div class="space-y-1">
-          <label class="text-gray-300 font-semibold uppercase tracking-wider text-[11px]">Palabras clave activadoras (separadas por coma):</label>
-          <input type="text" id="modalRuleKeywords" required placeholder="smartfit, gym, gimnasio, descuento, entrenamiento" class="w-full px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-emerald-400 font-mono text-xs focus:outline-none focus:border-emerald-500">
-          <p class="text-[10px] text-gray-500">El bot las detectará sin importar mayúsculas, minúsculas o tildes.</p>
+          <label class="text-white/70 font-semibold uppercase tracking-wider text-[11px]">Palabras clave activadoras (separadas por coma):</label>
+          <input type="text" id="modalRuleKeywords" required placeholder="smartfit, gym, gimnasio, descuento" class="w-full px-3.5 py-2.5 rounded-xl bg-black/50 border border-white/10 text-emerald-400 font-mono text-base sm:text-xs focus:outline-none focus:border-emerald-500">
+          <p class="text-[10px] text-white/40">Detecta sin importar mayúsculas, minúsculas o tildes.</p>
         </div>
 
         <!-- Channel & Match Type Selector -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div class="space-y-1">
-            <label class="text-gray-300 font-semibold uppercase tracking-wider text-[11px]">Canal de activación:</label>
-            <select id="modalRuleChannel" class="w-full px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500">
+            <label class="text-white/70 font-semibold uppercase tracking-wider text-[11px]">Canal de activación:</label>
+            <select id="modalRuleChannel" class="w-full px-3 py-2.5 rounded-xl bg-black/50 border border-white/10 text-white text-sm sm:text-xs focus:outline-none focus:border-emerald-500">
               <option value="dm,solicitud">Mensajes Directos (DMs)</option>
-              <option value="comentario">Solo Comentarios en Posts/Reels</option>
-              <option value="dm,solicitud,comentario">Ambos Canales (DM + Comentario)</option>
+              <option value="comentario">Solo Comentarios</option>
+              <option value="dm,solicitud,comentario">Ambos Canales (DMs + Comentarios)</option>
             </select>
           </div>
           <div class="space-y-1">
-            <label class="text-gray-300 font-semibold uppercase tracking-wider text-[11px]">Tipo de coincidencia:</label>
-            <select id="modalRuleMatchType" class="w-full px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500">
-              <option value="contains">Contiene la palabra clave</option>
+            <label class="text-white/70 font-semibold uppercase tracking-wider text-[11px]">Tipo de coincidencia:</label>
+            <select id="modalRuleMatchType" class="w-full px-3 py-2.5 rounded-xl bg-black/50 border border-white/10 text-white text-sm sm:text-xs focus:outline-none focus:border-emerald-500">
+              <option value="contains">Contiene la palabra</option>
               <option value="exact">Frase exacta</option>
-              <option value="starts_with">Empieza por la palabra clave</option>
+              <option value="starts_with">Empieza por la palabra</option>
             </select>
           </div>
         </div>
 
         <!-- Reply Text (DM) -->
         <div class="space-y-1">
-          <label class="text-gray-300 font-semibold uppercase tracking-wider text-[11px]">Mensaje privado a enviar al DM:</label>
-          <textarea id="modalRuleReplyText" rows="3" required placeholder="¡Hola! 🍱⚡ Aquí tienes la respuesta..." class="w-full px-3.5 py-2 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500 leading-relaxed"></textarea>
+          <label class="text-white/70 font-semibold uppercase tracking-wider text-[11px]">Mensaje privado al DM:</label>
+          <textarea id="modalRuleReplyText" rows="3" required placeholder="¡Hola! 🍱⚡ Aquí tienes la respuesta..." class="w-full px-3.5 py-2 rounded-xl bg-black/50 border border-white/10 text-white text-base sm:text-xs focus:outline-none focus:border-emerald-500 leading-relaxed"></textarea>
         </div>
 
         <!-- Comment Reply (if applies) -->
         <div class="space-y-1">
-          <label class="text-gray-300 font-semibold uppercase tracking-wider text-[11px]">Respuesta pública al comentario (opcional):</label>
-          <input type="text" id="modalRuleCommentReply" placeholder="¡Te respondimos al DM con la información! Revisa tu bandeja 📩⚡" class="w-full px-3.5 py-2 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs focus:outline-none focus:border-emerald-500">
+          <label class="text-white/70 font-semibold uppercase tracking-wider text-[11px]">Respuesta pública al comentario (opcional):</label>
+          <input type="text" id="modalRuleCommentReply" placeholder="¡Te respondimos al DM! Revisa tu bandeja 📩⚡" class="w-full px-3.5 py-2 rounded-xl bg-black/50 border border-white/10 text-white text-base sm:text-xs focus:outline-none focus:border-emerald-500">
         </div>
 
         <!-- Attach Menu Image Checkbox -->
-        <div class="p-3 rounded-xl bg-gray-900/60 border border-gray-800 flex items-center justify-between">
-          <div class="space-y-0.5">
-            <span class="text-xs font-semibold text-white">¿Adjuntar foto de la carta oficial 4:5?</span>
-            <p class="text-[10px] text-gray-400">Si se activa, el bot enviará la imagen del menú junto al texto.</p>
+        <div class="p-3 rounded-xl bg-black/40 border border-white/[0.08] flex items-center justify-between">
+          <div class="space-y-0.5 pr-2">
+            <span class="text-xs font-semibold text-white">¿Adjuntar foto de la carta 4:5?</span>
+            <p class="text-[10px] text-white/40">Envía la imagen oficial del menú junto al texto.</p>
           </div>
-          <input type="checkbox" id="modalRuleSendImage" class="w-4 h-4 rounded text-emerald-500 focus:ring-emerald-400 bg-gray-800 border-gray-700">
+          <input type="checkbox" id="modalRuleSendImage" class="w-5 h-5 rounded text-emerald-500 focus:ring-emerald-400 bg-gray-800 border-gray-700 shrink-0">
         </div>
 
-        <!-- Buttons -->
-        <div class="pt-2 flex justify-end gap-2">
-          <button type="button" onclick="closeRuleModal()" class="px-4 py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium text-xs transition">
+        <!-- Sticky Form Footer -->
+        <div class="pt-3 border-t border-white/[0.08] flex justify-end gap-2 bg-[#0f131a] pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+          <button type="button" onclick="closeRuleModal()" class="px-4 py-2.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-white/80 font-medium text-xs font-mono transition min-h-[44px]">
             Cancelar
           </button>
-          <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs transition flex items-center gap-1.5 shadow-lg shadow-emerald-500/20">
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs font-mono transition flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 min-h-[44px]">
             <i data-lucide="check" class="w-3.5 h-3.5"></i> Guardar Regla
           </button>
         </div>
@@ -1156,18 +1161,42 @@
     </div>
   </div>
 
-  <!-- TOAST NOTIFICATION POPUP -->
-  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-    <div class="flex items-center space-x-2.5 px-4 py-3 rounded-2xl bg-gray-900 border border-emerald-500/40 text-white shadow-2xl">
-      <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
-      <span id="toastMsg" class="text-xs font-medium">Configuración guardada</span>
+  <!-- TOAST NOTIFICATION POPUP (Positioned safely above mobile dock) -->
+  <div id="toast" class="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="flex items-center space-x-2.5 px-4 py-3 rounded-2xl bg-[#090a0f] border border-emerald-500/40 text-white shadow-2xl">
+      <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+      <span id="toastMsg" class="text-xs font-mono">Configuración guardada</span>
     </div>
   </div>
 
   <!-- FOOTER -->
-  <footer class="border-t border-gray-800 py-4 text-center text-xs text-gray-500 mt-auto">
+  <footer class="border-t border-white/[0.08] py-4 text-center text-xs text-white/30 font-mono mt-auto pb-24 md:pb-4">
     TapMeals Yopal &bull; Emprendimiento Grupo 7 &bull; Liceo Moderno Celestín Freinet
   </footer>
+
+  <!-- MOBILE BOTTOM DOCK (Thumb Zone Navigation / iOS & Linear Style) -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#090a0f]/95 backdrop-blur-md border-t border-white/[0.08] px-2 py-1.5 flex items-center justify-around pb-[max(0.5rem,env(safe-area-inset-bottom))] shadow-2xl">
+    <button onclick="switchTab('dashboard')" id="mob-btn-dashboard" class="mob-tab-btn flex flex-col items-center justify-center py-1 px-2 rounded-lg text-emerald-400 font-mono text-[10px] min-w-[52px] min-h-[44px] transition active:scale-95">
+      <i data-lucide="layout-dashboard" class="w-4 h-4 mb-0.5"></i>
+      <span>Despacho</span>
+    </button>
+    <button onclick="switchTab('menu')" id="mob-btn-menu" class="mob-tab-btn flex flex-col items-center justify-center py-1 px-2 rounded-lg text-white/50 hover:text-white font-mono text-[10px] min-w-[52px] min-h-[44px] transition active:scale-95">
+      <i data-lucide="utensils" class="w-4 h-4 mb-0.5"></i>
+      <span>Carta</span>
+    </button>
+    <button onclick="switchTab('tools')" id="mob-btn-tools" class="mob-tab-btn flex flex-col items-center justify-center py-1 px-2 rounded-lg text-white/50 hover:text-white font-mono text-[10px] min-w-[52px] min-h-[44px] transition active:scale-95">
+      <i data-lucide="flame" class="w-4 h-4 mb-0.5"></i>
+      <span>Cocina</span>
+    </button>
+    <button onclick="switchTab('rules')" id="mob-btn-rules" class="mob-tab-btn flex flex-col items-center justify-center py-1 px-2 rounded-lg text-white/50 hover:text-white font-mono text-[10px] min-w-[52px] min-h-[44px] transition active:scale-95">
+      <i data-lucide="tags" class="w-4 h-4 mb-0.5"></i>
+      <span>Reglas</span>
+    </button>
+    <button onclick="switchTab('simulator')" id="mob-btn-simulator" class="mob-tab-btn flex flex-col items-center justify-center py-1 px-2 rounded-lg text-white/50 hover:text-white font-mono text-[10px] min-w-[52px] min-h-[44px] transition active:scale-95">
+      <i data-lucide="smartphone" class="w-4 h-4 mb-0.5"></i>
+      <span>Simulador</span>
+    </button>
+  </nav>
 
   <!-- SCRIPT LOGIC -->
   <script>
@@ -1193,18 +1222,32 @@
     // Tab switcher
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      
+      // Desktop nav buttons
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('bg-emerald-500/15', 'text-emerald-400', 'border-emerald-500/30');
         btn.classList.add('text-white/50', 'border-transparent');
       });
-
-      const targetTab = document.getElementById(`tab-${tabName}`);
       const targetBtn = document.getElementById(`tab-btn-${tabName}`);
-      if (targetTab) targetTab.classList.remove('hidden');
       if (targetBtn) {
         targetBtn.classList.add('bg-emerald-500/15', 'text-emerald-400', 'border-emerald-500/30');
         targetBtn.classList.remove('text-white/50', 'border-transparent');
       }
+
+      // Mobile bottom dock buttons
+      document.querySelectorAll('.mob-tab-btn').forEach(btn => {
+        btn.classList.remove('text-emerald-400');
+        btn.classList.add('text-white/50');
+      });
+      const mobBtn = document.getElementById(`mob-btn-${tabName}`);
+      if (mobBtn) {
+        mobBtn.classList.add('text-emerald-400');
+        mobBtn.classList.remove('text-white/50');
+      }
+
+      const targetTab = document.getElementById(`tab-${tabName}`);
+      if (targetTab) targetTab.classList.remove('hidden');
+      
       lucide.createIcons();
     }
 

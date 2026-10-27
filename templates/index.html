@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TapMeals Yopal — Panel de Control 24/7</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: '#0a0d12',
+              card: '#121721',
+              cardBorder: '#1e2638',
+              emerald: '#10b981',
+              emeraldHover: '#059669',
+              amber: '#f59e0b',
+              accent: '#38bdf8'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Outfit', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0a0d12;
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+    }
+    .glass-card {
+      background: rgba(18, 23, 33, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(16, 185, 129, 0.5);
+    }
+    @keyframes pulse-slow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.96); }
+    }
+    .live-pulse {
+      animation: pulse-slow 2.5s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-black">
+
+  <!-- TOP NAVIGATION HEADER -->
+  <header class="sticky top-0 z-50 border-b border-gray-800 bg-[#0a0d12]/90 backdrop-blur-md px-4 lg:px-8 py-3.5 flex items-center justify-between">
+    <div class="flex items-center space-x-3.5">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 font-display font-extrabold text-xl text-black">
+        ⚡
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="font-display font-bold text-lg text-white tracking-tight">TAPMEALS</span>
+          <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">YOPAL</span>
+        </div>
+        <p class="text-xs text-gray-400">Panel de Control 24/7 & Contestador Automático</p>
+      </div>
+    </div>
+
+    <!-- Live Status Pill & Quick Toggle -->
+    <div class="flex items-center space-x-3 sm:space-x-5">
+      <div id="statusPill" class="flex items-center space-x-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-medium">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 live-pulse"></span>
+        <span id="statusText">CONTESTADOR ACTIVO</span>
+      </div>
+
+      <!-- Master ON/OFF Switch -->
+      <button onclick="toggleBot()" id="btnToggle" class="relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-emerald-500 transition-colors duration-200 ease-in-out focus:outline-none" role="switch" aria-checked="true">
+        <span id="toggleKnob" aria-hidden="true" class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-5"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <div class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
+
+    <!-- CLOUD 24/7 BANNER ALERT -->
+    <div class="rounded-2xl bg-gradient-to-r from-emerald-950/40 via-gray-900 to-cyan-950/30 border border-emerald-500/30 p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
+      <div class="flex items-start space-x-3.5">
+        <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mt-0.5">
+          <i data-lucide="cloud-lightning" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h2 class="text-sm sm:text-base font-semibold text-white flex items-center gap-2">
+            ¿Quieres que responda incluso con el computador APAGADO?
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded border border-emerald-500/30">Solución 24/7</span>
+          </h2>
+          <p class="text-xs sm:text-sm text-gray-300 mt-1 max-w-2xl">
+            Tu contestador ya está listo para correr en la nube sin depender de tu laptop. Activa <strong>ManyChat Oficial (0% riesgo)</strong> o <strong>despliega el servidor gratis en Render</strong> en 1 clic.
+          </p>
+        </div>
+      </div>
+      <button onclick="switchTab('cloud')" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs sm:text-sm transition flex items-center gap-2 shadow-lg shadow-emerald-500/25 shrink-0">
+        <i data-lucide="cloud" class="w-4 h-4"></i>
+        Ver Guía de Nube 24/7
+      </button>
+    </div>
+
+    <!-- TABS NAVIGATION -->
+    <div class="flex space-x-1 sm:space-x-2 border-b border-gray-800 pb-2 overflow-x-auto custom-scrollbar">
+      <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium transition flex items-center gap-2 bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+        <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Tablero
+      </button>
+      <button onclick="switchTab('simulator')" id="tab-btn-simulator" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
+        <i data-lucide="smartphone" class="w-4 h-4"></i> Simulador en Vivo
+      </button>
+      <button onclick="switchTab('config')" id="tab-btn-config" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
+        <i data-lucide="settings" class="w-4 h-4"></i> Mensajes y Disparadores
+      </button>
+      <button onclick="switchTab('menu')" id="tab-btn-menu" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
+        <i data-lucide="utensils" class="w-4 h-4"></i> Carta y Menú
+      </button>
+      <button onclick="switchTab('cloud')" id="tab-btn-cloud" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
+        <i data-lucide="server" class="w-4 h-4"></i> Despliegue Nube 24/7
+      </button>
+      <button onclick="switchTab('logs')" id="tab-btn-logs" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition flex items-center gap-2 border border-transparent">
+        <i data-lucide="history" class="w-4 h-4"></i> Registro en Vivo
+      </button>
+    </div>
+
+    <!-- TAB 1: TABLERO (DASHBOARD) -->
+    <div id="tab-dashboard" class="tab-content space-y-6">
+      <!-- 4 Quick Stats -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="glass-card rounded-2xl p-4 sm:p-5 border border-gray-800">
+          <div class="flex items-center justify-between text-gray-400 text-xs">
+            <span>TIEMPO ACTIVO</span>
+            <i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i>
+          </div>
+          <div id="statUptime" class="text-xl sm:text-2xl font-bold font-display text-white mt-2">00h 00m 00s</div>
+          <p class="text-[11px] text-gray-400 mt-1">Servidor corriendo sin cortes</p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-4 sm:p-5 border border-gray-800">
+          <div class="flex items-center justify-between text-gray-400 text-xs">
+            <span>DMS ENTREGADOS</span>
+            <i data-lucide="send" class="w-4 h-4 text-cyan-400"></i>
+          </div>
+          <div id="statDMs" class="text-xl sm:text-2xl font-bold font-display text-white mt-2">0</div>
+          <p class="text-[11px] text-gray-400 mt-1">Menús enviados a clientes</p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-4 sm:p-5 border border-gray-800">
+          <div class="flex items-center justify-between text-gray-400 text-xs">
+            <span>COMENTARIOS RESPONDIDOS</span>
+            <i data-lucide="message-circle" class="w-4 h-4 text-amber-400"></i>
+          </div>
+          <div id="statComentarios" class="text-xl sm:text-2xl font-bold font-display text-white mt-2">0</div>
+          <p class="text-[11px] text-gray-400 mt-1">Interacciones en Posts/Reels</p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-4 sm:p-5 border border-gray-800">
+          <div class="flex items-center justify-between text-gray-400 text-xs">
+            <span>DISPARADOR PRINCIPAL</span>
+            <i data-lucide="sparkles" class="w-4 h-4 text-purple-400"></i>
+          </div>
+          <div id="statTrigger" class="text-xl sm:text-2xl font-bold font-display text-emerald-400 mt-2">TapTap</div>
+          <p class="text-[11px] text-gray-400 mt-1">Ultra flexible (espacios, mayúsculas)</p>
+        </div>
+      </div>
+
+      <!-- Live Quick Status Card + Recent Activity preview -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Status & Controls -->
+        <div class="glass-card rounded-2xl p-6 border border-gray-800 space-y-4">
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-gray-400 flex items-center gap-2">
+            <i data-lucide="activity" class="w-4 h-4 text-emerald-400"></i> Estado Operativo
+          </h3>
+          
+          <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 space-y-3">
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-gray-400">Modo de Operación:</span>
+              <span class="font-medium text-emerald-400">24/7 Cloud Ready</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-gray-400">Cooldown Anti-Doble Envío:</span>
+              <span class="font-medium text-white">45 segundos</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-gray-400">Velocidad de Respuesta:</span>
+              <span class="font-medium text-emerald-400">~1.5s - 3s (Instantáneo)</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-gray-400">Auto-Aprobación Solicitudes:</span>
+              <span class="font-medium text-emerald-400">ACTIVADA</span>
+            </div>
+          </div>
+
+          <div class="space-y-2 pt-2">
+            <button onclick="switchTab('simulator')" class="w-full py-2.5 px-4 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-medium text-sm transition flex items-center justify-center gap-2 border border-gray-700">
+              <i data-lucide="play" class="w-4 h-4 text-emerald-400"></i> Probar en el Simulador
+            </button>
+            <button onclick="switchTab('config')" class="w-full py-2.5 px-4 rounded-xl bg-gray-800/50 hover:bg-gray-800 text-gray-300 font-medium text-sm transition flex items-center justify-center gap-2 border border-gray-800">
+              <i data-lucide="edit-3" class="w-4 h-4"></i> Editar Mensajes y Textos
+            </button>
+          </div>
+        </div>
+
+        <!-- Recent Logs preview -->
+        <div class="lg:col-span-2 glass-card rounded-2xl p-6 border border-gray-800 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-semibold uppercase tracking-wider text-gray-400 flex items-center gap-2">
+                <i data-lucide="list" class="w-4 h-4 text-cyan-400"></i> Últimas Interacciones
+              </h3>
+              <button onclick="switchTab('logs')" class="text-xs text-emerald-400 hover:underline">Ver todo</button>
+            </div>
+            <div id="dashboardLogsList" class="space-y-2.5 text-xs text-gray-300">
+              <!-- Dynamically populated -->
+              <p class="text-gray-500 py-6 text-center">Esperando interacciones de clientes...</p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-gray-800/80 flex items-center justify-between text-xs text-gray-400">
+            <span>Monitoreando comentarios en Reels y DMs</span>
+            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Actualización en vivo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: SIMULADOR EN VIVO (LIVE TESTER) -->
+    <div id="tab-simulator" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Controls & Input Simulator -->
+        <div class="lg:col-span-6 glass-card rounded-2xl p-6 border border-gray-800 space-y-5">
+          <div>
+            <h2 class="text-lg font-bold font-display text-white flex items-center gap-2">
+              <i data-lucide="smartphone" class="w-5 h-5 text-emerald-400"></i> Simulador de Instagram en Vivo
+            </h2>
+            <p class="text-xs text-gray-400 mt-1">
+              Escribe cualquier mensaje de prueba como si fueras un cliente en Instagram para verificar que el bot responda correctamente y sin enviar doble mensaje.
+            </p>
+          </div>
+
+          <!-- Channel Selector -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-gray-300">Canal donde escribe el cliente:</label>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="setSimChannel('dm')" id="sim-chan-dm" class="sim-chan-btn py-2 px-3 rounded-xl text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                Direct Message (DM)
+              </button>
+              <button onclick="setSimChannel('solicitud')" id="sim-chan-solicitud" class="sim-chan-btn py-2 px-3 rounded-xl text-xs font-medium bg-gray-900 text-gray-400 border border-gray-800">
+                Solicitud Pendiente
+              </button>
+              <button onclick="setSimChannel('comentario')" id="sim-chan-comentario" class="sim-chan-btn py-2 px-3 rounded-xl text-xs font-medium bg-gray-900 text-gray-400 border border-gray-800">
+                Comentario en Post
+              </button>
+            </div>
+          </div>
+
+          <!-- Message Input -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-gray-300">Mensaje del cliente:</label>
+            <textarea id="simInputText" rows="3" class="w-full px-3.5 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-emerald-500 transition" placeholder="Escribe 'TapTap', 'hola quiero el menú', etc."></textarea>
+          </div>
+
+          <!-- Quick Test Badges -->
+          <div class="space-y-1.5">
+            <span class="text-[11px] text-gray-400">Pruebas rápidas (un clic):</span>
+            <div class="flex flex-wrap gap-1.5">
+              <button onclick="fillSimInput('TapTap')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-emerald-300 border border-gray-700">TapTap</button>
+              <button onclick="fillSimInput('tap tap')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-emerald-300 border border-gray-700">tap tap</button>
+              <button onclick="fillSimInput('TAPTAP!!')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-emerald-300 border border-gray-700">TAPTAP!!</button>
+              <button onclick="fillSimInput('Hola me regalas el menú porfa')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-cyan-300 border border-gray-700">menú</button>
+              <button onclick="fillSimInput('precio de los almuerzos')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-cyan-300 border border-gray-700">precios</button>
+              <button onclick="fillSimInput('buenas tardes')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-gray-300 border border-gray-700">saludo</button>
+              <button onclick="fillSimInput('')" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-red-300 border border-gray-700">Vacío (anti-duplicado)</button>
+            </div>
+          </div>
+
+          <button onclick="runSimulatorTest()" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-bold text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
+            <i data-lucide="send" class="w-4 h-4"></i> Enviar Mensaje y Simular Respuesta
+          </button>
+
+          <!-- Result Diagnostic -->
+          <div id="simDiagnostic" class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 space-y-2 hidden">
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-gray-400">Resultado del Disparador:</span>
+              <span id="simResultBadge" class="px-2 py-0.5 rounded text-xs font-semibold"></span>
+            </div>
+            <p id="simReasonText" class="text-xs text-gray-300"></p>
+          </div>
+        </div>
+
+        <!-- Phone Preview Mockup -->
+        <div class="lg:col-span-6 flex justify-center">
+          <div class="w-full max-w-[360px] rounded-[38px] bg-black border-4 border-gray-800 p-3 shadow-2xl shadow-emerald-950/20">
+            <!-- Notch -->
+            <div class="w-28 h-4 bg-gray-900 rounded-full mx-auto mb-2"></div>
+
+            <!-- Instagram Header Mock -->
+            <div class="flex items-center justify-between pb-3 border-b border-gray-800/80 px-2">
+              <div class="flex items-center space-x-2.5">
+                <div class="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-xs font-bold text-emerald-400">
+                  TM
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-white flex items-center gap-1">
+                    tapmeals.yopal <i data-lucide="check-circle-2" class="w-3 h-3 text-cyan-400"></i>
+                  </div>
+                  <div class="text-[10px] text-emerald-400 flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> En línea ahora
+                  </div>
+                </div>
+              </div>
+              <div class="text-gray-400 text-xs">•••</div>
+            </div>
+
+            <!-- Chat Area -->
+            <div id="simChatScroll" class="py-4 px-2 space-y-3 min-h-[420px] max-h-[460px] overflow-y-auto custom-scrollbar flex flex-col justify-end text-xs">
+              
+              <!-- User Message Bubble -->
+              <div class="flex justify-end">
+                <div id="simUserBubble" class="max-w-[78%] bg-emerald-600 text-white rounded-2xl rounded-br-sm px-3.5 py-2">
+                  TapTap
+                </div>
+              </div>
+
+              <!-- Bot Response Preview -->
+              <div id="simBotContainer" class="flex flex-col space-y-2">
+                <div id="simBotBubble" class="max-w-[85%] bg-gray-800 text-gray-100 rounded-2xl rounded-bl-sm px-3.5 py-2.5 leading-relaxed whitespace-pre-line">
+                  ¡Hola atleta! 🍱⚡ Aquí tienes el menú oficial de TapMeals en Yopal.
+                  
+                  💡 Cero fritos ni aceites quemados. Cada bandeja viene pesada en báscula digital con etiqueta sellada en la tapa.
+                </div>
+
+                <!-- Menu Image Attachment -->
+                <div id="simMenuAttachment" class="max-w-[75%] rounded-xl overflow-hidden border border-gray-700 shadow-md">
+                  <img src="/menu-image" alt="Menú TapMeals" class="w-full h-auto object-cover">
+                </div>
+              </div>
+
+              <!-- Public Comment Toast (if channel = comentario) -->
+              <div id="simPublicCommentBox" class="hidden p-2.5 rounded-xl bg-purple-950/40 border border-purple-500/30 text-[11px] text-purple-200">
+                <span class="font-bold text-purple-400">Respuesta pública al comentario:</span>
+                <p id="simPublicCommentText" class="mt-0.5"></p>
+              </div>
+
+            </div>
+
+            <!-- Bottom Mock Bar -->
+            <div class="mt-2 pt-2 border-t border-gray-800/80 flex items-center justify-between px-3 text-[10px] text-gray-500">
+              <span>Enviar mensaje...</span>
+              <i data-lucide="image" class="w-3.5 h-3.5"></i>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 3: CONFIGURACIÓN (SETTINGS) -->
+    <div id="tab-config" class="tab-content hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6 sm:p-8 border border-gray-800 max-w-4xl mx-auto space-y-6">
+        <div>
+          <h2 class="text-xl font-bold font-display text-white flex items-center gap-2">
+            <i data-lucide="settings" class="w-5 h-5 text-emerald-400"></i> Configuración de Textos y Disparadores
+          </h2>
+          <p class="text-xs sm:text-sm text-gray-400 mt-1">
+            Modifica aquí los textos y respuestas automáticas. Se aplicarán de inmediato tanto en el contestador local como en la nube.
+          </p>
+        </div>
+
+        <form id="configForm" onsubmit="saveConfig(event)" class="space-y-5">
+          <!-- Keyword Trigger -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Palabra clave activadora principal:</label>
+            <input type="text" id="cfgTriggerKeyword" class="w-full px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white font-medium text-sm focus:outline-none focus:border-emerald-500" value="TapTap">
+            <p class="text-[11px] text-gray-500">El bot la detecta automáticamente pegada, separada ('tap tap'), con guiones o en mayúsculas.</p>
+          </div>
+
+          <!-- Official Welcome Message -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Mensaje Oficial de Bienvenida (Texto del DM):</label>
+            <textarea id="cfgWelcomeMessage" rows="4" class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-emerald-500 leading-relaxed"></textarea>
+            <p class="text-[11px] text-gray-500">Este es el texto que se entrega inmediatamente junto con la foto oficial del menú.</p>
+          </div>
+
+          <!-- Comment Public Reply -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Respuesta pública en comentarios de Posts/Reels:</label>
+            <input type="text" id="cfgCommentReply" class="w-full px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-emerald-500">
+            <p class="text-[11px] text-gray-500">El bot etiqueta al usuario y publica esto en el comentario para confirmar que ya le mandó el DM.</p>
+          </div>
+
+          <!-- Closed DMs Fallback -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Respuesta cuando el usuario tiene DMs privados/bloqueados:</label>
+            <input type="text" id="cfgClosedDmsReply" class="w-full px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-emerald-500">
+            <p class="text-[11px] text-gray-500">Si Instagram no permite enviarle DM por privacidad, el bot le dice en su comentario que escriba primero 'TapTap'.</p>
+          </div>
+
+          <!-- Cooldown -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+              <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Cooldown Anti-Duplicados (Segundos):</label>
+              <input type="number" id="cfgCooldown" min="10" max="300" class="w-full px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-emerald-500" value="45">
+              <p class="text-[11px] text-gray-500">Evita que a un mismo usuario le llegue doble mensaje en menos de este tiempo.</p>
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-xs font-semibold uppercase tracking-wider text-gray-300">Intervalo de Escaneo (Segundos):</label>
+              <input type="number" step="0.5" id="cfgScanInterval" min="1.0" max="10.0" class="w-full px-4 py-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-sm focus:outline-none focus:border-emerald-500" value="1.5">
+              <p class="text-[11px] text-gray-500">Frecuencia de revisión continua de nuevos DMs y solicitudes.</p>
+            </div>
+          </div>
+
+          <div class="pt-4 flex justify-end">
+            <button type="submit" class="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm transition flex items-center gap-2 shadow-lg shadow-emerald-500/20">
+              <i data-lucide="save" class="w-4 h-4"></i> Guardar Cambios
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- TAB 4: CARTA Y MENÚ (MENU MANAGER) -->
+    <div id="tab-menu" class="tab-content hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6 sm:p-8 border border-gray-800 max-w-4xl mx-auto space-y-6">
+        <div>
+          <h2 class="text-xl font-bold font-display text-white flex items-center gap-2">
+            <i data-lucide="utensils" class="w-5 h-5 text-emerald-400"></i> Gestión de la Carta y Foto del Menú
+          </h2>
+          <p class="text-xs sm:text-sm text-gray-400 mt-1">
+            Esta es la imagen oficial en formato 4:5 (1080×1350 px) que el contestador adjunta en los DMs sin recortarse.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+          <!-- Menu Preview -->
+          <div class="space-y-3">
+            <span class="text-xs font-semibold text-gray-300">Vista Previa Actual (4:5 Ratio):</span>
+            <div class="rounded-2xl overflow-hidden border border-gray-700 bg-black/40 shadow-xl max-w-xs mx-auto">
+              <img id="menuImagePreview" src="/menu-image" alt="Carta Oficial TapMeals" class="w-full h-auto object-cover">
+            </div>
+          </div>
+
+          <!-- Menu Actions -->
+          <div class="space-y-6">
+            <div class="p-5 rounded-xl bg-gray-900/80 border border-gray-800 space-y-3">
+              <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+                <i data-lucide="upload" class="w-4 h-4 text-emerald-400"></i> Cambiar imagen de la carta
+              </h3>
+              <p class="text-xs text-gray-400">
+                Si actualizas los precios o platos, sube aquí la nueva imagen (.png o .jpg) y el bot empezará a enviar la nueva versión de inmediato.
+              </p>
+              
+              <input type="file" id="menuFileInput" accept="image/*" class="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/10 file:text-emerald-400 hover:file:bg-emerald-500/20 cursor-pointer">
+              
+              <button onclick="uploadMenuImage()" class="w-full py-2.5 px-4 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-medium text-xs transition flex items-center justify-center gap-2 border border-gray-700">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Subir y Reemplazar Menú
+              </button>
+            </div>
+
+            <div class="p-5 rounded-xl bg-gray-900/80 border border-gray-800 space-y-3">
+              <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+                <i data-lucide="info" class="w-4 h-4 text-cyan-400"></i> Especificaciones del Menú Oficial
+              </h3>
+              <ul class="text-xs text-gray-300 space-y-1.5 list-disc list-inside">
+                <li>Resolución nativa: <strong>1080 × 1350 px (4:5)</strong></li>
+                <li>3 opciones estelares: Pechuga a la plancha, Fajitas de ternera magra, Bowl Doble Proteína.</li>
+                <li>Pollo Crispy Fit removido conforme a tus indicaciones.</li>
+                <li>Gramos reales pesados en crudo y macros certificados.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: DESPLIEGUE NUBE 24/7 (CLOUD SETUP) -->
+    <div id="tab-cloud" class="tab-content hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6 sm:p-8 border border-gray-800 max-w-4xl mx-auto space-y-6">
+        <div>
+          <h2 class="text-xl font-bold font-display text-white flex items-center gap-2">
+            <i data-lucide="cloud" class="w-5 h-5 text-emerald-400"></i> ¿Cómo dejarlo 24/7 con el computador apagado?
+          </h2>
+          <p class="text-xs sm:text-sm text-gray-400 mt-1">
+            Aquí tienes las 2 soluciones definitivas para que tu contestador de TapMeals responda automáticamente todo el día y la noche sin importar si apagas tu PC.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Option A: ManyChat Official (Recommended) -->
+          <div class="rounded-2xl bg-gradient-to-b from-emerald-950/40 to-gray-900 border-2 border-emerald-500/40 p-6 space-y-4 shadow-xl">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">MÉTODO OFICIAL RECOMENDADO</span>
+              <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400"></i>
+            </div>
+            
+            <h3 class="text-lg font-bold text-white">1. ManyChat Cloud (Oficial de Meta)</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Es el socio verificado oficial de Instagram. Corre directamente en los servidores de Meta. <strong>No requiere tener el computador prendido</strong> y tiene <strong>0% de riesgo de baneo</strong>.
+            </p>
+
+            <div class="space-y-2 text-xs text-gray-300 bg-black/40 p-3.5 rounded-xl border border-gray-800">
+              <div class="font-semibold text-emerald-400">Pasos en 3 minutos:</div>
+              <ol class="list-decimal list-inside space-y-1">
+                <li>Crea cuenta gratis en <a href="https://manychat.com" target="_blank" class="text-cyan-400 underline">manychat.com</a></li>
+                <li>Conecta tu cuenta <code class="text-emerald-300">@tapmeals.yopal</code></li>
+                <li>Crea una automatización: <em>"Cuando comenten <strong>TapTap</strong> en cualquier Reel $\rightarrow$ Enviar DM con el texto y la foto del menú"</em>.</li>
+              </ol>
+            </div>
+
+            <div class="text-[11px] text-gray-400 flex items-center gap-1.5">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Plan gratuito incluye hasta 1.000 contactos.
+            </div>
+          </div>
+
+          <!-- Option B: Render.com Cloud Webhook -->
+          <div class="rounded-2xl bg-gray-900 border border-gray-800 p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">SERVIDOR EN LA NUBE GRATIS</span>
+              <i data-lucide="server" class="w-5 h-5 text-cyan-400"></i>
+            </div>
+
+            <h3 class="text-lg font-bold text-white">2. Servidor Cloud (Render / Railway)</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Puedes subir este mismo Panel de Control y el script a un servidor gratuito como <strong>Render.com</strong> o <strong>Railway.app</strong>.
+            </p>
+
+            <div class="space-y-2 text-xs text-gray-300 bg-black/40 p-3.5 rounded-xl border border-gray-800">
+              <div class="font-semibold text-cyan-400">Archivos ya preparados:</div>
+              <ul class="space-y-1 list-disc list-inside">
+                <li><code class="text-gray-300">render.yaml</code> (Configuración automática)</li>
+                <li><code class="text-gray-300">Procfile</code> (Lanzador cloud)</li>
+                <li><code class="text-gray-300">requirements.txt</code> (Dependencias listas)</li>
+              </ul>
+            </div>
+
+            <p class="text-[11px] text-gray-400">
+              Al desplegarlo en Render, tendrás una dirección web propia (ej: <code class="text-cyan-300">https://tapmeals-yopal.onrender.com</code>) accesible desde tu celular en cualquier lugar.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Tip Box for School -->
+        <div class="p-4 rounded-xl bg-purple-950/30 border border-purple-500/25 text-xs text-purple-200 flex items-start gap-3">
+          <i data-lucide="award" class="w-5 h-5 text-purple-400 shrink-0 mt-0.5"></i>
+          <div>
+            <strong class="text-purple-300">Para tu sustentación en el Liceo Moderno Celestín Freinet:</strong>
+            <p class="mt-0.5 text-gray-300">
+              Explicar a los profesores que TapMeals cuenta con un <strong>sistema de atención automatizado en la nube 24/7</strong> con arquitectura desacoplada demuestra un nivel sobresaliente de ingeniería y modelo de negocio tecnológico.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 6: REGISTRO DE ACTIVIDAD (LOGS) -->
+    <div id="tab-logs" class="tab-content hidden space-y-4">
+      <div class="glass-card rounded-2xl p-6 border border-gray-800 space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold font-display text-white flex items-center gap-2">
+              <i data-lucide="history" class="w-5 h-5 text-emerald-400"></i> Registro de Actividad en Tiempo Real
+            </h2>
+            <p class="text-xs text-gray-400 mt-0.5">Historial en vivo de comentarios detectados, DMs enviados y solicitudes aprobadas.</p>
+          </div>
+          <button onclick="clearLogs()" class="px-3 py-1.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs text-gray-300 transition border border-gray-700">
+            Limpiar Registro
+          </button>
+        </div>
+
+        <!-- Logs Table -->
+        <div class="overflow-x-auto rounded-xl border border-gray-800 bg-gray-900/60">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-gray-900 text-gray-400 uppercase text-[10px] tracking-wider border-b border-gray-800">
+              <tr>
+                <th class="py-3 px-4">Hora</th>
+                <th class="py-3 px-4">Canal</th>
+                <th class="py-3 px-4">Remitente</th>
+                <th class="py-3 px-4">Detalle de la acción</th>
+                <th class="py-3 px-4">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="logsTableBody" class="divide-y divide-gray-800/60">
+              <tr>
+                <td colspan="5" class="py-8 text-center text-gray-500">No hay eventos registrados recientemente.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TOAST NOTIFICATION POPUP -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="flex items-center space-x-2.5 px-4 py-3 rounded-2xl bg-gray-900 border border-emerald-500/40 text-white shadow-2xl">
+      <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+      <span id="toastMsg" class="text-xs font-medium">Configuración guardada</span>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-gray-800 py-4 text-center text-xs text-gray-500 mt-auto">
+    TapMeals Yopal &bull; Emprendimiento Grupo 7 &bull; Liceo Moderno Celestín Freinet
+  </footer>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    let activeSimChannel = 'dm';
+
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Tab switcher
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-emerald-500/15', 'text-emerald-400', 'border-emerald-500/30');
+        btn.classList.add('text-gray-400', 'border-transparent');
+      });
+
+      const targetTab = document.getElementById(`tab-${tabName}`);
+      const targetBtn = document.getElementById(`tab-btn-${tabName}`);
+      if (targetTab) targetTab.classList.remove('hidden');
+      if (targetBtn) {
+        targetBtn.classList.add('bg-emerald-500/15', 'text-emerald-400', 'border-emerald-500/30');
+        targetBtn.classList.remove('text-gray-400', 'border-transparent');
+      }
+      lucide.createIcons();
+    }
+
+    // Toast helper
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = message;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+
+    // Toggle bot ON/OFF
+    async function toggleBot() {
+      try {
+        const res = await fetch('/api/toggle-bot', { method: 'POST' });
+        const data = await res.json();
+        updateBotStatusUI(data.bot_enabled);
+        showToast(data.bot_enabled ? "Contestador Automático ACTIVADO" : "Contestador Automático PAUSADO");
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function updateBotStatusUI(enabled) {
+      const pill = document.getElementById('statusPill');
+      const text = document.getElementById('statusText');
+      const btn = document.getElementById('btnToggle');
+      const knob = document.getElementById('toggleKnob');
+
+      if (enabled) {
+        pill.className = "flex items-center space-x-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-medium";
+        text.innerText = "CONTESTADOR ACTIVO";
+        btn.className = "relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-emerald-500 transition-colors duration-200 ease-in-out focus:outline-none";
+        knob.className = "pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-5";
+      } else {
+        pill.className = "flex items-center space-x-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-400 text-xs font-medium";
+        text.innerText = "CONTESTADOR PAUSADO";
+        btn.className = "relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-700 transition-colors duration-200 ease-in-out focus:outline-none";
+        knob.className = "pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-0";
+      }
+    }
+
+    // Simulator channel
+    function setSimChannel(channel) {
+      activeSimChannel = channel;
+      document.querySelectorAll('.sim-chan-btn').forEach(btn => {
+        btn.className = "sim-chan-btn py-2 px-3 rounded-xl text-xs font-medium bg-gray-900 text-gray-400 border border-gray-800";
+      });
+      document.getElementById(`sim-chan-${channel}`).className = "sim-chan-btn py-2 px-3 rounded-xl text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+    }
+
+    function fillSimInput(val) {
+      document.getElementById('simInputText').value = val;
+    }
+
+    async function runSimulatorTest() {
+      const text = document.getElementById('simInputText').value;
+      const res = await fetch('/api/test-simulator', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text, channel: activeSimChannel })
+      });
+      const data = await res.json();
+
+      // Update phone mockup
+      document.getElementById('simUserBubble').innerText = text || "(Mensaje vacío)";
+      
+      const botContainer = document.getElementById('simBotContainer');
+      const botBubble = document.getElementById('simBotBubble');
+      const menuAttach = document.getElementById('simMenuAttachment');
+      const commentBox = document.getElementById('simPublicCommentBox');
+      const commentText = document.getElementById('simPublicCommentText');
+      const diag = document.getElementById('simDiagnostic');
+      const badge = document.getElementById('simResultBadge');
+      const reason = document.getElementById('simReasonText');
+
+      diag.classList.remove('hidden');
+      reason.innerText = data.reason;
+
+      if (data.triggers) {
+        badge.className = "px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+        badge.innerText = "¡DISPARÓ MENÚ!";
+        
+        botContainer.classList.remove('hidden');
+        botBubble.innerText = data.dm_response;
+        menuAttach.classList.remove('hidden');
+
+        if (activeSimChannel === 'comentario' && data.public_comment_reply) {
+          commentBox.classList.remove('hidden');
+          commentText.innerText = data.public_comment_reply;
+        } else {
+          commentBox.classList.add('hidden');
+        }
+      } else {
+        badge.className = "px-2 py-0.5 rounded text-xs font-semibold bg-gray-800 text-gray-400 border border-gray-700";
+        badge.innerText = "NO DISPARÓ (IGNORADO)";
+        
+        botContainer.classList.add('hidden');
+        commentBox.classList.add('hidden');
+      }
+
+      // Scroll phone view down
+      const chat = document.getElementById('simChatScroll');
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    // Save config
+    async function saveConfig(e) {
+      e.preventDefault();
+      const payload = {
+        trigger_keyword: document.getElementById('cfgTriggerKeyword').value,
+        welcome_message: document.getElementById('cfgWelcomeMessage').value,
+        comment_public_reply: document.getElementById('cfgCommentReply').value,
+        closed_dms_reply: document.getElementById('cfgClosedDmsReply').value,
+        cooldown_seconds: parseInt(document.getElementById('cfgCooldown').value) || 45,
+        scan_interval_seconds: parseFloat(document.getElementById('cfgScanInterval').value) || 1.5
+      };
+
+      try {
+        const res = await fetch('/api/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast("Configuración guardada exitosamente");
+          document.getElementById('statTrigger').innerText = payload.trigger_keyword;
+        }
+      } catch (err) {
+        alert("Error al guardar: " + err);
+      }
+    }
+
+    // Upload menu image
+    async function uploadMenuImage() {
+      const fileInput = document.getElementById('menuFileInput');
+      if (!fileInput.files.length) {
+        alert("Por favor selecciona un archivo de imagen primero.");
+        return;
+      }
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+
+      try {
+        const res = await fetch('/api/upload-menu', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast("Menú actualizado con éxito");
+          document.getElementById('menuImagePreview').src = '/menu-image?t=' + Date.now();
+        } else {
+          alert("Error: " + data.error);
+        }
+      } catch (e) {
+        alert("Error al subir archivo: " + e);
+      }
+    }
+
+    // Clear logs
+    async function clearLogs() {
+      await fetch('/api/clear-logs', { method: 'POST' });
+      loadLogs();
+      showToast("Registro limpiado");
+    }
+
+    // Fetch initial status and populate
+    async function loadStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        document.getElementById('statUptime').innerText = data.uptime;
+        document.getElementById('statDMs').innerText = data.total_dms;
+        document.getElementById('statComentarios').innerText = data.total_comentarios;
+        document.getElementById('statTrigger').innerText = data.trigger_keyword;
+        updateBotStatusUI(data.bot_enabled);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function loadConfig() {
+      try {
+        const res = await fetch('/api/config');
+        const cfg = await res.json();
+        document.getElementById('cfgTriggerKeyword').value = cfg.trigger_keyword || "TapTap";
+        document.getElementById('cfgWelcomeMessage').value = cfg.welcome_message || "";
+        document.getElementById('cfgCommentReply').value = cfg.comment_public_reply || "";
+        document.getElementById('cfgClosedDmsReply').value = cfg.closed_dms_reply || "";
+        document.getElementById('cfgCooldown').value = cfg.cooldown_seconds || 45;
+        document.getElementById('cfgScanInterval').value = cfg.scan_interval_seconds || 1.5;
+        document.getElementById('statTrigger').innerText = cfg.trigger_keyword || "TapTap";
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function loadLogs() {
+      try {
+        const res = await fetch('/api/logs');
+        const data = await res.json();
+        const logs = data.logs || [];
+
+        // Update dashboard preview
+        const preview = document.getElementById('dashboardLogsList');
+        if (logs.length === 0) {
+          preview.innerHTML = `<p class="text-gray-500 py-6 text-center">Esperando interacciones de clientes...</p>`;
+        } else {
+          preview.innerHTML = logs.slice(0, 4).map(l => `
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-gray-900/60 border border-gray-800">
+              <div class="flex items-center space-x-2.5">
+                <span class="w-1.5 h-1.5 rounded-full ${l.tipo === 'exito' ? 'bg-emerald-400' : (l.tipo === 'comentario' ? 'bg-purple-400' : 'bg-cyan-400')}"></span>
+                <span class="font-semibold text-white">${l.remitente}</span>
+                <span class="text-gray-400 truncate max-w-xs">${l.detalle}</span>
+              </div>
+              <span class="text-gray-500 text-[10px] font-mono">${l.timestamp}</span>
+            </div>
+          `).join('');
+        }
+
+        // Update full table
+        const tbody = document.getElementById('logsTableBody');
+        if (logs.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-gray-500">No hay eventos registrados recientemente.</td></tr>`;
+        } else {
+          tbody.innerHTML = logs.map(l => `
+            <tr class="hover:bg-gray-800/40 transition">
+              <td class="py-2.5 px-4 font-mono text-gray-400">${l.timestamp}</td>
+              <td class="py-2.5 px-4">
+                <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${l.canal === 'DM' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'}">${l.canal}</span>
+              </td>
+              <td class="py-2.5 px-4 font-medium text-white">${l.remitente}</td>
+              <td class="py-2.5 px-4 text-gray-300">${l.detalle}</td>
+              <td class="py-2.5 px-4">
+                <span class="flex items-center gap-1 text-emerald-400"><i data-lucide="check" class="w-3.5 h-3.5"></i> Procesado</span>
+              </td>
+            </tr>
+          `).join('');
+          lucide.createIcons();
+        }
+
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Polling intervals
+    loadStatus();
+    loadConfig();
+    loadLogs();
+    setInterval(loadStatus, 4000);
+    setInterval(loadLogs, 3000);
+  </script>
+</body>
+</html>

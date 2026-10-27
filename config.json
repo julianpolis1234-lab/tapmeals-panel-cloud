@@ -1,0 +1,11 @@
+{
+  "bot_enabled": true,
+  "trigger_keyword": "TapTap",
+  "welcome_message": "¡Hola atleta! 🍱⚡ Aquí tienes el menú oficial de TapMeals en Yopal.\n\n💡 Cero fritos ni aceites quemados. Cada bandeja viene pesada en báscula digital con etiqueta sellada en la tapa.",
+  "comment_public_reply": "¡Te acabamos de enviar el menú oficial por mensaje directo! Revisa tu DM 🍱⚡",
+  "closed_dms_reply": "Tu cuenta tiene bloqueados los DMs de externos 🔒 Porfa envíanos tú un mensaje al directo con la palabra 'TapTap' y te llegará la carta de una 🍱⚡",
+  "cooldown_seconds": 45,
+  "scan_interval_seconds": 1.5,
+  "menu_image_path": "C:\\Users\\MSI\\Downloads\\TapMeals_Kit_Editable_ApoloStyle\\Menu_Oficial_TapMeals_Yopal.png",
+  "cloud_mode": "manychat_recommended"
+}

@@ -252,7 +252,108 @@ def consultar_omniroute(prompt: str, model: str = "claude", system_prompt: Optio
             return intento
         if intento.get("error") and ("429" in intento["error"] or "rate" in intento["error"].lower()):
             _MODEL_COOLDOWN_UNTIL[libre] = time.time() + 180
+    # Si OmniRoute local falla o el PC está apagado, intentar fallback cloud directo con Gemini o Groq si hay API keys
+    if not is_mocked:
+        if os.environ.get("GEMINI_API_KEY"):
+            g_res = _consultar_gemini_directo_cloud(prompt, system_prompt, timeout)
+            if g_res["success"]:
+                return g_res
+        if os.environ.get("GROQ_API_KEY"):
+            q_res = _consultar_groq_directo_cloud(prompt, system_prompt, timeout)
+            if q_res["success"]:
+                return q_res
+
     return res or _consultar_un_modelo(prompt, model, system_prompt, timeout)
+
+
+def _consultar_gemini_directo_cloud(prompt: str, system_prompt: Optional[str] = None, timeout: int = 10) -> Dict[str, Any]:
+    """Fallback directo a la API gratuita de Google Gemini (2.5 Flash) cuando el PC local y el puerto 20128 están apagados."""
+    gemini_key = os.environ.get("GEMINI_API_KEY", "").strip()
+    if not gemini_key:
+        return {"success": False, "response": FALLBACK_TAPMEALS_RESPONSE, "model": "gemini-cloud-direct", "latency": 0.0, "error": "GEMINI_API_KEY no configurada"}
+    
+    start_time = time.time()
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={gemini_key}"
+    sys_text = system_prompt or TAPMEALS_SYSTEM_PROMPT
+    payload = {
+        "contents": [
+            {
+                "parts": [
+                    {"text": f"Contexto de TapMeals Yopal:\n{sys_text}\n\nMensaje del cliente:\n{prompt}"}
+                ]
+            }
+        ],
+        "generationConfig": {
+            "temperature": 0.4,
+            "maxOutputTokens": 600
+        }
+    }
+    try:
+        data = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            body = json.loads(resp.read().decode("utf-8"))
+            content = body["candidates"][0]["content"]["parts"][0]["text"].strip()
+            return {
+                "success": True,
+                "response": content,
+                "model": "gemini-2.5-flash (cloud-direct)",
+                "latency": round(time.time() - start_time, 3),
+                "error": None
+            }
+    except Exception as e:
+        return {
+            "success": False,
+            "response": FALLBACK_TAPMEALS_RESPONSE,
+            "model": "gemini-2.5-flash (cloud-direct)",
+            "latency": round(time.time() - start_time, 3),
+            "error": str(e)
+        }
+
+
+def _consultar_groq_directo_cloud(prompt: str, system_prompt: Optional[str] = None, timeout: int = 10) -> Dict[str, Any]:
+    """Fallback directo a la API gratuita de Groq (Llama-3.3-70b) cuando el PC local está apagado."""
+    groq_key = os.environ.get("GROQ_API_KEY", "").strip()
+    if not groq_key:
+        return {"success": False, "response": FALLBACK_TAPMEALS_RESPONSE, "model": "groq-cloud-direct", "latency": 0.0, "error": "GROQ_API_KEY no configurada"}
+    
+    start_time = time.time()
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    sys_text = system_prompt or TAPMEALS_SYSTEM_PROMPT
+    payload = {
+        "model": "llama-3.3-70b-versatile",
+        "messages": [
+            {"role": "system", "content": sys_text},
+            {"role": "user", "content": prompt}
+        ],
+        "temperature": 0.4,
+        "max_tokens": 600
+    }
+    try:
+        data = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(url, data=data, headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {groq_key}"
+        })
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            body = json.loads(resp.read().decode("utf-8"))
+            content = body["choices"][0]["message"]["content"].strip()
+            return {
+                "success": True,
+                "response": content,
+                "model": "groq/llama-3.3-70b (cloud-direct)",
+                "latency": round(time.time() - start_time, 3),
+                "error": None
+            }
+    except Exception as e:
+        return {
+            "success": False,
+            "response": FALLBACK_TAPMEALS_RESPONSE,
+            "model": "groq/llama-3.3-70b (cloud-direct)",
+            "latency": round(time.time() - start_time, 3),
+            "error": str(e)
+        }
+
 
 
 def generar_respuesta_inteligente_dm(mensaje_usuario: str, modelo: str = "claude") -> Dict[str, Any]:

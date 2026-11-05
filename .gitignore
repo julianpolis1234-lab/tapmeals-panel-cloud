@@ -4,3 +4,8 @@ __pycache__/
 *session*.json
 *.log
 scratch/
+
+.agents/
+Media_Output/
+media_output/
+

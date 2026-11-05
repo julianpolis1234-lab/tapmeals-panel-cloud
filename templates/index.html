@@ -168,6 +168,10 @@
       <button onclick="switchTab('tools')" id="tab-btn-tools" class="tab-btn px-2.5 py-1 rounded text-white/50 hover:text-white transition flex items-center gap-1.5 border border-transparent">
         <span>Cocina & MRP</span>
       </button>
+      <button onclick="switchTab('departments')" id="tab-btn-departments" class="tab-btn px-2.5 py-1 rounded text-white/50 hover:text-white transition flex items-center gap-1.5 border border-transparent">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+        <span>Departamentos</span>
+      </button>
       <div class="h-3 w-px bg-white/10 mx-1"></div>
       <button onclick="switchTab('rules')" id="tab-btn-rules" class="tab-btn px-2.5 py-1 rounded text-white/50 hover:text-white transition flex items-center gap-1.5 border border-transparent">
         <span>Reglas</span>
@@ -867,6 +871,270 @@
 
       </div>
 
+    </section>
+
+    <!-- =======================================================================
+         TAB: DEPARTAMENTOS AUTÓNOMOS (MILESTONE 2: CHEFOPS, TRENDRADAR, GROWTHLEAD, RETENTIONAGENT)
+         ======================================================================= -->
+    <section id="tab-departments" class="tab-content hidden space-y-6">
+      
+      <!-- Departments Header -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
+        <div>
+          <h2 class="text-xl font-bold font-display tracking-wide text-white flex items-center gap-2">
+            <span class="text-emerald-400">⚡</span> Departamentos Autónomos & Subagentes
+          </h2>
+          <p class="text-xs text-white/50 font-mono mt-0.5">
+            Orquestación multi-departamento para TapMeals Yopal · Operación continua y reactiva
+          </p>
+        </div>
+        <div class="flex items-center gap-2 text-xs font-mono">
+          <span class="px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>4 Departamentos Operativos</span>
+          </span>
+          <button onclick="refreshDepartmentsStatus()" class="px-2.5 py-1 rounded bg-white/[0.06] hover:bg-white/[0.1] text-white/70 hover:text-white transition flex items-center gap-1 border border-white/10">
+            <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+            <span>Actualizar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4-Department High-Density Bento Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- DEPT 1: CHEFOPS (Cocina, MRP & Logística) -->
+        <article class="hairline-card p-4 sm:p-5 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="p-1.5 rounded bg-amber-500/10 text-amber-400 text-sm font-bold">🍳</span>
+                <div>
+                  <h3 class="text-sm font-bold text-white font-mono uppercase tracking-wider">ChefOps · Cocina & MRP</h3>
+                  <span class="text-[10px] text-white/40 font-mono">Corte Diario 10:30 AM · Explosión de Insumos</span>
+                </div>
+              </div>
+              <span id="chefCutoffBadge" class="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
+                Aceptando Pedidos
+              </span>
+            </div>
+
+            <!-- MRP Interactive Form -->
+            <div class="space-y-3">
+              <div class="flex items-center gap-2">
+                <label class="text-xs font-mono text-white/60">Número de Pedidos (Bowls):</label>
+                <input type="number" id="deptMrpOrders" value="85" min="0" class="w-20 px-2 py-1 rounded bg-white/[0.05] border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-amber-400">
+                <button onclick="calculateDeptMRP()" class="px-3 py-1 rounded bg-amber-500 hover:bg-amber-400 text-black font-bold font-mono text-xs transition">
+                  Calcular MRP
+                </button>
+              </div>
+
+              <!-- Live MRP Output Cards -->
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+                <div class="p-2.5 rounded bg-black/40 border border-white/5">
+                  <span class="text-[10px] font-mono text-white/40 block">Pechuga Cruda (30% merma)</span>
+                  <span id="deptMrpChicken" class="text-sm font-mono font-bold text-amber-400 block mt-0.5">18.214 kg</span>
+                  <span class="text-[9px] text-white/30 font-mono">150g cocido/bowl</span>
+                </div>
+                <div class="p-2.5 rounded bg-black/40 border border-white/5">
+                  <span class="text-[10px] font-mono text-white/40 block">Arroz Seco</span>
+                  <span id="deptMrpRice" class="text-sm font-mono font-bold text-white block mt-0.5">6.800 kg</span>
+                  <span class="text-[9px] text-white/30 font-mono">80g seco/bowl</span>
+                </div>
+                <div class="p-2.5 rounded bg-black/40 border border-white/5">
+                  <span class="text-[10px] font-mono text-white/40 block">Trío Vegetales</span>
+                  <span id="deptMrpVeg" class="text-sm font-mono font-bold text-emerald-400 block mt-0.5">6.375 kg</span>
+                  <span class="text-[9px] text-white/30 font-mono">25g B / 25g T / 25g Z</span>
+                </div>
+                <div class="p-2.5 rounded bg-black/40 border border-white/5">
+                  <span class="text-[10px] font-mono text-white/40 block">Envases BOPS</span>
+                  <span id="deptMrpContainers" class="text-sm font-mono font-bold text-white block mt-0.5">85 un</span>
+                  <span class="text-[9px] text-white/30 font-mono">3 divisiones</span>
+                </div>
+              </div>
+
+              <!-- Alerts Container -->
+              <div id="deptMrpAlerts" class="text-[11px] font-mono space-y-1">
+                <!-- Injected dynamically -->
+              </div>
+
+              <!-- Route Clustering Info -->
+              <div class="p-2.5 rounded bg-white/[0.02] border border-white/5 text-[11px] font-mono text-white/60">
+                <span class="text-white font-medium block mb-1">Rutas Logísticas Yopal (4 Clusters):</span>
+                <div class="grid grid-cols-2 gap-1 text-[10px]">
+                  <span class="text-emerald-400">🏢 Centro (Alcaldía / Bancos)</span>
+                  <span class="text-sky-400">🏡 San Martín (Campiña / Alameda)</span>
+                  <span class="text-amber-400">🎓 Universidades (Unitrópico / SENA)</span>
+                  <span class="text-violet-400">🏋️ Gym Hubs (Smart Fit / Alcaraván)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- DEPT 2: TRENDRADAR (Inteligencia de Mercado & Tendencias) -->
+        <article class="hairline-card p-4 sm:p-5 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="p-1.5 rounded bg-sky-500/10 text-sky-400 text-sm font-bold">📡</span>
+                <div>
+                  <h3 class="text-sm font-bold text-white font-mono uppercase tracking-wider">TrendRadar · Inteligencia IA</h3>
+                  <span class="text-[10px] text-white/40 font-mono">OmniRoute Port 20128 · Claude Sonnet 5.5</span>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-sky-500/15 border border-sky-500/30 text-sky-400">
+                OmniRoute Activo
+              </span>
+            </div>
+
+            <!-- Scan Controls -->
+            <div class="space-y-3">
+              <div class="flex gap-2">
+                <input type="text" id="deptTrendTopic" value="Fatiga post-almuerzo y exceso de fritos en oficinas de Yopal" class="flex-1 px-3 py-1.5 rounded bg-white/[0.05] border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-sky-400" placeholder="Temática de tendencia o dolor...">
+                <button onclick="scanDeptTrends()" id="btnScanTrends" class="px-3 py-1.5 rounded bg-sky-500 hover:bg-sky-400 text-black font-bold font-mono text-xs transition whitespace-nowrap">
+                  Escanear IA
+                </button>
+              </div>
+
+              <!-- Active Trends List -->
+              <div class="space-y-2 max-h-[220px] overflow-y-auto custom-scrollbar" id="deptTrendsContainer">
+                <div class="p-3 rounded bg-black/40 border border-white/5 space-y-1">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-white font-mono">Fatiga de oficina y sopas grasosas</span>
+                    <span class="text-[9px] px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-400 font-mono">lifestyle</span>
+                  </div>
+                  <p class="text-[11px] text-white/70 italic">"¿Cansado de la sopa grasosa en el centro de Yopal que te da sueño a las 2PM?"</p>
+                  <div class="flex items-center justify-between text-[10px] font-mono text-white/40 pt-1 border-t border-white/5">
+                    <span>305g reales · 150g pechuga · $13.500-$15.000 COP</span>
+                    <span class="text-emerald-400 font-bold">CTA: TapTap</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- DEPT 3: GROWTHLEAD (Adquisición & Comment-to-DM) -->
+        <article class="hairline-card p-4 sm:p-5 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="p-1.5 rounded bg-emerald-500/10 text-emerald-400 text-sm font-bold">🎯</span>
+                <div>
+                  <h3 class="text-sm font-bold text-white font-mono uppercase tracking-wider">GrowthLead · Adquisición</h3>
+                  <span class="text-[10px] text-white/40 font-mono">Enrutamiento Comment-to-DM &lt;3s · Lead Scoring</span>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
+                Trigger: TapTap
+              </span>
+            </div>
+
+            <!-- Comment-to-DM Interactive Tester -->
+            <div class="space-y-3">
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="text-[10px] font-mono text-white/40 block mb-1">Comentario del Atleta:</label>
+                  <input type="text" id="deptCommentText" value="Quiero el menu TapTap" class="w-full px-2 py-1 rounded bg-white/[0.05] border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-emerald-400">
+                </div>
+                <div>
+                  <label class="text-[10px] font-mono text-white/40 block mb-1">Usuario Instagram:</label>
+                  <input type="text" id="deptCommentUser" value="atleta_yopal" class="w-full px-2 py-1 rounded bg-white/[0.05] border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-emerald-400">
+                </div>
+              </div>
+              <button onclick="testDeptCommentRoute()" class="w-full py-1.5 rounded bg-emerald-500 hover:bg-emerald-400 text-black font-bold font-mono text-xs transition">
+                Simular Enrutamiento &lt;3s
+              </button>
+
+              <div id="deptRouteResult" class="p-2.5 rounded bg-black/40 border border-white/5 text-[11px] font-mono space-y-1.5">
+                <div class="text-white/40">Respuesta pública simulada:</div>
+                <div id="deptPublicReply" class="text-emerald-400">@atleta_yopal ¡Te acabamos de enviar el menú oficial por DM! Revisa tu bandeja 🍱⚡</div>
+                <div class="text-white/40 pt-1 border-t border-white/5">Payload DM enviado:</div>
+                <div id="deptDmPayload" class="text-white/70 text-[10px] whitespace-pre-line">305g reales: 150g pechuga, 80g arroz, 75g vegetales.
+Valores: $13.500 - $15.000 COP · WhatsApp: 573202337178</div>
+              </div>
+
+              <!-- Lead Scoring Tester -->
+              <div class="pt-2 border-t border-white/5 flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[10px] font-mono text-white/50">Interacciones:</span>
+                  <button onclick="addLeadInteraction('TapTap')" class="px-1.5 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[9px] font-mono text-emerald-400 border border-white/10">+TapTap</button>
+                  <button onclick="addLeadInteraction('Smart Fit')" class="px-1.5 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[9px] font-mono text-sky-400 border border-white/10">+SmartFit</button>
+                  <button onclick="addLeadInteraction('Nequi pagado')" class="px-1.5 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[9px] font-mono text-amber-400 border border-white/10">+Nequi</button>
+                </div>
+                <div id="deptLeadScoreBadge" class="text-xs font-mono font-bold text-amber-400">
+                  Score: 5 · Warm
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- DEPT 4: RETENTIONAGENT (QA Post-Venta & Fidelización) -->
+        <article class="hairline-card p-4 sm:p-5 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="p-1.5 rounded bg-violet-500/10 text-violet-400 text-sm font-bold">💎</span>
+                <div>
+                  <h3 class="text-sm font-bold text-white font-mono uppercase tracking-wider">RetentionAgent · QA & Fidelización</h3>
+                  <span class="text-[10px] text-white/40 font-mono">Feedback 13:45 · Escalamiento & Suscripciones</span>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-violet-500/15 border border-violet-500/30 text-violet-400">
+                13:45 Dispatch
+              </span>
+            </div>
+
+            <!-- QA Rating Tester -->
+            <div class="space-y-3">
+              <div>
+                <label class="text-[10px] font-mono text-white/40 block mb-1">Simular Calificación de Entrega (1 a 5 estrellas):</label>
+                <div class="flex gap-2">
+                  <select id="deptRatingVal" class="px-2 py-1 rounded bg-white/[0.05] border border-white/10 text-white font-mono text-xs focus:outline-none">
+                    <option value="5">⭐⭐⭐⭐⭐ 5 Estrellas (Excelente)</option>
+                    <option value="4">⭐⭐⭐⭐ 4 Estrellas (Bueno)</option>
+                    <option value="3">⭐⭐⭐ 3 Estrellas (Alerta Calidad)</option>
+                    <option value="2">⭐⭐ 2 Estrellas (Escalada a Chef)</option>
+                    <option value="1">⭐ 1 Estrella (Crítico Win-Back)</option>
+                  </select>
+                  <input type="text" id="deptRatingFeedback" placeholder="Comentario opcional..." class="flex-1 px-2 py-1 rounded bg-white/[0.05] border border-white/10 text-white font-mono text-xs focus:outline-none">
+                  <button onclick="submitDeptRating()" class="px-3 py-1 rounded bg-violet-500 hover:bg-violet-400 text-black font-bold font-mono text-xs transition">
+                    Evaluar
+                  </button>
+                </div>
+              </div>
+
+              <!-- Rating Evaluation Result -->
+              <div id="deptRatingResult" class="p-2.5 rounded bg-black/40 border border-white/5 text-[11px] font-mono space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-white/60">Estado de Calidad:</span>
+                  <span id="deptRatingStatus" class="text-emerald-400 font-bold">positive (Fidelización Registrada)</span>
+                </div>
+                <div class="flex items-center justify-between text-[10px] text-white/40">
+                  <span>Escalar a ChefOps:</span>
+                  <span id="deptRatingEscalate" class="text-white/60">No</span>
+                </div>
+              </div>
+
+              <!-- Subscription Upgrade Box -->
+              <div class="p-2.5 rounded bg-white/[0.02] border border-white/5 text-[11px] font-mono space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-white font-medium">Calificación a Plan Semanal:</span>
+                  <span class="text-amber-400 font-bold">$72.500 COP / sem</span>
+                </div>
+                <p class="text-[10px] text-white/50">Clientes con &ge;2 pedidos por semana califican a $5.000 COP de ahorro automático.</p>
+                <div class="text-[10px] text-emerald-400 pt-1 border-t border-white/5 flex items-center justify-between">
+                  <span>Plan Mensual: $270.000 COP (20 bowls)</span>
+                  <span>Ahorro: $5.000 COP/sem</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
     </section>
 
     <!-- =======================================================================
@@ -2049,10 +2317,199 @@
       }
     }
 
+    // -------------------------------------------------------------------------
+    // AUTONOMOUS DEPARTMENTS CONTROLLERS (MILESTONE 2)
+    // -------------------------------------------------------------------------
+    let currentInteractions = ["TapTap"];
+
+    async function calculateDeptMRP() {
+      const orderCount = parseInt(document.getElementById('deptMrpOrders')?.value) || 0;
+      try {
+        const res = await fetch('/api/departments/chef-ops/mrp', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({order_count: orderCount})
+        });
+        const data = await res.json();
+        if (data.raw_chicken_kg !== undefined) {
+          document.getElementById('deptMrpChicken').innerText = data.raw_chicken_kg.toFixed(3) + " kg";
+          document.getElementById('deptMrpRice').innerText = data.dry_rice_kg.toFixed(3) + " kg";
+          document.getElementById('deptMrpVeg').innerText = data.vegetables_total_kg.toFixed(3) + " kg";
+          document.getElementById('deptMrpContainers').innerText = data.bops_containers_units + " un";
+
+          const alertsBox = document.getElementById('deptMrpAlerts');
+          if (alertsBox) {
+            if (data.alerts && data.alerts.length > 0) {
+              alertsBox.innerHTML = data.alerts.map(a => `
+                <div class="px-2 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  ⚠️ ALERTA DE STOCK: ${a}
+                </div>
+              `).join('');
+            } else {
+              alertsBox.innerHTML = `<span class="text-emerald-400">✓ Niveles de stock óptimos para ${orderCount} pedidos</span>`;
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Error calculando MRP:", e);
+      }
+    }
+
+    async function scanDeptTrends() {
+      const topic = document.getElementById('deptTrendTopic')?.value || "Fatiga post-almuerzo en Yopal";
+      const btn = document.getElementById('btnScanTrends');
+      if (btn) btn.innerText = "Escaneando...";
+      try {
+        const res = await fetch('/api/departments/trends/scan', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({topic: topic})
+        });
+        const data = await res.json();
+        loadDeptTrends();
+        showToast("¡Tendencia analizada con OmniRoute!");
+      } catch (e) {
+        console.error(e);
+      } finally {
+        if (btn) btn.innerText = "Escanear IA";
+      }
+    }
+
+    async function loadDeptTrends() {
+      try {
+        const res = await fetch('/api/departments/trends');
+        const data = await res.json();
+        const container = document.getElementById('deptTrendsContainer');
+        if (container && data.trends) {
+          container.innerHTML = data.trends.map(t => `
+            <div class="p-3 rounded bg-black/40 border border-white/5 space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-white font-mono">${t.topic}</span>
+                <span class="text-[9px] px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-400 font-mono">${t.category}</span>
+              </div>
+              <p class="text-[11px] text-white/70 italic">"${t.hook_angle}"</p>
+              <div class="flex items-center justify-between text-[10px] font-mono text-white/40 pt-1 border-t border-white/5">
+                <span>${t.product_specs_featured ? t.product_specs_featured.price_cop : "$13.500 - $15.000 COP"}</span>
+                <a href="${t.whatsapp_link}" target="_blank" class="text-emerald-400 hover:underline">WhatsApp ⚡</a>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function testDeptCommentRoute() {
+      const comment = document.getElementById('deptCommentText')?.value || "Quiero el menu TapTap";
+      const user = document.getElementById('deptCommentUser')?.value || "atleta_yopal";
+      try {
+        const res = await fetch('/api/departments/leads/route', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({comment_text: comment, username: user})
+        });
+        const data = await res.json();
+        if (data.public_reply) {
+          document.getElementById('deptPublicReply').innerText = data.public_reply;
+          document.getElementById('deptDmPayload').innerText = data.dm_payload?.text || "DM enviado";
+          showToast("¡Ruta procesada en <3s!");
+        } else {
+          document.getElementById('deptPublicReply').innerText = "Sin respuesta (no contiene trigger TapTap)";
+          document.getElementById('deptDmPayload').innerText = "Ningún DM generado";
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function addLeadInteraction(keyword) {
+      currentInteractions.push(keyword);
+      testDeptLeadScoring();
+    }
+
+    async function testDeptLeadScoring() {
+      try {
+        const res = await fetch('/api/departments/leads/score', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({interactions: currentInteractions})
+        });
+        const data = await res.json();
+        const badge = document.getElementById('deptLeadScoreBadge');
+        if (badge) {
+          badge.innerText = `Score: ${data.score} · ${data.tier}`;
+          if (data.tier === 'Converted') badge.className = "text-xs font-mono font-bold text-emerald-400";
+          else if (data.tier === 'Hot') badge.className = "text-xs font-mono font-bold text-amber-400";
+          else if (data.tier === 'Warm') badge.className = "text-xs font-mono font-bold text-sky-400";
+          else badge.className = "text-xs font-mono font-bold text-white/50";
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function submitDeptRating() {
+      const rating = parseInt(document.getElementById('deptRatingVal')?.value) || 5;
+      const feedback = document.getElementById('deptRatingFeedback')?.value || "";
+      try {
+        const res = await fetch('/api/departments/retention/feedback', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({rating: rating, feedback: feedback})
+        });
+        const data = await res.json();
+        const statusEl = document.getElementById('deptRatingStatus');
+        const escalateEl = document.getElementById('deptRatingEscalate');
+        if (statusEl && escalateEl) {
+          if (data.escalate_to_chef) {
+            statusEl.innerText = "ALERTA (Escalado a ChefOps para Win-Back)";
+            statusEl.className = "text-amber-400 font-bold";
+            escalateEl.innerText = "SÍ · Alerta inmediata en cocina";
+            escalateEl.className = "text-amber-400 font-bold";
+          } else {
+            statusEl.innerText = "positive (Fidelización Registrada)";
+            statusEl.className = "text-emerald-400 font-bold";
+            escalateEl.innerText = "No";
+            escalateEl.className = "text-white/60";
+          }
+          showToast(`Calificación ${rating}⭐ procesada`);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function refreshDepartmentsStatus() {
+      try {
+        const res = await fetch('/api/departments/status');
+        const data = await res.json();
+        if (data.departments?.chef_ops) {
+          const badge = document.getElementById('chefCutoffBadge');
+          if (badge) {
+            if (data.departments.chef_ops.cutoff_passed) {
+              badge.innerText = "Corte 10:30 Superado (Turno Cerrado)";
+              badge.className = "px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-amber-500/15 border border-amber-500/30 text-amber-400";
+            } else {
+              badge.innerText = "Aceptando Pedidos (Pre-10:30)";
+              badge.className = "px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-emerald-500/15 border border-emerald-500/30 text-emerald-400";
+            }
+          }
+        }
+        loadDeptTrends();
+        showToast("Estado de departamentos sincronizado");
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
     // Initializations
     updateWhatsAppLink();
     calculateKitchenPrep();
     calculateAthleteMacros();
+    calculateDeptMRP();
+    loadDeptTrends();
+    refreshDepartmentsStatus();
     loadStatus();
     loadRules();
     loadConfig();

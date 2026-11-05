@@ -58,7 +58,7 @@
         "solicitud",
         "comentario"
       ],
-      "reply_text": "¡Hola! 🍱⚡ Nuestros precios oficiales de referencia en Yopal (305 g reales pesados en gramera digital en empaque BOPS de 3 divisiones) son:\n\n1. Bowl Pechuga a la Plancha Fit (150g pechuga + 80g arroz + 75g vegetales): $13.500 - $15.000 COP\n2. Plan Semanal (5 bowls): $72.500 COP ($14.500 c/u)\n3. Plan Mensual (20 bowls): $270.000 COP ($13.500 c/u)\n\n📲 Separa tu cupo o consulta planes en WhatsApp: https://wa.me/573202337178?text=Hola%20TapMeals,%20quiero%20conocer%20los%20precios%20y%20planes%20en%20Yopal",
+      "reply_text": "¡Hola! 🍱⚡ Nuestros precios oficiales de referencia en Yopal (305 g reales pesados en gramera digital en empaque BOPS de 3 divisiones) son:\n\n1. Bowl Pechuga a la Plancha Fit (150g pechuga + 80g arroz + 75g vegetales): $13.500 COP ($13.500 - $15.000 COP según opciones)\n2. Plan Semanal (5 bowls): $72.500 COP ($14.500 c/u)\n3. Plan Mensual (20 bowls): $270.000 COP ($13.500 c/u)\n\n📲 Separa tu cupo o consulta planes en WhatsApp: https://wa.me/573202337178?text=Hola%20TapMeals,%20quiero%20conocer%20los%20precios%20y%20planes%20en%20Yopal",
       "comment_reply": "¡Precios y planes enviados al DM! Revisa tu bandeja de entrada 🍱⚡",
       "send_image": true,
       "enabled": true
@@ -110,8 +110,7 @@
       "match_type": "contains",
       "channels": [
         "dm",
-        "solicitud",
-        "comentario"
+        "solicitud"
       ],
       "reply_text": "¡Hola atleta! 🍱⚡ Bienvenido a TapMeals Yopal (@tapmeals.yopal).\n\nPreparamos almuerzos saludables de 305 g reales pesados en gramera digital (150 g pechuga fresca sin piel, 80 g arroz blanco seco, 75 g vegetales frescos) en empaque BOPS de 3 divisiones. Cero aceites quemados.\n\nEscribe:\n• 'Precio' para ver valores ($13.500 a $15.000 COP)\n• 'TapTap' para recibir la carta completa\n• 'Piloto' para anotarte en la degustación en Yopal\n📲 O escríbenos a WhatsApp: https://wa.me/573202337178?text=Hola%20TapMeals,%20quiero%20informaci%C3%B3n%20sobre%20los%20almuerzos",
       "comment_reply": "¡Hola atleta! Te enviamos toda la información por mensaje directo 🍱⚡",
@@ -133,14 +132,12 @@
         "despacho",
         "ubicacion",
         "donde",
-        "yopal",
         "envio"
       ],
       "match_type": "contains",
       "channels": [
         "dm",
-        "solicitud",
-        "comentario"
+        "solicitud"
       ],
       "reply_text": "📍 Cobertura: Todo el casco urbano de Yopal (gimnasios como Smart Fit/Bodytech, universidades como Unitrópico, oficinas y residencias).\n\n⏰ Horario de recepción: 07:00 AM a 10:30 AM.\n🚀 Entregas puntuales: Entre 11:30 AM y 01:30 PM en empaque BOPS de 3 divisiones sellado.\n\n📲 Coordina tu entrega por WhatsApp: https://wa.me/573202337178?text=Hola%20TapMeals,%20quiero%20coordinar%20una%20entrega%20en%20Yopal",
       "comment_reply": "¡Información de cobertura y horarios en Yopal enviada a tu DM! 📍🍱",
@@ -169,8 +166,7 @@
       "match_type": "contains",
       "channels": [
         "dm",
-        "solicitud",
-        "comentario"
+        "solicitud"
       ],
       "reply_text": "⚡ En TapMeals no adivinamos: cada bandeja BOPS de 3 divisiones viene pesada en gramera digital con 305 g reales en crudo/seco:\n• 150 g de pechuga fresca sin piel (~36g-42g proteína real)\n• 80 g de arroz blanco seco\n• 75 g de vegetales frescos (25g brócoli, 25g tomate chonto, 25g zanahoria)\n\n📲 Consulta tu plan nutricional en nuestro WhatsApp: https://wa.me/573202337178?text=Hola%20TapMeals,%20quiero%20saber%20m%C3%A1s%20sobre%20los%20macros%20y%20gramajes",
       "comment_reply": "¡Detalles de macros y gramaje real (305 g) enviados a tu DM! 📊⚡",
@@ -196,8 +192,7 @@
       "match_type": "contains",
       "channels": [
         "dm",
-        "solicitud",
-        "comentario"
+        "solicitud"
       ],
       "reply_text": "¡Excelente elección, atleta! 📲⚡ Puedes agendar tu almuerzo o inscribirte en la tanda piloto en 30 segundos directamente en nuestro WhatsApp oficial:\n\n👉 https://wa.me/573202337178?text=Hola%20TapMeals!%20Quiero%20apartar%20mi%20almuerzo%20saludable%20en%20Yopal%20%F0%9F%8D%B1",
       "comment_reply": "¡Link directo de WhatsApp enviado a tu DM para apartar tu cupo! 📲🍱",
@@ -223,8 +218,7 @@
       "match_type": "contains",
       "channels": [
         "dm",
-        "solicitud",
-        "comentario"
+        "solicitud"
       ],
       "reply_text": "¡Con el mayor gusto, atleta! 🍱⚡ En TapMeals Yopal estamos para potenciar tu rendimiento con comida limpia de 305 g reales pesada en gramera digital.\n\n📲 Cuando quieras apartar tu porción, escríbenos directo a WhatsApp: https://wa.me/573202337178?text=Hola%20TapMeals!%20Quiero%20apartar%20mi%20cupo",
       "comment_reply": "¡Con el mayor gusto atleta! A la orden siempre en TapMeals Yopal 🍱⚡",
@@ -251,8 +245,7 @@
       "match_type": "contains",
       "channels": [
         "dm",
-        "solicitud",
-        "comentario"
+        "solicitud"
       ],
       "reply_text": "🏋️‍♂️ ¿Entrenas en Smart Fit, Bodytech o estudias en Unitrópico en Yopal? Tienes prioridad en nuestra lista de degustación piloto y tarifa preferencial desde $13.500 COP por bandeja de 305 g reales.\n\n📲 Reclama tu cupo de atleta en WhatsApp: https://wa.me/573202337178?text=Hola%20TapMeals,%20entreno%20en%20Yopal%20y%20quiero%20mi%20cupo%20de%20atleta",
       "comment_reply": "¡Beneficio para atletas y gimnasios de Yopal enviado a tu DM! 🏋️‍♂️⚡",

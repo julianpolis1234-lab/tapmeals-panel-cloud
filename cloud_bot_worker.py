@@ -170,12 +170,14 @@ def run_cloud_worker():
         known_threads.add(vt)
 
     start_ts = time.time()
+    startup_timestamp = time.time()
     circuit_breaker_until = 0
     cached_medias = []
     ultimo_refresh_medias = 0
     cooldown_threads = {}
     cooldown_seg = 6
     ciclo = 0
+    baseline_seeded = False
 
     while True:
         ahora = time.time()
@@ -187,13 +189,14 @@ def run_cloud_worker():
         try:
             ciclo += 1
             conf = cargar_config()
+            is_baseline_pass = not baseline_seeded
             if ciclo % 25 == 0:
                 historial = pull_history_from_github(historial)
                 dms_procesados.update(historial.get("dms", []))
                 comentarios_procesados.update(historial.get("comentarios", []))
                 known_threads.update(historial.get("known_threads", []))
 
-            # 1. COMENTARIOS EN REELS Y POSTS
+            # 1. COMENTARIOS EN REELS Y POSTS (Reactivo: solo nuevos tras startup)
             if ahora - ultimo_refresh_medias > 50 or not cached_medias:
                 try:
                     all_m = []
@@ -231,6 +234,22 @@ def run_cloud_worker():
                         cid = str(c.pk)
                         if cid in comentarios_procesados or str(c.user.pk) == my_user_id:
                             continue
+
+                        # Si es el pase inicial baseline, registrar sin responder
+                        if is_baseline_pass:
+                            comentarios_procesados.add(cid)
+                            continue
+
+                        # Ignorar comentarios anteriores al arranque
+                        c_time = getattr(c, 'created_at_utc', None)
+                        if c_time:
+                            try:
+                                c_ts = c_time.timestamp() if hasattr(c_time, 'timestamp') else float(c_time)
+                                if c_ts < startup_timestamp:
+                                    comentarios_procesados.add(cid)
+                                    continue
+                            except Exception:
+                                pass
 
                         eval_res = evaluar_reglas(c.text, "comentario", conf)
                         if eval_res.get("triggers"):
@@ -289,6 +308,21 @@ def run_cloud_worker():
                     if m_id in dms_procesados or str(m.user_id) == my_user_id:
                         continue
 
+                    # Si es el pase inicial, registrar sin responder
+                    if is_baseline_pass:
+                        dms_procesados.add(m_id)
+                        continue
+
+                    m_time = getattr(m, 'timestamp', None)
+                    if m_time:
+                        try:
+                            m_ts = m_time.timestamp() if hasattr(m_time, 'timestamp') else float(m_time)
+                            if m_ts < startup_timestamp:
+                                dms_procesados.add(m_id)
+                                continue
+                        except Exception:
+                            pass
+
                     eval_res = evaluar_reglas(m.text, "solicitud", conf)
                     if eval_res.get("triggers"):
                         regla = eval_res.get("rule")
@@ -304,18 +338,23 @@ def run_cloud_worker():
                         except Exception:
                             pass
 
-                        reply = eval_res.get("dm_response") or conf.get("welcome_message")
-                        cl.direct_send(reply, thread_ids=[thread.id])
-                        if eval_res.get("has_image") and DEFAULT_MENU_IMAGE.exists():
-                            time.sleep(0.6)
-                            try:
-                                cl.direct_send_photo(DEFAULT_MENU_IMAGE, thread_ids=[thread.id])
-                            except Exception:
-                                pass
+                        try:
+                            reply = eval_res.get("dm_response") or conf.get("welcome_message")
+                            if len(reply) > 950:
+                                reply = reply[:940] + "\n..."
+                            cl.direct_send(reply, thread_ids=[thread.id])
+                            if eval_res.get("has_image") and DEFAULT_MENU_IMAGE.exists():
+                                time.sleep(0.6)
+                                try:
+                                    cl.direct_send_photo(DEFAULT_MENU_IMAGE, thread_ids=[thread.id])
+                                except Exception:
+                                    pass
+                        except Exception as e_send_pending:
+                            print(f"[Cloud Aviso Envío Solicitud] {e_send_pending}")
             except Exception:
                 pass
 
-            # 3. HILOS CONOCIDOS (Round-Robin)
+            # 3. HILOS CONOCIDOS (Modo Reactivo Estricto: SOLO msgs[0])
             known_list = list(known_threads)
             if known_list:
                 batch_size = 2
@@ -328,33 +367,48 @@ def run_cloud_worker():
                         if not msgs:
                             continue
 
-                        nuevos = []
-                        for m in msgs[:6]:
-                            if str(m.user_id) == my_user_id:
-                                break
-                            mid = str(m.id)
-                            if mid not in dms_procesados and m.text:
-                                nuevos.append(m)
-
-                        if not nuevos:
+                        # REGLA ESTRICTA REACTIVA: SOLO inspeccionar msgs[0]
+                        m = msgs[0]
+                        # Si msgs[0] es del bot, el bot ya habló último: NUNCA responder ni mirar msgs[1]
+                        if str(m.user_id) == my_user_id:
                             continue
+
+                        mid = str(m.id)
+                        if mid in dms_procesados:
+                            continue
+
+                        # Si es el pase inicial baseline, registrar sin responder
+                        if is_baseline_pass:
+                            dms_procesados.add(mid)
+                            continue
+
+                        m_time = getattr(m, 'timestamp', None)
+                        if m_time:
+                            try:
+                                m_ts = m_time.timestamp() if hasattr(m_time, 'timestamp') else float(m_time)
+                                if m_ts < startup_timestamp:
+                                    dms_procesados.add(mid)
+                                    continue
+                            except Exception:
+                                pass
 
                         sender_user = thread_data.users[0] if getattr(thread_data, 'users', None) else None
                         username = sender_user.username if sender_user else "atleta"
 
-                        for m in reversed(nuevos):
-                            mid = str(m.id)
-                            eval_res = evaluar_reglas(m.text, "dm", conf)
-                            if eval_res.get("triggers"):
-                                regla = eval_res.get("rule")
-                                nombre_regla = regla["name"] if regla else "Asistente DM"
-                                print(f"[⚡ CLOUD DM] @{username}: \"{m.text}\" -> {nombre_regla}")
+                        eval_res = evaluar_reglas(m.text, "dm", conf)
+                        if eval_res.get("triggers"):
+                            regla = eval_res.get("rule")
+                            nombre_regla = regla["name"] if regla else "Asistente DM"
+                            print(f"[⚡ CLOUD DM] @{username}: \"{m.text}\" -> {nombre_regla}")
 
-                                dms_procesados.add(mid)
-                                historial.setdefault("dms", []).append(mid)
-                                push_history_to_github(historial)
+                            dms_procesados.add(mid)
+                            historial.setdefault("dms", []).append(mid)
+                            push_history_to_github(historial)
 
+                            try:
                                 reply = eval_res.get("dm_response") or conf.get("welcome_message")
+                                if len(reply) > 950:
+                                    reply = reply[:940] + "\n..."
                                 cl.direct_send(reply, thread_ids=[thread_data.id])
                                 if eval_res.get("has_image") and DEFAULT_MENU_IMAGE.exists():
                                     time.sleep(0.6)
@@ -362,14 +416,16 @@ def run_cloud_worker():
                                         cl.direct_send_photo(DEFAULT_MENU_IMAGE, thread_ids=[thread_data.id])
                                     except Exception:
                                         pass
-                            else:
-                                dms_procesados.add(mid)
-                                historial.setdefault("dms", []).append(mid)
-                                guardar_historial(historial)
+                            except Exception as e_send_dm:
+                                print(f"[Cloud Aviso Envío DM Thread] {e_send_dm}")
+                        else:
+                            dms_procesados.add(mid)
+                            historial.setdefault("dms", []).append(mid)
+                            guardar_historial(historial)
                     except Exception:
                         pass
 
-            # 4. BANDEJA PRINCIPAL (direct_threads con Circuit Breaker)
+            # 4. BANDEJA PRINCIPAL (direct_threads con Circuit Breaker y Regla Reactiva: SOLO msgs[0])
             if ahora > circuit_breaker_until:
                 try:
                     threads = cl.direct_threads(amount=2)
@@ -379,28 +435,52 @@ def run_cloud_worker():
                         if ahora - cooldown_threads.get(t_id, 0) < cooldown_seg:
                             continue
 
-                        msgs = thread.messages[:2] if thread.messages else []
-                        for m in msgs:
-                            if str(m.user_id) == my_user_id:
-                                break
-                            mid = str(m.id)
-                            if mid in dms_procesados:
-                                continue
+                        msgs = thread.messages if thread.messages else []
+                        if not msgs:
+                            continue
 
-                            eval_res = evaluar_reglas(m.text, "dm", conf)
-                            if eval_res.get("triggers"):
-                                user = thread.users[0] if thread.users else None
-                                username = user.username if user else "atleta"
-                                regla = eval_res.get("rule")
-                                nombre_regla = regla["name"] if regla else "Regla DM"
-                                print(f"[⚡ CLOUD INBOX DM] @{username}: \"{m.text}\" -> {nombre_regla}")
+                        # REGLA ESTRICTA REACTIVA: SOLO inspeccionar msgs[0]
+                        m = msgs[0]
+                        if str(m.user_id) == my_user_id:
+                            continue
 
-                                dms_procesados.add(mid)
-                                historial.setdefault("dms", []).append(mid)
-                                push_history_to_github(historial)
-                                cooldown_threads[t_id] = ahora
+                        mid = str(m.id)
+                        if mid in dms_procesados:
+                            continue
 
+                        # Si es el pase inicial, registrar sin responder
+                        if is_baseline_pass:
+                            dms_procesados.add(mid)
+                            continue
+
+                        m_time = getattr(m, 'timestamp', None)
+                        if m_time:
+                            try:
+                                m_ts = m_time.timestamp() if hasattr(m_time, 'timestamp') else float(m_time)
+                                if m_ts < startup_timestamp:
+                                    dms_procesados.add(mid)
+                                    continue
+                            except Exception:
+                                pass
+
+                        user = thread.users[0] if thread.users else None
+                        username = user.username if user else "atleta"
+
+                        eval_res = evaluar_reglas(m.text, "dm", conf)
+                        if eval_res.get("triggers"):
+                            regla = eval_res.get("rule")
+                            nombre_regla = regla["name"] if regla else "Regla DM"
+                            print(f"[⚡ CLOUD INBOX DM] @{username}: \"{m.text}\" -> {nombre_regla}")
+
+                            dms_procesados.add(mid)
+                            historial.setdefault("dms", []).append(mid)
+                            push_history_to_github(historial)
+                            cooldown_threads[t_id] = ahora
+
+                            try:
                                 reply = eval_res.get("dm_response") or conf.get("welcome_message")
+                                if len(reply) > 950:
+                                    reply = reply[:940] + "\n..."
                                 cl.direct_send(reply, thread_ids=[thread.id])
                                 if eval_res.get("has_image") and DEFAULT_MENU_IMAGE.exists():
                                     time.sleep(0.6)
@@ -408,9 +488,15 @@ def run_cloud_worker():
                                         cl.direct_send_photo(DEFAULT_MENU_IMAGE, thread_ids=[thread.id])
                                     except Exception:
                                         pass
+                            except Exception as e_send_inbox:
+                                print(f"[Cloud Aviso Envío Inbox DM] {e_send_inbox}")
                 except Exception as e_th:
                     if "403" in str(e_th) or "item_ack" in str(e_th):
                         circuit_breaker_until = ahora + 600
+
+            if is_baseline_pass:
+                baseline_seeded = True
+                print("[Cloud 24/7] Pase base inicial completado: hilos preexistentes registrados sin enviar mensajes.")
 
             if ciclo == 1 or ciclo % 20 == 0:
                 print(f"[Cloud 24/7 Heartbeat] Ciclo #{ciclo} OK | Hilos monitoreados: {len(known_threads)} | DMs procesados: {len(dms_procesados)} | Comentarios procesados: {len(comentarios_procesados)}")

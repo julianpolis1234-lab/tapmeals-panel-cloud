@@ -152,5 +152,59 @@
     },
     "whatsapp_link": "https://wa.me/573202337178?text=Hola%20TapMeals!%20Vi%20el%20video%20de%20Fatiga post-almuerzo",
     "cta_keyword": "TapTap"
+  },
+  {
+    "trend_id": "tofu_mito_mealprep_domingo",
+    "topic": "TOFU: El Mito del Meal Prep Casero el Domingo vs Fresco en Yopal",
+    "category": "lifestyle",
+    "hook_angle": "Domingo 7:00 AM: Hoy sí cocino para toda la semana... Miércoles: el pollo recalentado sabe a cartón. En Yopal recibe 305g recién hechos cada mediodía.",
+    "product_specs_featured": {
+      "weight_grams": 305,
+      "chicken_grams": 150,
+      "price_cop": "$13.500 - $15.000 COP",
+      "packaging": "BOPS 3 divisiones"
+    },
+    "whatsapp_link": "https://wa.me/573202337178?text=Hola%20TapMeals!%20Vi%20el%20video%20de%20TOFU: El Mito del Meal Prep Casero el Domingo vs Fresco en Yopal",
+    "cta_keyword": "TapTap",
+    "funnel_stage": "TOFU",
+    "visual_style": "Apple iOS Notification Card + Cold-to-Warm Color Reveal",
+    "ai_model": "ddgw/claude-haiku-4-5",
+    "live_reel_url": "https://www.instagram.com/reel/DfWGdtSM8QM/"
+  },
+  {
+    "trend_id": "mofu_guia_3_metas_yopal",
+    "topic": "MOFU: Guía Nutricional Guardable — Qué almorzar en Yopal según tu meta",
+    "category": "nutricion",
+    "hook_angle": "Guarda esta guía: Meta 1 Definición (520 kcal, .500), Meta 2 Volumen Limpio (200g proteína, .000), Meta 3 Energía Oficina/U sin sueño a las 2 PM (.500).",
+    "product_specs_featured": {
+      "weight_grams": 305,
+      "chicken_grams": 150,
+      "price_cop": "$13.500 - $15.000 COP",
+      "packaging": "BOPS 3 divisiones"
+    },
+    "whatsapp_link": "https://wa.me/573202337178?text=Hola%20TapMeals!%20Vi%20el%20video%20de%20MOFU: Guía Nutricional Guardable — Qué almorzar en Yopal según tu meta",
+    "cta_keyword": "TapTap",
+    "funnel_stage": "MOFU",
+    "visual_style": "Apple Fitness / MyFitnessPal Glass HUD + Macro Progress Bars",
+    "ai_model": "ddgw/gpt-5.4-mini",
+    "live_reel_url": "https://www.instagram.com/reel/DfWGiWzMVIZ/"
+  },
+  {
+    "trend_id": "bofu_prueba_gramera_directa",
+    "topic": "BOFU: Prueba Real de Gramera Digital 150g Proteína / 305g Totales",
+    "category": "fitness",
+    "hook_angle": "Aquí no adivinamos tus macros al ojo: 150g de proteína real pesada en gramera desde .500 COP en Yopal. Comenta TAPTAP.",
+    "product_specs_featured": {
+      "weight_grams": 305,
+      "chicken_grams": 150,
+      "price_cop": "$13.500 - $15.000 COP",
+      "packaging": "BOPS 3 divisiones"
+    },
+    "whatsapp_link": "https://wa.me/573202337178?text=Hola%20TapMeals!%20Vi%20el%20video%20de%20BOFU: Prueba Real de Gramera Digital 150g Proteína / 305g Totales",
+    "cta_keyword": "TapTap",
+    "funnel_stage": "BOFU",
+    "visual_style": "CapCut Pro Street Kinetic Typography + Fast Cuts 1.7s",
+    "ai_model": "agy/gemini-4-argon-medium",
+    "live_reel_url": "https://www.instagram.com/reel/DfWFJ2zsqus/"
   }
 ]

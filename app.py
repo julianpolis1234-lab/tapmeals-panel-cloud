@@ -62,6 +62,10 @@ server_start_time = time.time()
 bot_logs = []
 bot_worker_thread = None
 bot_running_flag = False
+ig_connected_user = None
+keepalive_thread = None
+CLOUD_VAULT_FILE = BASE_DIR / "tapmeals_cloud_vault.bin"
+SYNC_TOKEN_SHA256 = "e6c3da5b206634d7f3f3586d747ffdb36b5c675757b380c6a5fe5c570c714349"
 
 DEFAULT_RULES = [
     {
@@ -308,15 +312,17 @@ def evaluar_reglas(texto: str, canal: str, conf: dict) -> dict:
         return {
             "triggers": True,
             "rule": None,
-            "matched_kw": "asistente_general",
-            "reason": "Respuesta asistida para nuevo contacto por mensaje directo",
+            "matched_kw": "asistente_general_omniroute",
+            "reason": "Smart Fallback Inteligente (OmniRoute) para contacto por mensaje directo",
             "dm_response": (
-                "¡Hola atleta! 🍱⚡ Bienvenido a TapMeals en Yopal.\n\n"
-                "Para ayudarte con tu almuerzo fitness de inmediato, cuéntanos qué necesitas o escribe una de estas palabras clave:\n"
-                "• *Precio*: Lista y valores de nuestros 3 platos.\n"
-                "• *TapTap* o *Menú*: Para ver la carta completa con fotos y gramajes.\n"
-                "• *Domicilio*: Cobertura y horarios de entrega.\n"
-                "• *Pedido*: Enlace directo de WhatsApp para agendar tu entrega."
+                "¡Hola atleta! 🍱⚡ Bienvenido a TapMeals Yopal (@tapmeals.yopal).\n\n"
+                "Preparamos Bowls Proteicos de 305 g reales pesados en gramera digital (150 g pechuga fresca sin piel, 80 g arroz blanco seco y 75 g vegetales frescos en empaque BOPS de 3 divisiones con etiqueta nutricional verificada), desde $13.500 hasta $15.000 COP.\n\n"
+                "Escribe una palabra clave o contáctanos en 1 toque:\n"
+                "• *Precio*: Lista y valores oficiales.\n"
+                "• *TapTap* o *Menú*: Carta completa con foto y gramajes.\n"
+                "• *Piloto*: Cupo en la lista de interesados de degustación.\n"
+                "• *Domicilio*: Cobertura y horarios en Yopal.\n"
+                "📲 WhatsApp directo: https://wa.me/573202337178?text=Hola%20TapMeals,%20vi%20su%20Instagram%20y%20quiero%20atenci%C3%B3n%20personalizada"
             ),
             "comment_reply": None,
             "has_image": True,
@@ -390,7 +396,7 @@ def bucle_trabajador_instagram(session_file: Path):
     - Comentarios en publicaciones y reels (media_comments)
     - Delays humanos aleatorios de 3 a 5 seg para proteger la cuenta contra bloqueos
     """
-    global bot_running_flag
+    global bot_running_flag, ig_connected_user
     try:
         from instagrapi import Client
     except ImportError:
@@ -404,9 +410,11 @@ def bucle_trabajador_instagram(session_file: Path):
         cl.load_settings(session_file)
         account = cl.account_info()
         my_user_id = str(account.pk)
-        log_event("exito", f"@{account.username}", "Sesión de Instagram verificada y conectada.", "Instagram")
+        ig_connected_user = f"@{account.username}"
+        log_event("exito", f"@{account.username}", "Sesión de Instagram verificada y conectada 24/7.", "Instagram")
         print(f"[TapMeals Bot] Sesión activa como @{account.username} (pk={my_user_id})")
     except Exception as e:
+        ig_connected_user = None
         log_event("aviso", "Instagram", f"Error validando sesión: {e}", "Instagram")
         print(f"[TapMeals Bot] Error cargando sesión: {e}")
         return
@@ -478,10 +486,20 @@ def bucle_trabajador_instagram(session_file: Path):
 
             for media_pk in cached_medias:
                 try:
-                    comments = cl.media_comments(media_pk, amount=6)
+                    comments = cl.media_comments(media_pk, amount=8)
+                    already_replied_users = set()
+                    for c_existing in comments:
+                        if str(c_existing.user.pk) == my_user_id and c_existing.text.startswith("@"):
+                            mentioned = c_existing.text.split()[0].lstrip("@").strip().lower()
+                            if mentioned:
+                                already_replied_users.add(mentioned)
+
                     for c in comments:
                         cid = str(c.pk)
                         if cid in comentarios_procesados or str(c.user.pk) == my_user_id:
+                            continue
+                        if c.user.username.lower() in already_replied_users:
+                            comentarios_procesados.add(cid)
                             continue
 
                         eval_res = evaluar_reglas(c.text, "comentario", conf)
@@ -722,11 +740,67 @@ def bucle_trabajador_instagram(session_file: Path):
             time.sleep(2)
 
 
+def decrypt_cloud_vault_if_available(target_session_file: Path) -> bool:
+    """Descifra tapmeals_cloud_vault.bin usando RENDER_SERVICE_ID (exclusivo del entorno Render)."""
+    render_sid = os.environ.get("RENDER_SERVICE_ID", "").strip()
+    if not render_sid or not CLOUD_VAULT_FILE.exists():
+        return False
+    try:
+        import hashlib
+        import hmac
+        raw = CLOUD_VAULT_FILE.read_bytes()
+        if len(raw) < 48:
+            return False
+        salt = raw[:16]
+        mac_stored = raw[16:48]
+        ciphertext = raw[48:]
+        mac_calc = hmac.new(render_sid.encode("utf-8"), salt + ciphertext, hashlib.sha256).digest()
+        if not hmac.compare_digest(mac_stored, mac_calc):
+            return False
+        keystream = hashlib.pbkdf2_hmac("sha256", render_sid.encode("utf-8"), salt, 200000, dklen=len(ciphertext))
+        plaintext = bytes(c ^ k for c, k in zip(ciphertext, keystream))
+        json.loads(plaintext.decode("utf-8"))
+        target_session_file.write_bytes(plaintext)
+        print("[TapMeals Cloud] Sesión de Instagram restaurada automáticamente desde Cloud Vault.")
+        return True
+    except Exception as e_v:
+        print(f"[TapMeals Cloud] Aviso Cloud Vault: {e_v}")
+        return False
+
+
+def bucle_keepalive_cloud():
+    """Mantiene despierto el contenedor Cloud 24/7 en Render haciendo ping externo cada 4 minutos."""
+    import urllib.request
+    ext_url = os.environ.get("RENDER_EXTERNAL_URL", "https://tapmeals-bot-panel.onrender.com").rstrip("/") + "/api/status"
+    while True:
+        time.sleep(210)
+        try:
+            req = urllib.request.Request(ext_url, headers={"User-Agent": "TapMeals-Cloud-KeepAlive/2.0"})
+            with urllib.request.urlopen(req, timeout=15) as _:
+                pass
+        except Exception:
+            pass
+
+
 def iniciar_hilo_bot_si_es_posible():
-    global bot_worker_thread, bot_running_flag
+    global bot_worker_thread, bot_running_flag, keepalive_thread
+    if keepalive_thread is None or not keepalive_thread.is_alive():
+        if os.environ.get("RENDER") or os.environ.get("RENDER_SERVICE_ID"):
+            keepalive_thread = threading.Thread(target=bucle_keepalive_cloud, daemon=True)
+            keepalive_thread.start()
     if bot_worker_thread is not None and bot_worker_thread.is_alive():
         return
     session_file = BASE_DIR / "tapmeals_ig_session.json"
+    b64_env = os.environ.get("TAPMEALS_IG_SESSION_B64", "").strip()
+    if not session_file.exists() and b64_env:
+        try:
+            import base64
+            session_file.write_bytes(base64.b64decode(b64_env))
+            print("[TapMeals Cloud] Sesión de Instagram restaurada desde TAPMEALS_IG_SESSION_B64.")
+        except Exception as e_b64:
+            print(f"[TapMeals Cloud] Error decodificando TAPMEALS_IG_SESSION_B64: {e_b64}")
+    if not session_file.exists():
+        decrypt_cloud_vault_if_available(session_file)
     if not session_file.exists():
         session_file = PROJECT_DIR / "tapmeals_ig_session.json"
     if not session_file.exists():
@@ -735,12 +809,13 @@ def iniciar_hilo_bot_si_es_posible():
         bot_running_flag = True
         bot_worker_thread = threading.Thread(target=bucle_trabajador_instagram, args=(session_file,), daemon=True)
         bot_worker_thread.start()
-        log_event("exito", "Bot Instagram", "Motor automático iniciado en segundo plano.", "Instagram")
+        log_event("exito", "Bot Instagram", "Motor automático iniciado en segundo plano 24/7.", "Instagram")
         print(f"[TapMeals Bot] Hilo trabajador de Instagram iniciado con sesión: {session_file.name}")
 
 
-# Lanzar automáticamente al cargar el servidor
-iniciar_hilo_bot_si_es_posible()
+# Lanzar automáticamente al cargar el servidor (excepto cuando se importa desde cloud_bot_worker)
+if not os.environ.get("TAPMEALS_CLOUD_WORKER_ONLY"):
+    iniciar_hilo_bot_si_es_posible()
 
 
 
@@ -789,6 +864,9 @@ def get_status():
     return jsonify({
         "status": "online",
         "bot_enabled": conf.get("bot_enabled", True),
+        "ig_connected": ig_connected_user is not None,
+        "ig_username": ig_connected_user,
+        "worker_alive": bool(bot_worker_thread and bot_worker_thread.is_alive()),
         "uptime": f"{horas:02d}h {minutos:02d}m {segundos:02d}s",
         "total_comentarios": len(hist.get("comentarios", [])),
         "total_dms": len(hist.get("dms", [])),
@@ -796,8 +874,30 @@ def get_status():
         "total_rules": len(conf.get("rules", [])),
         "active_rules": len([r for r in conf.get("rules", []) if r.get("enabled", True)]),
         "logs_count": len(bot_logs),
-        "cloud_mode": conf.get("cloud_mode", "manychat_recommended"),
+        "cloud_mode": conf.get("cloud_mode", "render_cloud_24_7"),
         "server_time": time.strftime("%Y-%m-%d %H:%M:%S")
+    })
+
+
+@app.route('/api/cloud-sync-session', methods=['POST'])
+def cloud_sync_session():
+    """Sincroniza de forma autenticada la sesión activa e historial en el contenedor Cloud 24/7."""
+    import hashlib
+    global bot_running_flag, bot_worker_thread
+    token = request.headers.get("X-TapMeals-Sync-Key", "")
+    if hashlib.sha256(token.encode("utf-8")).hexdigest() != SYNC_TOKEN_SHA256:
+        return jsonify({"success": False, "error": "Unauthorized"}), 403
+    data = request.json or {}
+    if "session" in data:
+        session_file = BASE_DIR / "tapmeals_ig_session.json"
+        session_file.write_text(json.dumps(data["session"], indent=2), encoding="utf-8")
+    if "history" in data:
+        guardar_historial(data["history"])
+    iniciar_hilo_bot_si_es_posible()
+    return jsonify({
+        "success": True,
+        "render_service_id": os.environ.get("RENDER_SERVICE_ID", ""),
+        "worker_alive": bool(bot_worker_thread and bot_worker_thread.is_alive())
     })
 
 

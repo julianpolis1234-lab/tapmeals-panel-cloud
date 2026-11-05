@@ -65,7 +65,7 @@ bot_running_flag = False
 ig_connected_user = None
 keepalive_thread = None
 CLOUD_VAULT_FILE = BASE_DIR / "tapmeals_cloud_vault.bin"
-SYNC_TOKEN_SHA256 = "e6c3da5b206634d7f3f3586d747ffdb36b5c675757b380c6a5fe5c570c714349"
+SYNC_TOKEN_SHA256 = "74568db76a9942a2c9ca022625f2aef71c17d735f81a2cfccdbcb4ca02a9b116"
 
 DEFAULT_RULES = [
     {
